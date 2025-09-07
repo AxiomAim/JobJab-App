@@ -1,0 +1,32 @@
+export var _InflaterState;
+(function (_InflaterState) {
+    _InflaterState[_InflaterState["readingHeader"] = 0] = "readingHeader";
+    _InflaterState[_InflaterState["readingBFinal"] = 1] = "readingBFinal";
+    _InflaterState[_InflaterState["readingBType"] = 2] = "readingBType";
+    _InflaterState[_InflaterState["readingNlCodes"] = 3] = "readingNlCodes";
+    _InflaterState[_InflaterState["readingNdCodes"] = 4] = "readingNdCodes";
+    _InflaterState[_InflaterState["readingCodes"] = 5] = "readingCodes";
+    _InflaterState[_InflaterState["readingClCodes"] = 6] = "readingClCodes";
+    _InflaterState[_InflaterState["readingTcBefore"] = 7] = "readingTcBefore";
+    _InflaterState[_InflaterState["readingTcAfter"] = 8] = "readingTcAfter";
+    _InflaterState[_InflaterState["decodeTop"] = 9] = "decodeTop";
+    _InflaterState[_InflaterState["iLength"] = 10] = "iLength";
+    _InflaterState[_InflaterState["fLength"] = 11] = "fLength";
+    _InflaterState[_InflaterState["dCode"] = 12] = "dCode";
+    _InflaterState[_InflaterState["unCompressedAligning"] = 13] = "unCompressedAligning";
+    _InflaterState[_InflaterState["unCompressedByte1"] = 14] = "unCompressedByte1";
+    _InflaterState[_InflaterState["unCompressedByte2"] = 15] = "unCompressedByte2";
+    _InflaterState[_InflaterState["unCompressedByte3"] = 16] = "unCompressedByte3";
+    _InflaterState[_InflaterState["unCompressedByte4"] = 17] = "unCompressedByte4";
+    _InflaterState[_InflaterState["decodeUnCompressedBytes"] = 18] = "decodeUnCompressedBytes";
+    _InflaterState[_InflaterState["srFooter"] = 19] = "srFooter";
+    _InflaterState[_InflaterState["rFooter"] = 20] = "rFooter";
+    _InflaterState[_InflaterState["vFooter"] = 21] = "vFooter";
+    _InflaterState[_InflaterState["done"] = 22] = "done";
+})(_InflaterState || (_InflaterState = {}));
+export var _BlockType;
+(function (_BlockType) {
+    _BlockType[_BlockType["unCompressedType"] = 0] = "unCompressedType";
+    _BlockType[_BlockType["staticType"] = 1] = "staticType";
+    _BlockType[_BlockType["dynamicType"] = 2] = "dynamicType";
+})(_BlockType || (_BlockType = {}));

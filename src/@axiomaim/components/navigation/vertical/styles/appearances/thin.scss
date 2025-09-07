@@ -1,0 +1,93 @@
+/* Variables */
+:root {
+    --axiomaim-vertical-navigation-thin-width: 80px;
+}
+
+axiomaim-vertical-navigation {
+    /* Thin appearance overrides */
+    &.axiomaim-vertical-navigation-appearance-thin {
+        width: var(--axiomaim-vertical-navigation-thin-width);
+        min-width: var(--axiomaim-vertical-navigation-thin-width);
+        max-width: var(--axiomaim-vertical-navigation-thin-width);
+
+        /* Left positioned */
+        &.axiomaim-vertical-navigation-position-left {
+            &.axiomaim-vertical-navigation-mode-side {
+                margin-left: calc(var(--axiomaim-vertical-navigation-thin-width) * -1);
+            }
+
+            &.axiomaim-vertical-navigation-opened {
+                margin-left: 0;
+            }
+        }
+
+        /* Right positioned */
+        &.axiomaim-vertical-navigation-position-right {
+            &.axiomaim-vertical-navigation-mode-side {
+                margin-right: calc(var(--axiomaim-vertical-navigation-thin-width) * -1);
+            }
+
+            &.axiomaim-vertical-navigation-opened {
+                margin-right: 0;
+            }
+
+            .axiomaim-vertical-navigation-aside-wrapper {
+                left: auto;
+                right: var(--axiomaim-vertical-navigation-thin-width);
+            }
+        }
+
+        /* Wrapper */
+        .axiomaim-vertical-navigation-wrapper {
+            /* Content */
+            .axiomaim-vertical-navigation-content {
+                > axiomaim-vertical-navigation-aside-item,
+                > axiomaim-vertical-navigation-basic-item {
+                    flex-direction: column;
+                    justify-content: center;
+                    height: 64px;
+                    min-height: 64px;
+                    max-height: 64px;
+                    padding: 0 16px;
+
+                    .axiomaim-vertical-navigation-item-wrapper {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        .axiomaim-vertical-navigation-item {
+                            justify-content: center;
+                            padding: 12px;
+                            border-radius: 4px;
+
+                            .axiomaim-vertical-navigation-item-icon {
+                                margin: 0;
+                            }
+
+                            .axiomaim-vertical-navigation-item-arrow,
+                            .axiomaim-vertical-navigation-item-badge-content,
+                            .axiomaim-vertical-navigation-item-title-wrapper {
+                                display: none;
+                            }
+                        }
+                    }
+                }
+
+                > axiomaim-vertical-navigation-collapsable-item {
+                    display: none;
+                }
+
+                > axiomaim-vertical-navigation-group-item {
+                    > .axiomaim-vertical-navigation-item-wrapper {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        /* Aside wrapper */
+        .axiomaim-vertical-navigation-aside-wrapper {
+            left: var(--axiomaim-vertical-navigation-thin-width);
+        }
+    }
+}

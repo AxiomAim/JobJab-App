@@ -1,0 +1,28 @@
+<div class="axiomaim-horizontal-navigation-wrapper">
+    @for (item of navigation; track trackByFn($index, item)) {
+    <!-- Skip the hidden items -->
+    @if ((item.hidden && !item.hidden(item)) || !item.hidden) {
+    <!-- Basic -->
+    @if (item.type === 'basic') {
+    <axiomaim-horizontal-navigation-basic-item class="axiomaim-horizontal-navigation-menu-item" [item]="item"
+        [name]="name"></axiomaim-horizontal-navigation-basic-item>
+    }
+
+    <!-- Branch: aside, collapsable, group -->
+    @if (
+    item.type === 'aside' ||
+    item.type === 'collapsable' ||
+    item.type === 'group'
+    ) {
+    <axiomaim-horizontal-navigation-branch-item class="axiomaim-horizontal-navigation-menu-item" [item]="item"
+        [name]="name"></axiomaim-horizontal-navigation-branch-item>
+    }
+
+    <!-- Spacer -->
+    @if (item.type === 'spacer') {
+    <axiomaim-horizontal-navigation-spacer-item class="axiomaim-horizontal-navigation-menu-item" [item]="item"
+        [name]="name"></axiomaim-horizontal-navigation-spacer-item>
+    }
+    }
+    }
+</div>

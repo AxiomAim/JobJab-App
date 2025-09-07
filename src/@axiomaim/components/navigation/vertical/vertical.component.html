@@ -1,0 +1,90 @@
+<div class="axiomaim-vertical-navigation-wrapper">
+    <!-- Header -->
+    <div class="axiomaim-vertical-navigation-header">
+        <ng-content select="[axiomaimVerticalNavigationHeader]"></ng-content>
+    </div>
+
+    <!-- Content -->
+    <div class="axiomaim-vertical-navigation-content" axiomaimScrollbar [axiomaimScrollbarOptions]="{
+            wheelPropagation: inner,
+            suppressScrollX: true,
+        }" #navigationContent>
+        <!-- Content header -->
+        <div class="axiomaim-vertical-navigation-content-header">
+            <ng-content select="[axiomaimVerticalNavigationContentHeader]"></ng-content>
+        </div>
+
+        <!-- Items -->
+        @for (item of navigation; track trackByFn($index, item)) {
+        <!-- Skip the hidden items -->
+        @if ((item.hidden && !item.hidden(item)) || !item.hidden) {
+        <!-- Aside -->
+        @if (item.type === 'aside') {
+        <axiomaim-vertical-navigation-aside-item [item]="item" [name]="name" [activeItemId]="activeAsideItemId"
+            [autoCollapse]="autoCollapse" [skipChildren]="true"
+            (click)="toggleAside(item)"></axiomaim-vertical-navigation-aside-item>
+        }
+
+        <!-- Basic -->
+        @if (item.type === 'basic') {
+        <axiomaim-vertical-navigation-basic-item [item]="item" [name]="name"></axiomaim-vertical-navigation-basic-item>
+        }
+
+        <!-- Collapsable -->
+        @if (item.type === 'collapsable') {
+        <axiomaim-vertical-navigation-collapsable-item [item]="item" [name]="name"
+            [autoCollapse]="autoCollapse"></axiomaim-vertical-navigation-collapsable-item>
+        }
+
+        <!-- Divider -->
+        @if (item.type === 'divider') {
+        <axiomaim-vertical-navigation-divider-item [item]="item"
+            [name]="name"></axiomaim-vertical-navigation-divider-item>
+        }
+
+        <!-- Group -->
+        @if (item.type === 'group') {
+        <axiomaim-vertical-navigation-group-item [item]="item" [name]="name"
+            [autoCollapse]="autoCollapse"></axiomaim-vertical-navigation-group-item>
+        }
+
+        <!-- Spacer -->
+        @if (item.type === 'spacer') {
+        <axiomaim-vertical-navigation-spacer-item [item]="item"
+            [name]="name"></axiomaim-vertical-navigation-spacer-item>
+        }
+        }
+        }
+
+        <!-- Content footer -->
+        <div class="axiomaim-vertical-navigation-content-footer">
+            <ng-content select="[axiomaimVerticalNavigationContentFooter]"></ng-content>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="axiomaim-vertical-navigation-footer">
+        <ng-content select="[axiomaimVerticalNavigationFooter]"></ng-content>
+    </div>
+</div>
+
+<!-- Aside -->
+@if (activeAsideItemId) {
+<div class="axiomaim-vertical-navigation-aside-wrapper" axiomaimScrollbar [axiomaimScrollbarOptions]="{
+            wheelPropagation: false,
+            suppressScrollX: true,
+        }" [@fadeInLeft]="position === 'left'" [@fadeInRight]="position === 'right'"
+    [@fadeOutLeft]="position === 'left'" [@fadeOutRight]="position === 'right'">
+    <!-- Items -->
+    @for (item of navigation; track trackByFn($index, item)) {
+    <!-- Skip the hidden items -->
+    @if ((item.hidden && !item.hidden(item)) || !item.hidden) {
+    <!-- Aside -->
+    @if (item.type === 'aside' && item.id === activeAsideItemId) {
+    <axiomaim-vertical-navigation-aside-item [item]="item" [name]="name"
+        [autoCollapse]="autoCollapse"></axiomaim-vertical-navigation-aside-item>
+    }
+    }
+    }
+</div>
+}

@@ -1,0 +1,156 @@
+<div class="absolute inset-0 flex min-w-0 flex-col overflow-hidden">
+    <mat-drawer-container class="bg-card h-full flex-auto dark:bg-transparent" (backdropClick)="onBackdropClicked()">
+        <!-- Drawer -->
+        <mat-drawer class="w-full dark:bg-gray-900 md:w-full" [mode]="drawerMode" [opened]="false" [position]="'end'"
+            [disableClose]="true" #matDrawer>
+            <router-outlet></router-outlet>
+        </mat-drawer>
+
+        <mat-drawer-content class="flex flex-col">
+            <!-- Main -->
+            <div class="flex-auto">
+                <!-- Header -->
+                <div class="flex flex-auto flex-col justify-between border-b px-6 py-8 sm:flex-row md:flex-col md:px-8">
+                    <!-- Title -->
+                    <div>
+                        <div class="text-4xl font-extrabold leading-none tracking-tight">
+                            <a mat-icon-button [matTooltip]="'Table View'" class="bg-gray-100 "
+                                (click)="viewTable = !viewTable">
+                                <mat-icon class="text-gray" [svgIcon]="'heroicons_outline:table-cells'"></mat-icon>
+                            </a>
+                            Organizations
+                        </div>
+
+                        <div class="text-secondary ml-0.5 font-medium">
+                            @if (organizationsCount > 0) {
+                            {{ organizationsCount }}
+                            }
+                            {{
+                            organizationsCount
+                            | i18nPlural
+                            : {
+                            '=0': 'No organizations',
+                            '=1': 'organization',
+                            other: 'organizations',
+                            }
+                            }}
+                        </div>
+                    </div>
+
+                    <!-- Main actions -->
+                    <div class="mt-4 flex items-center sm:mt-0 md:mt-4">
+                        <!-- Search -->
+                        <div class="flex-auto">
+                            <mat-form-field class="davesa-mat-dense davesa-mat-rounded w-full min-w-50"
+                                subscriptSizing="dynamic">
+                                <mat-icon class="icon-size-5" matPrefix [svgIcon]="
+                                        'heroicons_solid:magnifying-glass'
+                                    "></mat-icon>
+                                <input matInput [formControl]="searchInputControl" [autocomplete]="'off'"
+                                    [placeholder]="'Search organizations'" />
+                            </mat-form-field>
+                        </div>
+                        <!-- Add organization button -->
+                        <button class="mx-6" mat-button [color]="'primary'" (click)="openComposeDialog()">
+                            <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                            <span class="ml-2">Add</span>
+                        </button>
+
+                        <!-- <button class="ml-4" mat-button [color]="'primary'" (click)="createItem()">
+                            <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                            <span class="ml-2 mr-1">Add</span>
+                        </button> -->
+                    </div>
+                </div>
+                @if(viewTable) {
+                <div class="relative">
+                    <div
+                        class="flex flex-auto flex-col justify-between border-b px-6 py-8 sm:flex-row md:flex-col md:px-8">
+                        <ejs-grid [dataSource]='organizations | sortByIndex' height='100%' [toolbar]='toolbar'
+                            [allowGrouping]='false' [selectionSettings]="selectionOptions"
+                            (rowSelected)='selectedRow($event)' id="itemdGrid" allowTextWrap="true"
+                            [textWrapSettings]="wrapSettings" [allowPaging]="true" [pageSettings]='pageSettings'
+                            [toolbar]="toolbar" [allowSorting]='true'>
+
+                            <e-columns>
+                                <e-column field='domain' headerText='Domain' textAlign='Left' width=100></e-column>
+                                <e-column field='company' headerText='Company' textAlign='Left' width=100></e-column>
+                            </e-columns>
+                        </ejs-grid>
+                    </div>
+                </div>
+
+                }
+
+                @if(!viewTable) {
+
+                <!-- Organizations list -->
+                <div class="relative">
+                    @if (organizations | sortByIndex) {
+                    @if (organizations.length) {
+                    @for (
+                    organization of organizations;
+                    track trackByFn(i, organization);
+                    let i = $index
+                    ) {
+                    <!-- Group -->
+                    <!-- @if (
+                    i === 0 ||
+                    organization.company.charAt(0) !==
+                    organizations[i - 1].company.charAt(0)
+                    ) {
+                    <div
+                        class="text-secondary sticky top-0 z-10 -mt-px border-b border-t bg-gray-50 px-6 py-1 font-medium uppercase dark:bg-gray-900 md:px-8">
+                        {{ organization.first_company?.charAt(0) }}{{ organization.last_company?.charAt(0) }}
+                    </div>
+                    } -->
+                    <!-- Organization -->
+                    <a class="z-20 flex cursor-pointer items-center border-b px-6 py-4 md:px-8" [ngClass]="{
+                                        'dark:hover:bg-hover hover:bg-gray-100':
+                                            !selectedOrganization ||
+                                            selectedOrganization.id !== organization.id,
+                                        'bg-primary-50 dark:bg-hover':
+                                            selectedOrganization &&
+                                            selectedOrganization.id === organization.id,
+                                    }" [routerLink]="['./', organization.id]">
+                        <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
+                            @if (organization.avatarUrl) {
+                            <img class="h-full w-full object-cover" [src]="organization.avatarUrl"
+                                alt="Organization avatar" />
+                            }
+                            <!-- @if (organization.company) {
+                            <div class="flex h-full w-full items-center justify-center rounded-full  text-lg uppercase text-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                                [ngClass]="organization.activeOrg ? 'bg-green-200' : 'bg-gray-200'">
+                                {{ organization?.company }}
+                            </div>
+                            } -->
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="ml-4 min-w-0">
+                                <div class="truncate font-medium leading-5">
+                                    {{ organization.company }}
+                                </div>
+                            </div>
+                            <div class="ml-4 min-w-0">
+                                <div class="truncate leading-5">
+                                    {{ organization.id }}
+                                </div>
+                            </div>
+                        </div>
+
+                    </a>
+                    }
+                    } @else {
+                    <div class="border-t p-8 text-center text-4xl font-semibold tracking-tight sm:p-16">
+                        There are no organizations!
+                    </div>
+                    }
+                    }
+
+                    <!-- No organizations -->
+                </div>
+                }
+            </div>
+        </mat-drawer-content>
+    </mat-drawer-container>
+</div>

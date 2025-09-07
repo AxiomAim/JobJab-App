@@ -1,0 +1,74 @@
+<div class="axiomaim-vertical-navigation-item-wrapper"
+    [class.axiomaim-vertical-navigation-item-has-subtitle]="!!item.subtitle" [ngClass]="item.classes?.wrapper">
+    <div class="axiomaim-vertical-navigation-item" [ngClass]="{
+            'axiomaim-vertical-navigation-item-active': active,
+            'axiomaim-vertical-navigation-item-disabled': item.disabled,
+            'axiomaim-vertical-navigation-item-active-forced': item.active,
+        }" [matTooltip]="item.tooltip || ''">
+        <!-- Icon -->
+        @if (item.icon) {
+        <mat-icon class="axiomaim-vertical-navigation-item-icon" [ngClass]="item.classes?.icon"
+            [svgIcon]="item.icon"></mat-icon>
+        }
+
+        <!-- Title & Subtitle -->
+        <div class="axiomaim-vertical-navigation-item-title-wrapper">
+            <div class="axiomaim-vertical-navigation-item-title">
+                <span [ngClass]="item.classes?.title">
+                    {{ item.title }}
+                </span>
+            </div>
+            @if (item.subtitle) {
+            <div class="axiomaim-vertical-navigation-item-subtitle">
+                <span [ngClass]="item.classes?.subtitle">
+                    {{ item.subtitle }}
+                </span>
+            </div>
+            }
+        </div>
+
+        <!-- Badge -->
+        @if (item.badge) {
+        <div class="axiomaim-vertical-navigation-item-badge">
+            <div class="axiomaim-vertical-navigation-item-badge-content" [ngClass]="item.badge.classes">
+                {{ item.badge.title }}
+            </div>
+        </div>
+        }
+    </div>
+</div>
+
+@if (!skipChildren) {
+<div class="axiomaim-vertical-navigation-item-children">
+    @for (item of item.children; track trackByFn($index, item)) {
+    <!-- Skip the hidden items -->
+    @if ((item.hidden && !item.hidden(item)) || !item.hidden) {
+    <!-- Basic -->
+    @if (item.type === 'basic') {
+    <axiomaim-vertical-navigation-basic-item [item]="item" [name]="name"></axiomaim-vertical-navigation-basic-item>
+    }
+
+    <!-- Collapsable -->
+    @if (item.type === 'collapsable') {
+    <axiomaim-vertical-navigation-collapsable-item [item]="item" [name]="name"
+        [autoCollapse]="autoCollapse"></axiomaim-vertical-navigation-collapsable-item>
+    }
+
+    <!-- Divider -->
+    @if (item.type === 'divider') {
+    <axiomaim-vertical-navigation-divider-item [item]="item" [name]="name"></axiomaim-vertical-navigation-divider-item>
+    }
+
+    <!-- Group -->
+    @if (item.type === 'group') {
+    <axiomaim-vertical-navigation-group-item [item]="item" [name]="name"></axiomaim-vertical-navigation-group-item>
+    }
+
+    <!-- Spacer -->
+    @if (item.type === 'spacer') {
+    <axiomaim-vertical-navigation-spacer-item [item]="item" [name]="name"></axiomaim-vertical-navigation-spacer-item>
+    }
+    }
+    }
+</div>
+}

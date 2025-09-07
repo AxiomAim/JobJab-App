@@ -1,0 +1,1 @@
+import{zb as a}from"./chunk-Q34RPHHW.js";var f=(()=>{class i{transform(r,t,n){return Array.isArray(r)?r.map(e=>n.find(m=>m[t]===e)):n.find(e=>e[t]===r)}static{this.\u0275fac=function(t){return new(t||i)}}static{this.\u0275pipe=a({name:"axiomaimFindByKey",type:i,pure:!1})}}return i})();export{f as a};
