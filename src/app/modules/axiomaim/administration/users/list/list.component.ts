@@ -37,9 +37,9 @@ import {
     takeUntil,
 } from 'rxjs';
 import { User } from '../user.model';
-import { UsersV2_Service } from '../usersV2.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UsersComposeComponent } from '../compose/compose.component';
+import { UsersV2Service } from '../users-v2.service';
 
 @Component({
     selector: 'users-list',
@@ -63,7 +63,7 @@ import { UsersComposeComponent } from '../compose/compose.component';
     ],
 })
 export class UsersListComponent implements OnInit, OnDestroy {
-    _usersV2Service = inject(UsersV2_Service);
+    _usersV2Service = inject(UsersV2Service);
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
 
     private _users: BehaviorSubject<User[] | null> = new BehaviorSubject(
@@ -222,11 +222,6 @@ export class UsersListComponent implements OnInit, OnDestroy {
         });
     }
 
-    refactor() {
-        this._usersV2Service.refactorModel().subscribe((res) => {
-            console.log('Refactor model response', res);
-        });
-    }
     /**
      * Track by function for ngFor loops
      *

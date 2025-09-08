@@ -21,7 +21,6 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { LocalV2Service } from 'app/core/services/local-v2.service';
 import { UserModel } from 'app/modules/axiomaim/administration/users/user.model';
 import { UsersV2Service } from 'app/modules/axiomaim/administration/users/users-v2.service';
-import { UsersV2_Service } from 'app/modules/axiomaim/administration/users/usersV2.service';
 
 @Component({
     selector: 'auth-sign-up',

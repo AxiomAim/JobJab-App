@@ -40,12 +40,12 @@ import { Tag } from 'app/core/models/tag.model';
 import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { Country, User } from '../user.model';
-import { UsersV2_Service } from '../usersV2.service';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { UserRolesV2Service } from '../../user-roles/userRolesV2.service';
 import { UserRole } from '../../user-roles/user-role.model';
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
 import { Organization } from '../../organizations/organizations.model';
+import { UsersV2Service } from '../users-v2.service';
 
 
 interface PhonenumberType {
@@ -78,7 +78,7 @@ interface PhonenumberType {
     ],
 })
 export class UsersDetailsComponent implements OnInit, OnDestroy {
-    _usersV2Service = inject(UsersV2_Service);
+    _usersV2Service = inject(UsersV2Service);
     _userRolesV2Service = inject(UserRolesV2Service);
     _axiomaimLoadingService = inject(AxiomaimLoadingService);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
@@ -149,12 +149,11 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        this._usersV2Service.initialize();
         this.loginUser = this._usersV2Service.loginUser();
-        this.organization = this._usersV2Service.organization();
+        // this.organization = this._usersV2Service.organization();
         this.users = this._usersV2Service.users();
         this.user = this._usersV2Service.user();
-        this.userRoles = this._usersV2Service.userRoles();
+        // this.userRoles = this._usersV2Service.userRoles();
         // Open the drawer
         this._usersListComponent.matDrawer.open();
         const phonePattern = "^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"; 
@@ -174,7 +173,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
 
         this._usersListComponent.matDrawer.open();
         this.userForm.patchValue(this.user);
-        this._countries.next(this._usersV2Service.countries());
+        // this._countries.next(this._usersV2Service.countries());
 
         // Get the country telephone codes
         this.countries$
@@ -239,8 +238,8 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
 
         // Update the user on the server
         this._usersV2Service
-            .updateItem(this.user.id, this.user)
-            .subscribe(() => {
+            .updateItem(this.user)
+            .then(() => {
                 // Toggle the edit mode off
                 this.toggleEditMode(false);
             });
@@ -284,7 +283,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
                 // Delete the user
                 this._usersV2Service
                     .deleteItem(id)
-                    .subscribe((isDeleted) => {
+                    .then((isDeleted) => {
                         // Return if the user wasn't deleted...
                         if (!isDeleted) {
                             return;
@@ -321,23 +320,23 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
     uploadAvatar(event: any): void {
         console.log('event', event.target.files[0])
         this._axiomaimLoadingService.show()        
-        this._usersV2Service.uploadAvatar(event.target.files[0], 'users').subscribe({
-            next: (response: any) => {
-                this._axiomaimLoadingService.hide();
-                console.log('uploadAvatar', response)
-                this.user.avatarPath = response.filePath;
-                this.user.avatarFile = response.fileName;
-                this.user.avatarType = response.fileType;
-                this.user.avatarUrl = response.fileUrl;
-                this.user.avatar = response.fileUrl;                
-                this._user.next(this.user);
-                console.log('user', this.user);
-            },
-            error: (error: any) => {
-                this._axiomaimLoadingService.hide();
-                console.error('error', error);
-            },
-        });
+        // this._usersV2Service.uploadAvatar(event.target.files[0], 'users').subscribe({
+        //     next: (response: any) => {
+        //         this._axiomaimLoadingService.hide();
+        //         console.log('uploadAvatar', response)
+        //         this.user.avatarPath = response.filePath;
+        //         this.user.avatarFile = response.fileName;
+        //         this.user.avatarType = response.fileType;
+        //         this.user.avatarUrl = response.fileUrl;
+        //         this.user.avatar = response.fileUrl;                
+        //         this._user.next(this.user);
+        //         console.log('user', this.user);
+        //     },
+        //     error: (error: any) => {
+        //         this._axiomaimLoadingService.hide();
+        //         console.error('error', error);
+        //     },
+        // });
     }
 
     /**
