@@ -19,6 +19,9 @@ import { AxiomaimAlertComponent, AxiomaimAlertType } from '@axiomaim/components/
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { LocalV2Service } from 'app/core/services/local-v2.service';
+import { UserModel } from 'app/modules/axiomaim/administration/users/user.model';
+import { UsersV2Service } from 'app/modules/axiomaim/administration/users/users-v2.service';
+import { UsersV2_Service } from 'app/modules/axiomaim/administration/users/usersV2.service';
 
 @Component({
     selector: 'auth-sign-up',
@@ -40,6 +43,7 @@ import { LocalV2Service } from 'app/core/services/local-v2.service';
 })
 export class AuthSignUpComponent implements OnInit {
     private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
+    private _usersV2Service = inject(UsersV2Service);
     private _localV2Service = inject(LocalV2Service);
     @ViewChild('signUpNgForm') signUpNgForm: NgForm;
 
@@ -85,12 +89,11 @@ export class AuthSignUpComponent implements OnInit {
     /**
      * Sign up
      */
-    signUp(): void {
+    async signUp() {
         // Do nothing if the form is invalid
         if (this.signUpForm.invalid) {
             return;
         }
-
         // Disable the form
         this.signUpForm.disable();
 
@@ -98,31 +101,55 @@ export class AuthSignUpComponent implements OnInit {
         this.showAlert = false;
 
         // firebase-auth v2 sign up
-        this._firebaseAuthV2Service
-            .signUp(this.signUpForm.value)
-            .subscribe(
-                {
-                    next: (response) => {
-                        // Navigate to the confirmation required page
-                        this._router.navigateByUrl('/confirmation-required');
-                    },
-                    error: (response) => {
-                        // Re-enable the form
-                        this.signUpForm.enable();
+        const newAuth = await this._firebaseAuthV2Service.signUp(this.signUpForm.value);
+        console.log('newAuth', newAuth);
+        await this.createUser(newAuth, this.signUpForm.value);
+        newAuth.catch((err) => {
+            // Re-enable the form
+            this.signUpForm.enable();
 
-                        // Reset the form
-                        this.signUpNgForm.resetForm();
+            // Reset the form
+            this.signUpNgForm.resetForm();
 
-                        // Set the alert
-                        this.alert = {
-                            type: 'error',
-                            message: 'Something went wrong, please try again.',
-                        };
+            // Set the alert
+            this.alert = {
+                type: 'error',
+                message: 'Something went wrong, please try again.',
+            };
 
-                        // Show the alert
-                        this.showAlert = true;  
-                    }
-                }
-            )
+            // Show the alert
+            this.showAlert = true;  
+        })
+    }
+
+    async createUser(auth: any, signup: any) {
+        const newUser = UserModel.emptyDto()
+        newUser.id = auth.user.uid;
+        newUser.firstName = signup.firstName;
+        newUser.lastName = signup.lastName;
+        newUser.company = signup.company;
+        newUser.agreements = signup.agreements;
+        newUser.displayName = signup.firstName + ' ' + signup.lastName;
+        newUser.emailSignature = signup.firstName + ' ' + signup.lastName + ' ' + signup.email;
+        await this._usersV2Service.createItem(newUser).then((user) => {
+            this._firebaseAuthV2Service.sendEmailVerification(auth);
+            // Navigate to the confirmation required page
+            this._router.navigateByUrl('/confirmation-required');
+        }).catch((err) => {
+            // Re-enable the form
+            this.signUpForm.enable();
+
+            // Reset the form
+            this.signUpNgForm.resetForm();
+
+            // Set the alert
+            this.alert = {
+                type: 'error',
+                message: 'Something went wrong, please try again.',
+            };
+
+            // Show the alert
+            this.showAlert = true;  
+        });
     }
 }

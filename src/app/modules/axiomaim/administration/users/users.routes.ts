@@ -9,7 +9,7 @@ import { UsersComponent } from 'app/modules/axiomaim/administration/users/users.
 import { UsersDetailsComponent } from 'app/modules/axiomaim/administration/users/details/details.component';
 import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
 import { catchError, map, throwError } from 'rxjs';
-import { UsersV2Service } from './usersV2.service';
+import { UsersV2_Service } from './usersV2.service';
 import { LoginUserService } from 'app/core/login-user/login-user.service';
 
 /**
@@ -23,7 +23,7 @@ const usersResolver = (
     state: RouterStateSnapshot
 ) => {
     const loginUserService = inject(LoginUserService);
-    const usersV2Service = inject(UsersV2Service);
+    const usersV2Service = inject(UsersV2_Service);
     const router = inject(Router);
     loginUserService.getOrganization().subscribe(organization => {
         return usersV2Service.getAllByOrgId(organization.id).pipe(
@@ -53,7 +53,7 @@ const userResolver = (
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
 ) => {
-    const usersV2Service = inject(UsersV2Service);
+    const usersV2Service = inject(UsersV2_Service);
     const router = inject(Router);
 
     return usersV2Service.getById(route.paramMap.get('id')).pipe(
@@ -81,7 +81,7 @@ const userOrgResolver = (
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
 ) => {
-    const usersV2Service = inject(UsersV2Service);
+    const usersV2Service = inject(UsersV2_Service);
     const router = inject(Router);
 
     return usersV2Service.getAllByOrgId(route.paramMap.get('orgId')).pipe(
@@ -154,16 +154,16 @@ export default [
                 path: '',
                 component: UsersListComponent,
                 resolve: {
-                    loginUser: () => inject(UsersV2Service).initialize(),
-                    users: () => inject(UsersV2Service).getAll(),
+                    loginUser: () => inject(UsersV2_Service).initialize(),
+                    users: () => inject(UsersV2_Service).getAll(),
                 },
                 children: [
                     {
                         path: ':id',
                         component: UsersDetailsComponent,
                         resolve: {
-                            loginUser: () => inject(UsersV2Service).initialize(),
-                            userRoles: () => inject(UsersV2Service).getUserRoles(),
+                            loginUser: () => inject(UsersV2_Service).initialize(),
+                            userRoles: () => inject(UsersV2_Service).getUserRoles(),
                             user: userResolver,
                         },
                         canDeactivate: [canDeactivateUsersDetails],

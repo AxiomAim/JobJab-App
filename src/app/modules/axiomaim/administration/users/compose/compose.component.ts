@@ -27,7 +27,7 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { AxiomaimLoadingBarComponent } from '@axiomaim/components/loading-bar';
 import { Router } from '@angular/router';
-import { UsersV2Service } from '../usersV2.service';
+import { UsersV2_Service } from '../usersV2.service';
 import { Country, User, UserModel } from '../user.model';
 import { UserRole } from '../../user-roles/user-role.model';
 import { UserRolesV2Service } from '../../user-roles/userRolesV2.service';
@@ -63,7 +63,7 @@ interface PhonenumerType {
     ],
 })
 export class UsersComposeComponent implements OnInit {
-    _usersV2Service = inject(UsersV2Service);
+    _usersV2Service = inject(UsersV2_Service);
     _userRolesV2Service = inject(UserRolesV2Service);
     _router = inject(Router);
     _axiomaimLoadingService = inject(AxiomaimLoadingService);

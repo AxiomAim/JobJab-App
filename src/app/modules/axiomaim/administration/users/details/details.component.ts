@@ -40,7 +40,7 @@ import { Tag } from 'app/core/models/tag.model';
 import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { Country, User } from '../user.model';
-import { UsersV2Service } from '../usersV2.service';
+import { UsersV2_Service } from '../usersV2.service';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { UserRolesV2Service } from '../../user-roles/userRolesV2.service';
 import { UserRole } from '../../user-roles/user-role.model';
@@ -78,7 +78,7 @@ interface PhonenumberType {
     ],
 })
 export class UsersDetailsComponent implements OnInit, OnDestroy {
-    _usersV2Service = inject(UsersV2Service);
+    _usersV2Service = inject(UsersV2_Service);
     _userRolesV2Service = inject(UserRolesV2Service);
     _axiomaimLoadingService = inject(AxiomaimLoadingService);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;

@@ -232,26 +232,39 @@ const initializeAuth = (id: string): Promise<void> => {
 
   }
 
+  const signUp = async (signup: any): Promise<any> => {
+    const newAuth = createUserWithEmailAndPassword(auth, signup.email, signup.password);
+    authUser.set(auth)
+    return newAuth;
+  };
+  
+  const sendEmailVerification = async (auth: any): Promise<any> => {
+    const confirmEmail = sendEmailVerification(auth.currentUser);
+    return confirmEmail;
+  };
 
-  const signUp = (signup: any): Observable<User> => {
-    return new Observable((observer) => {
-      createUserWithEmailAndPassword(auth, signup.email, signup.password).then((auth: any) => {
-        authUser.set(auth)
-        const newUser = UserModel.emptyDto()
-        newUser.id = auth.user.uid;
-        newUser.domain = signup.domain;
-        newUser.firstName = signup.firstName;
-        newUser.lastName = signup.lastName;
-        newUser.displayName = signup.firstName + ' ' + signup.lastName;
-        newUser.emailSignature = signup.firstName + ' ' + signup.lastName + ' ' + signup.email;
-        _usersDataService.createItem(newUser).subscribe(thisUser => {
-          loginUser.set(newUser);
-          setToStorage()
-          observer.next(thisUser);
-        })
-      })
-    })
-  }
+  // const signUp = (signup: any): Observable<User> => {
+  //   return new Observable((observer) => {
+  //     createUserWithEmailAndPassword(auth, signup.email, signup.password).then((auth: any) => {
+  //       authUser.set(auth)
+  //       console.log('Firebase signup', auth);
+  //       const newUser = UserModel.emptyDto()
+  //       newUser.id = auth.user.uid;
+  //       newUser.domain = signup.domain;
+  //       newUser.firstName = signup.firstName;
+  //       newUser.lastName = signup.lastName;
+  //       newUser.company = signup.company;
+  //       newUser.agreements = signup.agreements;
+  //       newUser.displayName = signup.firstName + ' ' + signup.lastName;
+  //       newUser.emailSignature = signup.firstName + ' ' + signup.lastName + ' ' + signup.email;
+  //       _usersDataService.createItem(newUser).subscribe(thisUser => {
+  //         loginUser.set(newUser);
+  //         setToStorage()
+  //         observer.next(thisUser);
+  //       })
+  //     })
+  //   })
+  // }
 
     const signOut = (): Observable<boolean> => {
       return new Observable((observer) => {
@@ -426,7 +439,8 @@ const initializeAuth = (id: string): Promise<void> => {
     setScheme,
     setTheme,
     setLayout,
-    initializeAuth
+    initializeAuth,
+    sendEmailVerification
   };
 });
 

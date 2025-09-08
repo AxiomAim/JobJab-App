@@ -15,7 +15,6 @@ import { Organization } from "../organizations/organizations.model";
 import { UsersBackupDataService } from "./users-backup-data.service";
 import { UsersRestoreDataService } from "./users-restore-data.service";
 import { UserRolesV2Service } from "../user-roles/userRolesV2.service";
-import { UserRoles } from "app/core/enum/user-role.enum";
 import { UserRole } from "../user-roles/user-role.model";
 
 export const encryptStorage = new EncryptStorage("encrypt-axiomaim", {
@@ -27,7 +26,7 @@ const USERS = "users";
 const USER = "user";
 const LOGIN_USER = "loginUser";
 
-export const UsersV2Service = createInjectable(() => {
+export const UsersV2_Service = createInjectable(() => {
   const allCountries = [
     {
       id: 'f9033267-9df0-46e4-9f79-c8b022e5c835',

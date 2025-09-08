@@ -37,7 +37,7 @@ import {
     takeUntil,
 } from 'rxjs';
 import { User } from '../user.model';
-import { UsersV2Service } from '../usersV2.service';
+import { UsersV2_Service } from '../usersV2.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UsersComposeComponent } from '../compose/compose.component';
 
@@ -63,7 +63,7 @@ import { UsersComposeComponent } from '../compose/compose.component';
     ],
 })
 export class UsersListComponent implements OnInit, OnDestroy {
-    _usersV2Service = inject(UsersV2Service);
+    _usersV2Service = inject(UsersV2_Service);
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
 
     private _users: BehaviorSubject<User[] | null> = new BehaviorSubject(

@@ -42,7 +42,7 @@ import { UserRole } from '../user-role.model';
 import { UserRolesV2Service } from '../userRolesV2.service';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
-import { UsersV2Service } from '../../users/usersV2.service';
+import { UsersV2_Service } from '../../users/usersV2.service';
 import { UserRolesListComponent } from '../list/list.component';
 import { User } from '../../users/user.model';
 
@@ -77,7 +77,7 @@ interface PhonenumerType {
     ],
 })
 export class UserRolesDetailsComponent implements OnInit, OnDestroy {
-    _usersV2Service = inject(UsersV2Service);
+    _usersV2Service = inject(UsersV2_Service);
     _userRolesV2Service = inject(UserRolesV2Service);
     _axiomaimLoadingService = inject(AxiomaimLoadingService);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;

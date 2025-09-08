@@ -11,24 +11,14 @@ export class UserModel implements BaseDto {
         orgId: string,
         domain: string,
         firstTime: boolean,
-        staffId: number, 
         staff: boolean, 
-        projectId: string,
         activeUser: boolean,
         email: string,
         emailKey: string,
         personalEmail: string,
-        userName: string,
         displayName: string,
         userRoles: UserRole[],
         title: string,
-        signatureName: string,
-        signatureRole: string,
-        signaturePassword: string,
-        signatureUrl: string,
-        signaturePath: string,
-        signatureFile: string,
-        signatureType: string,
         firstName: string,
         lastName: string,
         company: string,
@@ -36,10 +26,6 @@ export class UserModel implements BaseDto {
         address: string,
         emailSignature: string,
         avatar: string,
-        avatarUrl: string,
-        avatarPath: string,
-        avatarFile: string,
-        avatarType: string,
         background: string,
         linkedIn: string,
         phoneNumbers: PhoneNumber[],
@@ -52,8 +38,6 @@ export class UserModel implements BaseDto {
         status?: string,
         theme?: Theme,
         scheme?: Scheme,
-        platform?: string,
-        selected?: boolean,
         login_at?: string[],
         login_info?: any[],
         created_at?: string,
@@ -64,21 +48,11 @@ export class UserModel implements BaseDto {
             this.orgId = orgId;
             this.domain = domain;
             this.firstTime = firstTime;
-            this.staffId = staffId;
             this.staff = staff;
-            this.projectId = projectId;
             this.activeUser = activeUser;
-            this.userName = userName;
             this.displayName = displayName;
             this.userRoles = userRoles;
             this.title = title;
-            this.signatureName = signatureName;            
-            this.signatureRole = signatureRole;
-            this.signaturePassword = signaturePassword;
-            this.signatureUrl = signatureUrl;
-            this.signaturePath = signaturePath;
-            this.signatureFile = signatureFile;
-            this.signatureType = signatureType;            
             this.firstName = firstName;
             this.lastName = lastName;
             this.company = company;
@@ -89,10 +63,6 @@ export class UserModel implements BaseDto {
             this.emailKey = emailKey;
             this.personalEmail = personalEmail;
             this.avatar = avatar;
-            this.avatarUrl = avatarUrl;
-            this.avatarPath = avatarPath;
-            this.avatarFile = avatarFile;
-            this.avatarType = avatarType;
             this.background = background;    
             this.linkedIn = linkedIn;
             this.phoneNumbers = phoneNumbers;
@@ -105,8 +75,6 @@ export class UserModel implements BaseDto {
             this.status = status;
             this.theme = theme;
             this.scheme = scheme;    
-            this.platform = platform;
-            this.selected = selected;
             this.login_at = login_at;
             this.login_info = login_info;
             this.created_at = created_at;
@@ -175,21 +143,11 @@ export class UserModel implements BaseDto {
             orgId: dto.orgId ? dto.orgId : '',
             domain: dto.domain ? dto.domain : '',
             firstTime: dto.firstTime ? dto.firstTime : true,
-            staffId: dto.staffId ? dto.staffId : 1,
             staff: dto.staff ? dto.staff : false,
-            projectId: dto.projectId ? dto.projectId : '',
             activeUser: dto.activeUser ? dto.activeUser : false,
-            userName: dto.userName ? dto.userName : '',
             displayName: dto.displayName ? dto.displayName : '',
             userRoles: dto.userRoles ? dto.userRoles : [],
             title: dto.title ? dto.title : '',
-            signatureName: dto.signatureName ? dto.signatureName : '',
-            signatureRole: dto.signatureRole ? dto.signatureRole : '',
-            signaturePassword: dto.signaturePassword ? dto.signaturePassword : '',
-            signatureUrl: dto.signatureUrl ? dto.signatureUrl : '', 
-            signaturePath: dto.signaturePath ? dto.signaturePath : '',
-            signatureFile: dto.signatureFile ? dto.signatureFile : '',
-            signatureType: dto.signatureType ? dto.signatureType : '',
             firstName: dto.firstName ? dto.firstName : '',            
             lastName: dto.lastName ? dto.lastName : '',
             company: dto.company ? dto.company : '',
@@ -200,10 +158,6 @@ export class UserModel implements BaseDto {
             emailKey: dto.emailKey ? dto.emailKey : '',
             personalEmail: dto.personalEmail ? dto.personalEmail : '',
             avatar: dto.avatar ? dto.avatar : '',
-            avatarUrl: dto.avatarUrl ? dto.avatarUrl : '',
-            avatarPath: dto.avatarPath ? dto.avatarPath : '',
-            avatarFile: dto.avatarFile ? dto.avatarFile : '',
-            avatarType: dto.avatarType ? dto.avatarType : '',
             background: dto.background ? dto.background : 'images/cards/axiomaim-card.jpg',
             linkedIn: dto.linkedIn ? dto.linkedIn : '',
             phoneNumbers: dto.phoneNumbers ? dto.phoneNumbers : [],
@@ -233,21 +187,11 @@ export class UserModel implements BaseDto {
             orgId: '',
             domain: '',
             firstTime: true,
-            staffId: 1,
             staff: false,
-            projectId: '',
             activeUser: false,
-            userName: '',
             displayName: '',
             userRoles: [],
             title: '',
-            signatureName: '',
-            signatureRole: '',
-            signaturePassword: '',
-            signatureUrl: '',
-            signaturePath: '',
-            signatureFile: '',
-            signatureType: '',
             firstName: '',
             lastName: '',
             company: '',
@@ -258,11 +202,7 @@ export class UserModel implements BaseDto {
             emailKey: '',
             personalEmail: '',
             avatar: '',
-            avatarUrl: '',
-            avatarPath: '',
-            avatarFile: '',
-            avatarType: '',
-            background: 'images/cards/axiomaim-card.jpg',
+            background: 'images/cards/33-640x480.jpg',
             linkedIn: '',
             phoneNumbers: [],
             mobileCountry: '',
@@ -291,24 +231,14 @@ export interface User  extends BaseDto {
     orgId: string,
     domain: string;
     firstTime: boolean;
-    staffId: number;
     staff: boolean;
-    projectId: string;
     activeUser: boolean;
     email: string;
     emailKey: string;
     personalEmail: string;
-    userName: string;
     displayName: string;
     userRoles: UserRole[],
     title: string;
-    signatureName: string;
-    signatureRole: string;
-    signaturePassword: string;
-    signatureUrl: string;
-    signaturePath: string;
-    signatureFile: string;
-    signatureType: string;
     firstName: string;
     lastName: string;
     company: string;
@@ -316,10 +246,6 @@ export interface User  extends BaseDto {
     address: string;
     emailSignature: string;
     avatar: string;
-    avatarUrl: string;
-    avatarPath: string;
-    avatarFile: string;
-    avatarType: string;
     background: string;
     linkedIn: string;
     phoneNumbers: PhoneNumber[];
