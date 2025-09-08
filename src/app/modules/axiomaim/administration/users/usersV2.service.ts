@@ -18,7 +18,7 @@ import { UserRolesV2Service } from "../user-roles/userRolesV2.service";
 import { UserRoles } from "app/core/enum/user-role.enum";
 import { UserRole } from "../user-roles/user-role.model";
 
-export const encryptStorage = new EncryptStorage("encrypt-davesa", {
+export const encryptStorage = new EncryptStorage("encrypt-axiomaim", {
   storageType: "sessionStorage",
 });
 
@@ -390,7 +390,7 @@ const refactorModel = (): Observable<User[]> => {
         // refUser.avatarPath = '';
         // refUser.avatarFile = '';
         // refUser.avatarType = '';
-        refUser.background = 'images/cards/davesa-card.jpg';
+        refUser.background = 'images/cards/axiomaim-card.jpg';
         // refUser.linkedIn = '';
         // refUser.phoneNumbers = [];
         refUser.mobileCountry = thisUser.mobileCountry ? thisUser.mobileCountry : '';
@@ -413,7 +413,7 @@ const refactorModel = (): Observable<User[]> => {
         // refUser.deleted_at = '';
         
         // const finalUser: User = { ...refUser, ...thisUser }; 
-        // thisUser.background = 'images/cards/davesa-card.jpg';
+        // thisUser.background = 'images/cards/axiomaim-card.jpg';
         // thisUser.displayName = thisUser.firstName + ' ' + thisUser.lastName;
         // thisUser.emailSignature = thisUser.displayName + ' ' + thisUser.email;
         // const domain = getEmailDomain(thisUser.email);

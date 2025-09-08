@@ -1,4 +1,4 @@
-import { Scheme, Theme } from '@davesa/services/config';
+import { Scheme, Theme } from '@axiomaim/services/config';
 import { BaseDto } from 'app/core/models/base-dto.model';
 import { v4 as uuidv4 } from 'uuid';
 import { UserRole } from '../user-roles/user-role.model';
@@ -30,8 +30,8 @@ export class UserModel implements BaseDto {
         csvUser: boolean,
         csvTester: boolean,
         csvAdmin: boolean,
-        davesaUser: boolean,
-        davesaAdmin: boolean,
+        axiomaimUser: boolean,
+        axiomaimAdmin: boolean,
         siteAdmin: boolean,
         covidNotify: boolean,
         covidNurse: boolean,
@@ -97,8 +97,8 @@ export class UserModel implements BaseDto {
             this.csvUser = csvUser;
             this.csvTester = csvTester;
             this.csvAdmin = csvAdmin;
-            this.davesaUser = davesaUser;
-            this.davesaAdmin = davesaAdmin;
+            this.axiomaimUser = axiomaimUser;
+            this.axiomaimAdmin = axiomaimAdmin;
             this.systemAdmin = systemAdmin;
             this.siteAdmin = siteAdmin;
             this.covidNotify = covidNotify;
@@ -166,8 +166,8 @@ export class UserModel implements BaseDto {
     public csvUser: boolean;
     public csvTester: boolean;
     public csvAdmin: boolean;
-    public davesaUser: boolean;
-    public davesaAdmin: boolean;
+    public axiomaimUser: boolean;
+    public axiomaimAdmin: boolean;
     public siteAdmin: boolean;
     public covidNotify: boolean;
     public covidNurse: boolean;
@@ -238,8 +238,8 @@ export class UserModel implements BaseDto {
             csvUser: dto.csvUser ? dto.csvUser : false,
             csvTester: dto.csvTester ? dto.csvTester : false,
             csvAdmin: dto.csvAdmin ? dto.csvAdmin : false,
-            davesaUser: dto.davesaUser ? dto.davesaUser : false,
-            davesaAdmin: dto.davesaAdmin ? dto.davesaAdmin : false,
+            axiomaimUser: dto.axiomaimUser ? dto.axiomaimUser : false,
+            axiomaimAdmin: dto.axiomaimAdmin ? dto.axiomaimAdmin : false,
             systemAdmin: dto.systemAdmin ? dto.systemAdmin : false,
             siteAdmin: dto.siteAdmin ? dto.siteAdmin : false,
             covidNotify: dto.covidNotify ? dto.covidNotify : false,
@@ -266,7 +266,7 @@ export class UserModel implements BaseDto {
             avatarPath: dto.avatarPath ? dto.avatarPath : '',
             avatarFile: dto.avatarFile ? dto.avatarFile : '',
             avatarType: dto.avatarType ? dto.avatarType : '',
-            background: dto.background ? dto.background : 'images/cards/davesa-card.jpg',
+            background: dto.background ? dto.background : 'images/cards/axiomaim-card.jpg',
             imageUrl: dto.imageUrl ? dto.imageUrl : '',
             linkedIn: dto.linkedIn ? dto.linkedIn : '',
             phoneNumbers: dto.phoneNumbers ? dto.phoneNumbers : [],
@@ -312,8 +312,8 @@ export class UserModel implements BaseDto {
             csvUser: false,
             csvTester: false,
             csvAdmin: false,
-            davesaUser: false,
-            davesaAdmin: false,
+            axiomaimUser: false,
+            axiomaimAdmin: false,
             siteAdmin: false,
             covidNotify: false,
             covidNurse: false,
@@ -339,7 +339,7 @@ export class UserModel implements BaseDto {
             avatarPath: '',
             avatarFile: '',
             avatarType: '',
-            background: 'images/cards/davesa-card.jpg',
+            background: 'images/cards/axiomaim-card.jpg',
             imageUrl: '',
             linkedIn: '',
             phoneNumbers: [],
@@ -385,8 +385,8 @@ export interface User  extends BaseDto {
     csvUser: boolean;
     csvTester: boolean;
     csvAdmin: boolean;
-    davesaUser: boolean;
-    davesaAdmin: boolean;
+    axiomaimUser: boolean;
+    axiomaimAdmin: boolean;
     siteAdmin: boolean;
     covidNotify: boolean;
     covidNurse: boolean;

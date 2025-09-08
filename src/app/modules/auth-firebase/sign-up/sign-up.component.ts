@@ -1,7 +1,5 @@
-import { NgIf } from '@angular/common';
 import { Component, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import {
-    FormControl,
     FormsModule,
     NgForm,
     ReactiveFormsModule,
@@ -16,20 +14,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterLink } from '@angular/router';
-import { davesaAnimations } from '@davesa/animations';
-import { DavesaAlertComponent, DavesaAlertType } from '@davesa/components/alert';
+import { axiomaimAnimations } from '@axiomaim/animations';
+import { AxiomaimAlertComponent, AxiomaimAlertType } from '@axiomaim/components/alert';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AuthService } from 'app/core/auth/auth.service';
+import { LocalV2Service } from 'app/core/services/local-v2.service';
 
 @Component({
-    selector: 'auth-firebase-sign-up',
+    selector: 'auth-sign-up',
     templateUrl: './sign-up.component.html',
     encapsulation: ViewEncapsulation.None,
-    animations: davesaAnimations,
-    standalone: true,
+    animations: axiomaimAnimations,
     imports: [
         RouterLink,
-        DavesaAlertComponent,
+        AxiomaimAlertComponent,
         FormsModule,
         ReactiveFormsModule,
         MatFormFieldModule,
@@ -38,15 +36,14 @@ import { AuthService } from 'app/core/auth/auth.service';
         MatIconModule,
         MatCheckboxModule,
         MatProgressSpinnerModule,
-        NgIf
-    
     ],
 })
-export class AuthFirebaseSignUpComponent implements OnInit {
+export class AuthSignUpComponent implements OnInit {
     private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
+    private _localV2Service = inject(LocalV2Service);
     @ViewChild('signUpNgForm') signUpNgForm: NgForm;
 
-    alert: { type: DavesaAlertType; message: string } = {
+    alert: { type: AxiomaimAlertType; message: string } = {
         type: 'success',
         message: '',
     };
@@ -57,7 +54,7 @@ export class AuthFirebaseSignUpComponent implements OnInit {
      * Constructor
      */
     constructor(
-        private _authService: AuthService,
+        // private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
         private _router: Router
     ) {}
@@ -71,17 +68,12 @@ export class AuthFirebaseSignUpComponent implements OnInit {
      */
     ngOnInit(): void {
         // Create the form
-        const domainControl = new FormControl('', [
-            Validators.required,
-            Validators.pattern(/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-z]{2,}$/),
-          ]);
-
         this.signUpForm = this._formBuilder.group({
-            domain: domainControl,
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
             password: ['', Validators.required],
+            company: [''],
             agreements: ['', Validators.requiredTrue],
         });
     }
@@ -105,42 +97,32 @@ export class AuthFirebaseSignUpComponent implements OnInit {
         // Hide the alert
         this.showAlert = false;
 
-        // Sign up
-        this._firebaseAuthV2Service.signUp(this.signUpForm.value).subscribe(
-            (response) => {
-                // Navigate to the confirmation required page
-                this._router.navigateByUrl('/confirmation-required');
-            },
-            (response) => {
-                // Re-enable the form
-                this.signUpForm.enable();
+        // firebase-auth v2 sign up
+        this._firebaseAuthV2Service
+            .signUp(this.signUpForm.value)
+            .subscribe(
+                {
+                    next: (response) => {
+                        // Navigate to the confirmation required page
+                        this._router.navigateByUrl('/confirmation-required');
+                    },
+                    error: (response) => {
+                        // Re-enable the form
+                        this.signUpForm.enable();
 
-                // Reset the form
-                this.signUpNgForm.resetForm();
+                        // Reset the form
+                        this.signUpNgForm.resetForm();
 
-                // Set the alert
-                this.alert = {
-                    type: 'error',
-                    message: 'Something went wrong, please try again.',
-                };
+                        // Set the alert
+                        this.alert = {
+                            type: 'error',
+                            message: 'Something went wrong, please try again.',
+                        };
 
-                // Show the alert
-                this.showAlert = true;
-            }
-        )
+                        // Show the alert
+                        this.showAlert = true;  
+                    }
+                }
+            )
     }
-
-    checkDomain(domain: string): boolean {
-        let isValid = false;
-        this._firebaseAuthV2Service.checkDomain(domain).subscribe((res) => {
-            if(res) {
-                isValid = true;
-            } else {
-                isValid = false;
-            }
-        });
-        return isValid;
-    }
-
-
 }

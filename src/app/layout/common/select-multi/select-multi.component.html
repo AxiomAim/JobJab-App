@@ -1,0 +1,11 @@
+<div class="mt-8">
+    <div class="text-lg font-medium  w-full">{{ labelName }}</div>
+    <ng-select ngSelectMat class="text-gray-800 dark:text-gray-200 bg-gray-200 dark:bg-gray-800"
+        [items]="items$ ? (items$ | async) : items" [multiple]="multiple" [closeOnSelect]="false" [searchable]="false"
+        [bindLabel]="bindLabel" [placeholder]="labelName" [(ngModel)]="selectedItems" (change)="onOptionSelected()">
+        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+            {{ item.hierarchId }} {{ item.name }}
+        </ng-template>
+    </ng-select>
+</div>

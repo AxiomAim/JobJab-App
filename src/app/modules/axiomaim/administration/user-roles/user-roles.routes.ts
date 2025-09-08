@@ -5,9 +5,9 @@ import {
     RouterStateSnapshot,
     Routes,
 } from '@angular/router';
-import { UserRolesComponent } from 'app/modules/davesa/administration/user-roles/user-roles.component';
-import { UserRolesDetailsComponent } from 'app/modules/davesa/administration/user-roles/details/details.component';
-import { UserRolesListComponent } from 'app/modules/davesa/administration/user-roles/list/list.component';
+import { UserRolesComponent } from 'app/modules/axiomaim/administration/user-roles/user-roles.component';
+import { UserRolesDetailsComponent } from 'app/modules/axiomaim/administration/user-roles/details/details.component';
+import { UserRolesListComponent } from 'app/modules/axiomaim/administration/user-roles/list/list.component';
 import { catchError, throwError } from 'rxjs';
 import { UserRolesV2Service } from './userRolesV2.service';
 

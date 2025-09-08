@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import {
     FormsModule,
     NgForm,
@@ -12,20 +12,18 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
-import { davesaAnimations } from '@davesa/animations';
-import { DavesaAlertComponent, DavesaAlertType } from '@davesa/components/alert';
-import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
+import { axiomaimAnimations } from '@axiomaim/animations';
+import { AxiomaimAlertComponent, AxiomaimAlertType } from '@axiomaim/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
 import { finalize } from 'rxjs';
 
 @Component({
-    selector: 'auth-firebase-forgot-password',
+    selector: 'auth-forgot-password',
     templateUrl: './forgot-password.component.html',
     encapsulation: ViewEncapsulation.None,
-    animations: davesaAnimations,
-    standalone: true,
+    animations: axiomaimAnimations,
     imports: [
-        DavesaAlertComponent,
+        AxiomaimAlertComponent,
         FormsModule,
         ReactiveFormsModule,
         MatFormFieldModule,
@@ -35,11 +33,10 @@ import { finalize } from 'rxjs';
         RouterLink,
     ],
 })
-export class AuthFirebaseForgotPasswordComponent implements OnInit {
-    private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
+export class AuthForgotPasswordComponent implements OnInit {
     @ViewChild('forgotPasswordNgForm') forgotPasswordNgForm: NgForm;
 
-    alert: { type: DavesaAlertType; message: string } = {
+    alert: { type: AxiomaimAlertType; message: string } = {
         type: 'success',
         message: '',
     };
@@ -76,72 +73,49 @@ export class AuthFirebaseForgotPasswordComponent implements OnInit {
      * Send the reset link
      */
     sendResetLink(): void {
-                // Return if the form is invalid
-                if (this.forgotPasswordForm.invalid) {
-                    return;
-                }
-        
-                // Disable the form
-                this.forgotPasswordForm.disable();
-        
-                // Hide the alert
-                this.showAlert = false;
-        
-        this._firebaseAuthV2Service.sendPasswordReset(this.forgotPasswordForm.get('email').value).subscribe(
-            {
-                next:
+        // Return if the form is invalid
+        if (this.forgotPasswordForm.invalid) {
+            return;
+        }
+
+        // Disable the form
+        this.forgotPasswordForm.disable();
+
+        // Hide the alert
+        this.showAlert = false;
+
+        // Forgot password
+        this._authService
+            .forgotPassword(this.forgotPasswordForm.get('email').value)
+            .pipe(
+                finalize(() => {
+                    // Re-enable the form
+                    this.forgotPasswordForm.enable();
+
+                    // Reset the form
+                    this.forgotPasswordNgForm.resetForm();
+
+                    // Show the alert
+                    this.showAlert = true;
+                })
+            )
+            .subscribe(
                 (response) => {
-                    console.log('response', response)
+                    // Set the alert
                     this.alert = {
                         type: 'success',
                         message:
                             "Password reset sent! You'll receive an email if you are registered on our system.",
                     };
-                    this.showAlert = true;
-                    // Disable the form
-                    this.forgotPasswordForm.disable();    
                 },
-                error:
                 (response) => {
-                    console.log('error', response)
+                    // Set the alert
+                    this.alert = {
+                        type: 'error',
+                        message:
+                            'Email does not found! Are you sure you are already a member?',
+                    };
                 }
-
-
-            }
-        );
-
-        // Forgot password
-        // this._authService
-        //     .forgotPassword(this.forgotPasswordForm.get('email').value)
-        //     .pipe(
-        //         finalize(() => {
-        //             // Re-enable the form
-        //             this.forgotPasswordForm.enable();
-
-        //             // Reset the form
-        //             this.forgotPasswordNgForm.resetForm();
-
-        //             // Show the alert
-        //             this.showAlert = true;
-        //         })
-        //     )
-        //     .subscribe(
-        //         (response) => {
-        //             // Set the alert
-        //             this.alert = {
-        //                 type: 'success',
-        //                 message:
-        //                     "Password reset sent! You'll receive an email if you are registered on our system.",
-        //             };
-        //         },
-        //         (response) => {
-        //             // Set the alert
-        //             this.alert = {
-        //                 type: 'error',
-        //                 message:
-        //                     'Email does not found! Are you sure you are already a member?',
-        //             };
-        //         }
-        //     );
+            );
     }
 }

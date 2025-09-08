@@ -18,14 +18,14 @@ import {
   getRedirectResult
 } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
-import { UsersDataService } from 'app/modules/davesa/administration/users/users-data.service';
-import { User, UserModel } from 'app/modules/davesa/administration/users/user.model';
+import { UsersDataService } from 'app/modules/axiomaim/administration/users/users-data.service';
+import { User, UserModel } from 'app/modules/axiomaim/administration/users/user.model';
 import { signInWithPopup, signInWithRedirect } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { Organization } from 'app/modules/davesa/administration/organizations/organizations.model';
-import { OrganizationsDataService } from 'app/modules/davesa/administration/organizations/organizations-data.service';
-import { DavesaConfigService, Scheme, Theme } from '@davesa/services/config';
-// import { OrganizationsV2Service } from 'app/modules/davesa/administration/organizations/organizationsV2.service';
+import { Organization } from 'app/modules/axiomaim/administration/organizations/organizations.model';
+import { OrganizationsDataService } from 'app/modules/axiomaim/administration/organizations/organizations-data.service';
+import { AxiomaimConfigService, Scheme, Theme } from '@axiomaim/services/config';
+// import { OrganizationsV2Service } from 'app/modules/axiomaim/administration/organizations/organizationsV2.service';
 
 export const encryptStorage = new EncryptStorage(environment.LOCAL_STORAGE_KEY, {
   storageType: 'sessionStorage',
@@ -39,11 +39,11 @@ export const FirebaseAuthV2Service = createInjectable(() => {
   const _router = inject(Router);
   // const _authService = inject(AuthService);
 
-  const app = initializeApp(environment.firebase);
+  const app = initializeApp(environment.firebaseConfig);
   const auth: Auth = getAuth(app);
   const _usersDataService = inject(UsersDataService);
   const _organizationsDataService = inject(OrganizationsDataService);
-  const _davesaConfigService = inject(DavesaConfigService);
+  const _axiomaimConfigService = inject(AxiomaimConfigService);
 
   // const _organizationsV2Service = inject(OrganizationsV2Service);
   const loginUser = signal<User | null>(null);
@@ -53,8 +53,6 @@ export const FirebaseAuthV2Service = createInjectable(() => {
   const provider = signal<any | null>(null);
   const authUser = signal<any | null>(null);
   const token = signal<any | null>(null);
-  const loading = signal(false);
-  const error = signal<string | null>(null);
   const googleProvider = new GoogleAuthProvider();
   const microsoftProvider = new OAuthProvider('microsoft.com');
   const facebookProvider = new FacebookAuthProvider();
@@ -80,18 +78,13 @@ export const FirebaseAuthV2Service = createInjectable(() => {
   };
 
   const setLoginUser = (data: any) => {
-    loading.set(true);
-    error.set(null);  
     loginUser.set(data)
     setScheme();
     setTheme();
     setToStorage()
-    loading.set(false);
   }
 
   const loadFromStorage = () => {
-    loading.set(true);
-    error.set(null);  
     try {
       const jsonUser = encryptStorage.getItem(LOGIN_USER);
       loginUser.set(jsonUser)
@@ -100,39 +93,29 @@ export const FirebaseAuthV2Service = createInjectable(() => {
       const jsonOrganization = encryptStorage.getItem(ORGANIZATION);
       organization.set(jsonOrganization)
     } catch(err) {
-      error.set(err)
+
     }
-    loading.set(false);
 
   }
 
   const setToStorage = () => {
-    loading.set(true);
-    error.set(null);  
     try {
       encryptStorage.setItem(LOGIN_USER, JSON.stringify(loginUser()));
       encryptStorage.setItem(AUTH_LOGIN_USER, JSON.stringify(authUser()));
       encryptStorage.setItem(ORGANIZATION, JSON.stringify(organization()));
     } catch(err) {
-      error.set(err)
       console.error('Error setting user to storage:', err);
     }
-    loading.set(false);
-
   }
 
   const removeFromStorage = () => {
-    loading.set(true);
-    error.set(null);  
     try {
       encryptStorage.removeItem(LOGIN_USER);
       encryptStorage.removeItem(AUTH_LOGIN_USER);
       encryptStorage.removeItem(ORGANIZATION);
     } catch(err) {
-      error.set(err)
       console.error('Error removing Login User from storage:', err);
     }
-    loading.set(false);
   }
 
 
@@ -200,11 +183,7 @@ const initializeAuth = (id: string): Promise<void> => {
 
   const getUserAccount = (id: string): Observable<User> => {
       return new Observable((observer) => {
-        loading.set(true);
-        error.set(null);  
         _usersDataService.getItem(id).subscribe(thisUSer => {
-        loading.set(false);
-        error.set(null);  
         observer.next(thisUSer)
       })
     })
@@ -221,8 +200,6 @@ const initializeAuth = (id: string): Promise<void> => {
   const signIn = (credentials: { email: string; password: string }): Observable<User> => {
     const domain = getDomainFromEmail(credentials.email);
     return new Observable((observer) => {
-      loading.set(true);
-      error.set(null);  
       signInWithEmailAndPassword(auth, credentials.email, credentials.password).then((auth: any) => {
         authUser.set(auth)
         _usersDataService.getItem(auth.user.uid).pipe(switchMap((thisUser) => {
@@ -237,8 +214,6 @@ const initializeAuth = (id: string): Promise<void> => {
           return _organizationsDataService.getItem(domain).pipe(map(thisOrganization => {
             organization.set(thisOrganization);
             setToStorage();
-            loading.set(false);
-            error.set(null);
             observer.next(thisUser);
           }));
         }));
@@ -260,8 +235,6 @@ const initializeAuth = (id: string): Promise<void> => {
 
   const signUp = (signup: any): Observable<User> => {
     return new Observable((observer) => {
-      loading.set(true);
-      error.set(null);  
       createUserWithEmailAndPassword(auth, signup.email, signup.password).then((auth: any) => {
         authUser.set(auth)
         const newUser = UserModel.emptyDto()
@@ -274,8 +247,6 @@ const initializeAuth = (id: string): Promise<void> => {
         _usersDataService.createItem(newUser).subscribe(thisUser => {
           loginUser.set(newUser);
           setToStorage()
-          loading.set(false);
-          error.set(null);
           observer.next(thisUser);
         })
       })
@@ -301,12 +272,8 @@ const initializeAuth = (id: string): Promise<void> => {
 
   const sendPasswordReset = (email: string): Observable<boolean> => {
     return new Observable((observer) => {
-      loading.set(true);
-    error.set(null);  
     sendPasswordResetEmail(auth, email).then(() => {
       authUser.set(null)
-      loading.set(false);
-      error.set(null);  
       observer.next(true);  
     });
   })
@@ -337,7 +304,6 @@ const initializeAuth = (id: string): Promise<void> => {
         setScheme();
         setTheme();    
         setToStorage();
-        loading.set(false);
         return loginUser();
       } else {
         const newUser = UserModel.emptyDto()
@@ -351,7 +317,6 @@ const initializeAuth = (id: string): Promise<void> => {
           setScheme();
           setTheme();      
           setToStorage();
-          loading.set(false);
           return loginUser();
         })
       }
@@ -363,8 +328,6 @@ const initializeAuth = (id: string): Promise<void> => {
     googleProvider.addScope('profile');
     googleProvider.addScope('email');
     const result = await signInWithPopup(auth, googleProvider);
-    loading.set(true);
-    error.set(null);  
     authUser.set(result.user)
     loginUserId.set(result.user.uid)
     const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -375,7 +338,6 @@ const initializeAuth = (id: string): Promise<void> => {
         setScheme();
         setTheme();    
         setToStorage();
-        loading.set(false);
         return loginUser();
       } else {
         const newUser = UserModel.emptyDto()
@@ -389,7 +351,6 @@ const initializeAuth = (id: string): Promise<void> => {
           setScheme();
           setTheme();      
           setToStorage();
-          loading.set(false);
           return loginUser();
         })
       }
@@ -415,7 +376,7 @@ const initializeAuth = (id: string): Promise<void> => {
   const setScheme = (): void => {
     const scheme: Scheme = loginUser().scheme;
     if(scheme) {
-      _davesaConfigService.config = { scheme };
+      _axiomaimConfigService.config = { scheme };
     }
     
   }
@@ -423,7 +384,7 @@ const initializeAuth = (id: string): Promise<void> => {
   const setTheme = (): void => {
     const theme: Theme = loginUser().theme;
     if(theme) {
-      _davesaConfigService.config = { theme };  
+      _axiomaimConfigService.config = { theme };  
     }
   }
 
@@ -439,7 +400,7 @@ const initializeAuth = (id: string): Promise<void> => {
         })
         .then(() => {
             // Set the config
-            _davesaConfigService.config = { layout };
+            _axiomaimConfigService.config = { layout };
         });
   }
     

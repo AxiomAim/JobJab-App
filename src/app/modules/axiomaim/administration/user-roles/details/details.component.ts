@@ -35,12 +35,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DavesaConfirmationService } from '@davesa/services/confirmation';
+import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
 import { Tag } from 'app/core/models/tag.model';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { UserRole } from '../user-role.model';
 import { UserRolesV2Service } from '../userRolesV2.service';
-import { DavesaLoadingService } from '@davesa/services/loading';
+import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
 import { UsersV2Service } from '../../users/usersV2.service';
 import { UserRolesListComponent } from '../list/list.component';
@@ -79,7 +79,7 @@ interface PhonenumerType {
 export class UserRolesDetailsComponent implements OnInit, OnDestroy {
     _usersV2Service = inject(UsersV2Service);
     _userRolesV2Service = inject(UserRolesV2Service);
-    _davesaLoadingService = inject(DavesaLoadingService);
+    _axiomaimLoadingService = inject(AxiomaimLoadingService);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
     @ViewChild('tagsPanel') private _tagsPanel: TemplateRef<any>;
     @ViewChild('tagsPanelOrigin') private _tagsPanelOrigin: ElementRef;
@@ -118,7 +118,7 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
         private _changeDetectorRef: ChangeDetectorRef,
         private _userRolesListComponent: UserRolesListComponent,
         private _formBuilder: UntypedFormBuilder,
-        private _davesaConfirmationService: DavesaConfirmationService,
+        private _axiomaimConfirmationService: AxiomaimConfirmationService,
         private _renderer2: Renderer2,
         private _router: Router,
         private _overlay: Overlay,
@@ -246,7 +246,7 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
      */
     deleteUserRole(): void {
         // Open the confirmation dialog
-        const confirmation = this._davesaConfirmationService.open({
+        const confirmation = this._axiomaimConfirmationService.open({
             title: 'Delete user',
             message:
                 'Are you sure you want to delete this user? This action cannot be undone!',

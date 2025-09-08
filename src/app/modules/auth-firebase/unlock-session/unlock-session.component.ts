@@ -13,19 +13,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { davesaAnimations } from '@davesa/animations';
-import { DavesaAlertComponent, DavesaAlertType } from '@davesa/components/alert';
+import { axiomaimAnimations } from '@axiomaim/animations';
+import { AxiomaimAlertComponent, AxiomaimAlertType } from '@axiomaim/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
-import { LoginUserService } from 'app/core/login-user/login-user.service';
+import { UserService } from 'app/core/user/user.service';
 
 @Component({
-    selector: 'auth-firebase-unlock-session',
+    selector: 'auth-unlock-session',
     templateUrl: './unlock-session.component.html',
     encapsulation: ViewEncapsulation.None,
-    animations: davesaAnimations,
-    standalone: true,
+    animations: axiomaimAnimations,
     imports: [
-        DavesaAlertComponent,
+        AxiomaimAlertComponent,
         FormsModule,
         ReactiveFormsModule,
         MatFormFieldModule,
@@ -36,10 +35,10 @@ import { LoginUserService } from 'app/core/login-user/login-user.service';
         RouterLink,
     ],
 })
-export class AuthFirebaseUnlockSessionComponent implements OnInit {
+export class AuthUnlockSessionComponent implements OnInit {
     @ViewChild('unlockSessionNgForm') unlockSessionNgForm: NgForm;
 
-    alert: { type: DavesaAlertType; message: string } = {
+    alert: { type: AxiomaimAlertType; message: string } = {
         type: 'success',
         message: '',
     };
@@ -56,7 +55,7 @@ export class AuthFirebaseUnlockSessionComponent implements OnInit {
         private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
         private _router: Router,
-        private _userService: LoginUserService
+        private _userService: UserService
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -68,8 +67,8 @@ export class AuthFirebaseUnlockSessionComponent implements OnInit {
      */
     ngOnInit(): void {
         // Get the user's name
-        this._userService.loginUser$.subscribe((user) => {
-            this.name = user.displayName;
+        this._userService.user$.subscribe((user) => {
+            this.name = user.name;
             this._email = user.email;
         });
 

@@ -1,0 +1,13 @@
+<div class="mt-8">
+    <div class="text-lg font-medium">{{ labelName }}</div>
+    <ng-select class="rounded-md py-0.5 px-2.5 border border-transparent text-sm" [items]="items"
+        [bindLabel]="bindLabel" [addTag]="true" [multiple]="true" groupBy="gender" [selectableGroup]="true"
+        [closeOnSelect]="false" [(ngModel)]="selectedItems" (close)="optionSelected($event)">
+        <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item.gender | uppercase }}
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item.name }}
+        </ng-template>
+    </ng-select>
+</div>

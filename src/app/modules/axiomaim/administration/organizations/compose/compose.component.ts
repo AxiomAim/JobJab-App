@@ -23,17 +23,16 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AsyncPipe, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { DavesaConfirmationService } from '@davesa/services/confirmation';
+import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { DavesaFindByKeyPipe } from '@davesa/pipes/find-by-key';
+import { AxiomaimFindByKeyPipe } from '@axiomaim/pipes/find-by-key';
 import { SettingsComponent } from 'app/layout/common/settings/settings.component';
-import { DavesaLoadingService } from '@davesa/services/loading';
-import { DavesaLoadingBarComponent } from '@davesa/components/loading-bar';
+import { AxiomaimLoadingService } from '@axiomaim/services/loading';
+import { AxiomaimLoadingBarComponent } from '@axiomaim/components/loading-bar';
 import { Router } from '@angular/router';
-import { SelectAutocompleteComponent } from 'app/layout/common/select-autocomplete/select-autocomplete.component';
 
 @Component({
     selector: 'organizations-compose',
@@ -57,13 +56,13 @@ import { SelectAutocompleteComponent } from 'app/layout/common/select-autocomple
         MatOptionModule,
         TextFieldModule,
         SettingsComponent,
-        DavesaLoadingBarComponent,
+        AxiomaimLoadingBarComponent,
         AsyncPipe,
     ],
 })
 export class OrganizationsComposeComponent implements OnInit {
     _router = inject(Router);
-    _davesaLoadingService = inject(DavesaLoadingService);
+    _axiomaimLoadingService = inject(AxiomaimLoadingService);
     _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     _organizationsV2Service = inject(OrganizationsV2Service);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
@@ -116,7 +115,7 @@ export class OrganizationsComposeComponent implements OnInit {
         private _renderer2: Renderer2,
         private _viewContainerRef: ViewContainerRef,
         private _changeDetectorRef: ChangeDetectorRef,
-        private _davesaConfirmationService: DavesaConfirmationService
+        private _axiomaimConfirmationService: AxiomaimConfirmationService
 
     ) {}
 
@@ -245,7 +244,7 @@ export class OrganizationsComposeComponent implements OnInit {
             } else {
 
             // Open the confirmation dialog
-            const confirmation = this._davesaConfirmationService.open({
+            const confirmation = this._axiomaimConfirmationService.open({
                 title: 'Domain Exists',
                 message:
                     `${domain} already exists.`,
@@ -330,10 +329,10 @@ export class OrganizationsComposeComponent implements OnInit {
      */
     uploadAvatar(event: any): void {
         console.log('event', event.target.files[0])
-        this._davesaLoadingService.show()        
+        this._axiomaimLoadingService.show()        
         this._organizationsV2Service.uploadAvatar(event.target.files[0], 'organizations').subscribe({
             next: (response: any) => {
-                this._davesaLoadingService.hide();
+                this._axiomaimLoadingService.hide();
                 this.organization.avatarPath = response.filePath;
                 this.organization.avatarFile = response.fileName;
                 this.organization.avatarType = response.fileType;
@@ -344,7 +343,7 @@ export class OrganizationsComposeComponent implements OnInit {
                 console.log('organization', this.organization);
             },
             error: (error: any) => {
-                this._davesaLoadingService.hide();
+                this._axiomaimLoadingService.hide();
                 console.error('error', error);
             },
         });

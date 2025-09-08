@@ -5,9 +5,9 @@ import {
     RouterStateSnapshot,
     Routes,
 } from '@angular/router';
-import { OrganizationsComponent } from 'app/modules/davesa/administration/organizations/organizations.component';
-import { OrganizationsDetailsComponent } from 'app/modules/davesa/administration/organizations/details/details.component';
-import { OrganizationsListComponent } from 'app/modules/davesa/administration/organizations/list/list.component';
+import { OrganizationsComponent } from 'app/modules/axiomaim/administration/organizations/organizations.component';
+import { OrganizationsDetailsComponent } from 'app/modules/axiomaim/administration/organizations/details/details.component';
+import { OrganizationsListComponent } from 'app/modules/axiomaim/administration/organizations/list/list.component';
 import { catchError, throwError } from 'rxjs';
 import { OrganizationsV2Service } from './organizationsV2.service';
 

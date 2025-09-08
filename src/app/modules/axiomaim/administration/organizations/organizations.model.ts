@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { BaseDto } from 'app/core/models/base-dto.model';
-import { Scheme, Theme } from '@davesa/services/config';
+import { Scheme, Theme } from '@axiomaim/services/config';
 
 export class OrganizationModel {
 
@@ -38,8 +37,8 @@ export class OrganizationModel {
         csvUser?: boolean,
         csvTester?: boolean,
         csvAdmin?: boolean,
-        davesaUser?: boolean,
-        davesaAdmin?: boolean,
+        axiomaimUser?: boolean,
+        axiomaimAdmin?: boolean,
         siteAdmin?: boolean,
         covidNotify?: boolean,
         covidNurse?: boolean,
@@ -89,8 +88,8 @@ export class OrganizationModel {
         this.csvUser = csvUser;
         this.csvTester = csvTester;
         this.csvAdmin = csvAdmin;
-        this.davesaUser = davesaUser;
-        this.davesaAdmin = davesaAdmin;                    
+        this.axiomaimUser = axiomaimUser;
+        this.axiomaimAdmin = axiomaimAdmin;                    
         this.siteAdmin = siteAdmin;
         this.covidNotify = covidNotify;
         this.covidNurse = covidNurse;
@@ -140,8 +139,8 @@ export class OrganizationModel {
     public csvUser?: boolean;
     public csvTester?: boolean;
     public csvAdmin?: boolean;
-    public davesaUser?: boolean;
-    public davesaAdmin?: boolean;
+    public axiomaimUser?: boolean;
+    public axiomaimAdmin?: boolean;
     public siteAdmin?: boolean;
     public covidNotify?: boolean;
     public covidNurse?: boolean;
@@ -168,7 +167,7 @@ export class OrganizationModel {
             avatarPath: null,
             avatarFile: 'logo.png',
             avatarType: 'png',            
-            background: 'images/cards/davesa-card.jpg',
+            background: 'images/cards/axiomaim-card.jpg',
             theme: null,
             scheme: null,
             name: 'CompanyName',
@@ -194,8 +193,8 @@ export class OrganizationModel {
             csvUser: false,
             csvTester: false,
             csvAdmin: false,
-            davesaUser: false,
-            davesaAdmin: false,
+            axiomaimUser: false,
+            axiomaimAdmin: false,
             siteAdmin: false,
             covidNotify: false,
             covidNurse: false,
@@ -241,7 +240,7 @@ export class OrganizationModel {
                 avatarPath: dto.avatarPath ? dto.avatarPath : null,
                 avatarFile: dto.avatarFile ? dto.avatarFile : 'logo.png',
                 avatarType: dto.avatarType ? dto.avatarType : 'png',
-                background: dto.background ? dto.background : 'images/cards/davesa-card.jpg',
+                background: dto.background ? dto.background : 'images/cards/axiomaim-card.jpg',
                 theme: dto.theme ? dto.theme : null,
                 scheme: dto.scheme ? dto.scheme : null,
                 name: dto.name ? dto.name : 'CompanyName',
@@ -267,8 +266,8 @@ export class OrganizationModel {
                 csvUser: dto.csvUser ? dto.csvUser : false,
                 csvTester: dto.csvTester ? dto.csvTester : false,
                 csvAdmin: dto.csvAdmin ? dto.csvAdmin : false,
-                davesaUser: dto.davesaUser ? dto.davesaUser : false,
-                davesaAdmin: dto.davesaAdmin ? dto.davesaAdmin : false,
+                axiomaimUser: dto.axiomaimUser ? dto.axiomaimUser : false,
+                axiomaimAdmin: dto.axiomaimAdmin ? dto.axiomaimAdmin : false,
                 siteAdmin: dto.siteAdmin ? dto.siteAdmin : false,
                 covidNotify: dto.covidNotify ? dto.covidNotify : false,
                 covidNurse: dto.covidNurse ? dto.covidNurse : false,
@@ -323,8 +322,8 @@ export interface Organization {
     csvUser?: boolean;
     csvTester?: boolean;
     csvAdmin?: boolean;
-    davesaUser?: boolean;
-    davesaAdmin?: boolean;
+    axiomaimUser?: boolean;
+    axiomaimAdmin?: boolean;
     siteAdmin?: boolean;
     covidNotify?: boolean;
     covidNurse?: boolean;

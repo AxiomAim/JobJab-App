@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { AuthFirebaseUnlockSessionComponent } from 'app/modules/auth-firebase/unlock-session/unlock-session.component';
+import { AuthUnlockSessionComponent } from 'app/modules/auth-firebase/unlock-session/unlock-session.component';
 
 export default [
     {
         path: '',
-        component: AuthFirebaseUnlockSessionComponent,
+        component: AuthUnlockSessionComponent,
     },
 ] as Routes;

@@ -1,20 +1,16 @@
 import { I18nPluralPipe } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { Subject, finalize, takeUntil, takeWhile, tap, timer } from 'rxjs';
 
 @Component({
-    selector: 'auth-firebase-sign-out',
+    selector: 'auth-sign-out',
     templateUrl: './sign-out.component.html',
     encapsulation: ViewEncapsulation.None,
-    standalone: true,
     imports: [RouterLink, I18nPluralPipe],
 })
-export class AuthFirebaseSignOutComponent implements OnInit, OnDestroy {
-    private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
-
+export class AuthSignOutComponent implements OnInit, OnDestroy {
     countdown: number = 5;
     countdownMapping: any = {
         '=1': '# second',
@@ -37,8 +33,7 @@ export class AuthFirebaseSignOutComponent implements OnInit, OnDestroy {
     /**
      * On init
      */
-    async ngOnInit() {
-        await this._firebaseAuthV2Service.signOut().subscribe();
+    ngOnInit(): void {
         // Sign out
         this._authService.signOut();
 

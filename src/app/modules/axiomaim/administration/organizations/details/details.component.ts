@@ -35,14 +35,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DavesaFindByKeyPipe } from '@davesa/pipes/find-by-key/find-by-key.pipe';
-import { DavesaConfirmationService } from '@davesa/services/confirmation';
+import { AxiomaimFindByKeyPipe } from '@axiomaim/pipes/find-by-key/find-by-key.pipe';
+import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
 import { Tag } from 'app/core/models/tag.model';
-import { OrganizationsListComponent } from 'app/modules/davesa/administration/organizations/list/list.component';
+import { OrganizationsListComponent } from 'app/modules/axiomaim/administration/organizations/list/list.component';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { Country, Organization } from '../organizations.model';
 import { OrganizationsV2Service } from '../organizationsV2.service';
-import { DavesaLoadingService } from '@davesa/services/loading';
+import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 
 @Component({
     selector: 'organizations-details',
@@ -67,13 +67,13 @@ import { DavesaLoadingService } from '@davesa/services/loading';
         MatDatepickerModule,
         TextFieldModule,
         AsyncPipe
-        // DavesaFindByKeyPipe,
+        // AxiomaimFindByKeyPipe,
         // DatePipe,
     ],
 })
 export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
     _organizationsV2Service = inject(OrganizationsV2Service);
-    _davesaLoadingService = inject(DavesaLoadingService);
+    _axiomaimLoadingService = inject(AxiomaimLoadingService);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
     @ViewChild('tagsPanel') private _tagsPanel: TemplateRef<any>;
     @ViewChild('tagsPanelOrigin') private _tagsPanelOrigin: ElementRef;
@@ -105,7 +105,7 @@ export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
         private _changeDetectorRef: ChangeDetectorRef,
         private _organizationsListComponent: OrganizationsListComponent,
         private _formBuilder: UntypedFormBuilder,
-        private _davesaConfirmationService: DavesaConfirmationService,
+        private _axiomaimConfirmationService: AxiomaimConfirmationService,
         private _renderer2: Renderer2,
         private _router: Router,
         private _overlay: Overlay,
@@ -333,7 +333,7 @@ export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
      */
     deleteOrganization(): void {
         // Open the confirmation dialog
-        const confirmation = this._davesaConfirmationService.open({
+        const confirmation = this._axiomaimConfirmationService.open({
             title: 'Delete organization',
             message:
                 'Are you sure you want to delete this organization? This action cannot be undone!',
@@ -402,10 +402,10 @@ export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
      */
     uploadAvatar(event: any): void {
         console.log('event', event.target.files[0])
-        this._davesaLoadingService.show()        
+        this._axiomaimLoadingService.show()        
         this._organizationsV2Service.uploadAvatar(event.target.files[0], 'organizations').subscribe({
             next: (response: any) => {
-                this._davesaLoadingService.hide();
+                this._axiomaimLoadingService.hide();
                 console.log('uploadAvatar', response)
                 this.organization.avatarPath = response.filePath;
                 this.organization.avatarFile = response.fileName;
@@ -416,7 +416,7 @@ export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
                 console.log('organization', this.organization);
             },
             error: (error: any) => {
-                this._davesaLoadingService.hide();
+                this._axiomaimLoadingService.hide();
                 console.error('error', error);
             },
         });

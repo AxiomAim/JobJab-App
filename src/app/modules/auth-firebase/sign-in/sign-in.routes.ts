@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { AuthFirebaseSignInComponent } from 'app/modules/auth-firebase/sign-in/sign-in.component';
+import { AuthSignInComponent } from 'app/modules/auth-firebase/sign-in/sign-in.component';
 
 export default [
     {
         path: '',
-        component: AuthFirebaseSignInComponent,
+        component: AuthSignInComponent,
     },
 ] as Routes;

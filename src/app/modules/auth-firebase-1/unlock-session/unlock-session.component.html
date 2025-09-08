@@ -1,0 +1,223 @@
+<div class="flex min-w-0 flex-auto flex-col items-center sm:flex-row sm:justify-center md:items-start md:justify-start">
+    <div
+        class="w-full px-4 py-8 sm:bg-card sm:w-auto sm:rounded-2xl sm:p-12 sm:shadow md:flex md:h-full md:w-1/2 md:items-center md:justify-end md:rounded-none md:p-16 md:shadow-none">
+        <div class="mx-auto w-full max-w-80 sm:mx-0 sm:w-80">
+            <!-- Logo -->
+            <div class="w-12">
+                <img src="images/logo/logo.svg" />
+            </div>
+
+            <!-- Title -->
+            <div class="mt-8 text-4xl font-extrabold leading-tight tracking-tight">
+                Unlock your session
+            </div>
+            <div class="mt-0.5 font-medium">
+                Your session is locked due to inactivity
+            </div>
+
+            <!-- Alert -->
+            @if (showAlert) {
+            <axiomaim-alert class="mt-8" [appearance]="'outline'" [showIcon]="false" [type]="alert.type"
+                [@shake]="alert.type === 'error'">
+                {{ alert.message }}
+            </axiomaim-alert>
+            }
+
+            <!-- Unlock form -->
+            <form class="mt-8" [formGroup]="unlockSessionForm" #unlockSessionNgForm="ngForm">
+                <!-- Name field -->
+                <mat-form-field class="w-full">
+                    <mat-label>Full name</mat-label>
+                    <input id="name" matInput [formControlName]="'name'" />
+                </mat-form-field>
+
+                <!-- Password field -->
+                <mat-form-field class="w-full">
+                    <mat-label>Password</mat-label>
+                    <input id="password" matInput type="password" [formControlName]="'password'" #passwordField />
+                    <button mat-icon-button type="button" (click)="
+                            passwordField.type === 'password'
+                                ? (passwordField.type = 'text')
+                                : (passwordField.type = 'password')
+                        " matSuffix>
+                        @if (passwordField.type === 'password') {
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                        }
+                        @if (passwordField.type === 'text') {
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                        }
+                    </button>
+                    <mat-error> Password is required </mat-error>
+                </mat-form-field>
+
+                <!-- Submit button -->
+                <button class="axiomaim-mat-button-large mt-3 w-full" mat-flat-button [color]="'primary'"
+                    [disabled]="unlockSessionForm.disabled" (click)="unlock()">
+                    @if (!unlockSessionForm.disabled) {
+                    <span> Unlock your session </span>
+                    }
+                    @if (unlockSessionForm.disabled) {
+                    <mat-progress-spinner [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
+                    }
+                </button>
+
+                <!-- Form footer -->
+                <div class="text-secondary mt-8 text-md font-medium">
+                    <span>I'm not</span>
+                    <a class="ml-1 text-primary-500 hover:underline" [routerLink]="['/sign-out']">{{ name }}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div
+        class="relative hidden h-full w-1/2 flex-auto items-center justify-center overflow-hidden bg-gray-800 p-16 dark:border-l md:flex lg:px-28">
+        <!-- LEFT WINDOW -->
+        <!-- Background -->
+        <!-- Polygon -->
+        <!-- prettier-ignore -->
+        <svg class="absolute inset-0 pointer-events-none" viewBox="-60 -40 960 540" width="100%" height="100%"
+            preserveAspectRatio="xMidYMax slice">
+            <g class="text-indigo-300 opacity-15" fill="none" stroke="currentColor" stroke-width="50">
+                <polygon points="196,23 382,126 382,332 196,435 10,332 10,126" />
+                <polygon points="690,491 876,388 876,182 690,79 504,182 504,388" />
+            </g>
+        </svg>
+        <!-- Dots -->
+        <!-- prettier-ignore -->
+        <svg class="absolute -top-16 -right-16 text-gray-700" viewBox="0 0 220 192" width="220" height="192"
+            fill="none">
+            <defs>
+                <pattern id="837c3e70-6c3a-44e6-8854-cc48c737b659" x="0" y="0" width="20" height="20"
+                    patternUnits="userSpaceOnUse">
+                    <rect x="0" y="0" width="4" height="4" fill="currentColor"></rect>
+                </pattern>
+            </defs>
+            <rect width="220" height="192" fill="url(#837c3e70-6c3a-44e6-8854-cc48c737b659)"></rect>
+        </svg>
+
+        <!-- DNA Strand -->
+        <!-- prettier-ignore -->
+        <svg class="absolute inset-0 pointer-events-none" viewBox="-10 -5 130 80" preserveAspectRatio="xMidYMax slice">
+            <g class="text-indigo-300 opacity-25" fill="none" stroke="currentColor" stroke-width="100">
+                <circle cx="68.46" cy="1.78" r="1.78" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="67.16" cy="7.57" r="2.02" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="64.32" cy="12.48" r="2.02" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="59.99" cy="16.42" r="2.35" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="53.38" cy="19.27" r="2.87" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="44.72" cy="20.64" r="3.26" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="35.92" cy="22.21" r="2.87" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="29.37" cy="24.98" r="2.35" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="24.99" cy="29" r="2.02" style="fill:#FF8166; stroke-width:0px;" />
+                <path
+                    d="M42.28,6.31c-.49.85-1.58,1.14-2.43.65s-1.14-1.58-.65-2.43,1.58-1.14,2.43-.65c.85.49,1.14,1.58.65,2.43Z"
+                    style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="41.58" cy="12.45" r="1.52" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="47.74" cy="29.03" r="1.52" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="48.64" cy="36.1" r="1.78" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="47.33" cy="41.9" r="2.02" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="21.85" cy="34.43" r="2.02" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="20.55" cy="40.23" r="1.78" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="21.6" cy="47.19" r="1.52" style="fill:#FF8166; stroke-width:0px;" />
+                <path
+                    d="M28.93,64.68c-.42.73-1.35.97-2.07.55-.73-.42-.97-1.35-.55-2.07.42-.73,1.35-.97,2.07-.55s.97,1.35.55,2.07Z"
+                    style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="28.51" cy="70.98" r="1.78" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="44.37" cy="47.43" r="2.02" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="39.5" cy="51.17" r="2.35" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="33.36" cy="53.98" r="2.87" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="24.68" cy="55.34" r="3.26" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="15.79" cy="57.09" r="2.87" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="9.23" cy="59.85" r="2.35" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="4.88" cy="63.89" r="2.02" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="2.02" cy="68.78" r="2.02" style="fill:currentColor; stroke-width:0px;" />
+            </g>
+        </svg>
+        <svg class="absolute inset-0 pointer-events-none" viewBox="-40 -70 130 1000"
+            preserveAspectRatio="xMidYMax slice">
+            <g class="text-indigo-300 opacity-25" fill="none" stroke="currentColor" stroke-width="100">
+                <circle cx="68.46" cy="1.78" r="1.78" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="67.16" cy="7.57" r="2.02" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="64.32" cy="12.48" r="2.02" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="59.99" cy="16.42" r="2.35" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="53.38" cy="19.27" r="2.87" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="44.72" cy="20.64" r="3.26" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="35.92" cy="22.21" r="2.87" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="29.37" cy="24.98" r="2.35" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="24.99" cy="29" r="2.02" style="fill:#FF8166; stroke-width:0px;" />
+                <path
+                    d="M42.28,6.31c-.49.85-1.58,1.14-2.43.65s-1.14-1.58-.65-2.43,1.58-1.14,2.43-.65c.85.49,1.14,1.58.65,2.43Z"
+                    style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="41.58" cy="12.45" r="1.52" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="47.74" cy="29.03" r="1.52" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="48.64" cy="36.1" r="1.78" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="47.33" cy="41.9" r="2.02" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="21.85" cy="34.43" r="2.02" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="20.55" cy="40.23" r="1.78" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="21.6" cy="47.19" r="1.52" style="fill:#FF8166; stroke-width:0px;" />
+                <path
+                    d="M28.93,64.68c-.42.73-1.35.97-2.07.55-.73-.42-.97-1.35-.55-2.07.42-.73,1.35-.97,2.07-.55s.97,1.35.55,2.07Z"
+                    style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="28.51" cy="70.98" r="1.78" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="44.37" cy="47.43" r="2.02" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="39.5" cy="51.17" r="2.35" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="33.36" cy="53.98" r="2.87" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="24.68" cy="55.34" r="3.26" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="15.79" cy="57.09" r="2.87" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="9.23" cy="59.85" r="2.35" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="4.88" cy="63.89" r="2.02" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="2.02" cy="68.78" r="2.02" style="fill:currentColor; stroke-width:0px;" />
+            </g>
+        </svg>
+        <svg class="absolute inset-0 pointer-events-none" viewBox="-80 -140 130 1000"
+            preserveAspectRatio="xMidYMax slice">
+            <g class="text-indigo-300 opacity-25" fill="none" stroke="currentColor" stroke-width="100">
+                <circle cx="68.46" cy="1.78" r="1.78" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="67.16" cy="7.57" r="2.02" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="64.32" cy="12.48" r="2.02" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="59.99" cy="16.42" r="2.35" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="53.38" cy="19.27" r="2.87" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="44.72" cy="20.64" r="3.26" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="35.92" cy="22.21" r="2.87" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="29.37" cy="24.98" r="2.35" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="24.99" cy="29" r="2.02" style="fill:#FF8166; stroke-width:0px;" />
+                <path
+                    d="M42.28,6.31c-.49.85-1.58,1.14-2.43.65s-1.14-1.58-.65-2.43,1.58-1.14,2.43-.65c.85.49,1.14,1.58.65,2.43Z"
+                    style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="41.58" cy="12.45" r="1.52" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="47.74" cy="29.03" r="1.52" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="48.64" cy="36.1" r="1.78" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="47.33" cy="41.9" r="2.02" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="21.85" cy="34.43" r="2.02" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="20.55" cy="40.23" r="1.78" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="21.6" cy="47.19" r="1.52" style="fill:#FF8166; stroke-width:0px;" />
+                <path
+                    d="M28.93,64.68c-.42.73-1.35.97-2.07.55-.73-.42-.97-1.35-.55-2.07.42-.73,1.35-.97,2.07-.55s.97,1.35.55,2.07Z"
+                    style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="28.51" cy="70.98" r="1.78" style="fill:#FF8166; stroke-width:0px;" />
+                <circle cx="44.37" cy="47.43" r="2.02" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="39.5" cy="51.17" r="2.35" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="33.36" cy="53.98" r="2.87" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="24.68" cy="55.34" r="3.26" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="15.79" cy="57.09" r="2.87" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="9.23" cy="59.85" r="2.35" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="4.88" cy="63.89" r="2.02" style="fill:currentColor; stroke-width:0px;" />
+                <circle cx="2.02" cy="68.78" r="2.02" style="fill:currentColor; stroke-width:0px;" />
+            </g>
+        </svg>
+
+        <!-- Content -->
+        <div class="relative z-10 w-full max-w-2xl">
+            <div class="mb-10 2xl:w-100 xl:w-100 lg:w-80 md:w-50 sm:w-50 xs:w-50 w-50">
+                <img src="images/logo/horizontal_c_w.svg" />
+            </div>
+
+            <div class="text-7xl font-bold leading-none text-gray-100">
+                <div>Welcome</div>
+                <div></div>
+            </div>
+            <div class="mt-6 text-lg leading-6 tracking-tight text-gray-400">
+                eSite Platform.
+            </div>
+        </div>
+    </div>
+</div>

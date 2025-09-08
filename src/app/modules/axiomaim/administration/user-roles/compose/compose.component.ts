@@ -19,13 +19,13 @@ import { BehaviorSubject, finalize, Observable, Subject, takeUntil, takeWhile, t
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AsyncPipe, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { DavesaConfirmationService } from '@davesa/services/confirmation';
+import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { DavesaLoadingService } from '@davesa/services/loading';
-import { DavesaLoadingBarComponent } from '@davesa/components/loading-bar';
+import { AxiomaimLoadingService } from '@axiomaim/services/loading';
+import { AxiomaimLoadingBarComponent } from '@axiomaim/components/loading-bar';
 import { Router } from '@angular/router';
 import { UserRolesV2Service } from '../userRolesV2.service';
 import { UserRole, UserRoleModel } from '../user-role.model';
@@ -55,7 +55,7 @@ interface PhonenumerType {
         MatSelectModule,
         MatOptionModule,
         TextFieldModule,
-        DavesaLoadingBarComponent,
+        AxiomaimLoadingBarComponent,
         AsyncPipe,
     ],
 })
@@ -63,7 +63,7 @@ export class UserRolesComposeComponent implements OnInit {
     _usersV2Service = inject(UserRolesV2Service);
     _userRolesV2Service = inject(UserRolesV2Service);
     _router = inject(Router);
-    _davesaLoadingService = inject(DavesaLoadingService);
+    _axiomaimLoadingService = inject(AxiomaimLoadingService);
     _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
     
@@ -100,7 +100,7 @@ export class UserRolesComposeComponent implements OnInit {
         private _renderer2: Renderer2,
         private _viewContainerRef: ViewContainerRef,
         private _changeDetectorRef: ChangeDetectorRef,
-        private _davesaConfirmationService: DavesaConfirmationService
+        private _axiomaimConfirmationService: AxiomaimConfirmationService
 
     ) {}
 

@@ -1,16 +1,15 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { davesaAnimations } from '@davesa/animations';
+import { axiomaimAnimations } from '@axiomaim/animations';
 
 @Component({
-    selector: 'auth-firebase-confirmation-required',
+    selector: 'auth-confirmation-required',
     templateUrl: './confirmation-required.component.html',
     encapsulation: ViewEncapsulation.None,
-    animations: davesaAnimations,
-    standalone: true,
+    animations: axiomaimAnimations,
     imports: [RouterLink],
 })
-export class AuthFirebaseConfirmationRequiredComponent {
+export class AuthConfirmationRequiredComponent {
     /**
      * Constructor
      */

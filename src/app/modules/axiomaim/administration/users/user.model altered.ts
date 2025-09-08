@@ -1,4 +1,4 @@
-import { Scheme, Theme } from '@davesa/services/config';
+import { Scheme, Theme } from '@axiomaim/services/config';
 import { BaseDto } from 'app/core/models/base-dto.model';
 import { v4 as uuidv4 } from 'uuid';
 import { UserRole } from '../user-roles/user-role.model';
@@ -210,7 +210,7 @@ export class UserModel implements BaseDto {
             avatarPath: dto.avatarPath ? dto.avatarPath : '',
             avatarFile: dto.avatarFile ? dto.avatarFile : '',
             avatarType: dto.avatarType ? dto.avatarType : '',
-            background: dto.background ? dto.background : 'images/cards/davesa-card.jpg',
+            background: dto.background ? dto.background : 'images/cards/axiomaim-card.jpg',
             linkedIn: dto.linkedIn ? dto.linkedIn : '',
             phoneNumbers: dto.phoneNumbers ? dto.phoneNumbers : [],
             mobileCountry: dto.mobileCountry ? dto.mobileCountry : '',
@@ -268,7 +268,7 @@ export class UserModel implements BaseDto {
             avatarPath: '',
             avatarFile: '',
             avatarType: '',
-            background: 'images/cards/davesa-card.jpg',
+            background: 'images/cards/axiomaim-card.jpg',
             linkedIn: '',
             phoneNumbers: [],
             mobileCountry: '',

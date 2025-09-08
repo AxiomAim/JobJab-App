@@ -26,7 +26,7 @@ import {
     RouterLink,
     RouterOutlet,
 } from '@angular/router';
-import { DavesaMediaWatcherService } from '@davesa/services/media-watcher';
+import { AxiomaimMediaWatcherService } from '@axiomaim/services/media-watcher';
 import {
     BehaviorSubject,
     Observable,
@@ -99,7 +99,7 @@ export class UserRolesListComponent implements OnInit, OnDestroy {
         private _changeDetectorRef: ChangeDetectorRef,
         @Inject(DOCUMENT) private _document: any,
         private _router: Router,
-        private _davesaMediaWatcherService: DavesaMediaWatcherService,
+        private _axiomaimMediaWatcherService: AxiomaimMediaWatcherService,
         private _matDialog: MatDialog,
         
     ) {}
@@ -162,7 +162,7 @@ export class UserRolesListComponent implements OnInit, OnDestroy {
         });
 
         // Subscribe to media changes
-        this._davesaMediaWatcherService.onMediaChange$
+        this._axiomaimMediaWatcherService.onMediaChange$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(({ matchingAliases }) => {
                 // Set the drawerMode if the given breakpoint is active

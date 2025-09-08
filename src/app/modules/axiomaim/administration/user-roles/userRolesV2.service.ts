@@ -11,7 +11,7 @@ import { UserRolesDataService } from "./user-roles-data.service";
 import { UserRole } from "./user-role.model";
 import { cloneDeep } from "lodash";
 
-export const encryptStorage = new EncryptStorage("encrypt-davesa", {
+export const encryptStorage = new EncryptStorage("encrypt-axiomaim", {
   storageType: "sessionStorage",
 });
 

@@ -13,20 +13,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
-import { davesaAnimations } from '@davesa/animations';
-import { DavesaAlertComponent, DavesaAlertType } from '@davesa/components/alert';
-import { DavesaValidators } from '@davesa/validators';
+import { axiomaimAnimations } from '@axiomaim/animations';
+import { AxiomaimAlertComponent, AxiomaimAlertType } from '@axiomaim/components/alert';
+import { AxiomaimValidators } from '@axiomaim/validators';
 import { AuthService } from 'app/core/auth/auth.service';
 import { finalize } from 'rxjs';
 
 @Component({
-    selector: 'auth-firebase-reset-password',
+    selector: 'auth-reset-password',
     templateUrl: './reset-password.component.html',
     encapsulation: ViewEncapsulation.None,
-    animations: davesaAnimations,
-    standalone: true,
+    animations: axiomaimAnimations,
     imports: [
-        DavesaAlertComponent,
+        AxiomaimAlertComponent,
         FormsModule,
         ReactiveFormsModule,
         MatFormFieldModule,
@@ -37,10 +36,10 @@ import { finalize } from 'rxjs';
         RouterLink,
     ],
 })
-export class AuthFirebaseResetPasswordComponent implements OnInit {
+export class AuthResetPasswordComponent implements OnInit {
     @ViewChild('resetPasswordNgForm') resetPasswordNgForm: NgForm;
 
-    alert: { type: DavesaAlertType; message: string } = {
+    alert: { type: AxiomaimAlertType; message: string } = {
         type: 'success',
         message: '',
     };
@@ -70,7 +69,7 @@ export class AuthFirebaseResetPasswordComponent implements OnInit {
                 passwordConfirm: ['', Validators.required],
             },
             {
-                validators: DavesaValidators.mustMatch(
+                validators: AxiomaimValidators.mustMatch(
                     'password',
                     'passwordConfirm'
                 ),

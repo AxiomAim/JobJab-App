@@ -35,13 +35,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DavesaConfirmationService } from '@davesa/services/confirmation';
+import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
 import { Tag } from 'app/core/models/tag.model';
-import { UsersListComponent } from 'app/modules/davesa/administration/users/list/list.component';
+import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { Country, User } from '../user.model';
 import { UsersV2Service } from '../usersV2.service';
-import { DavesaLoadingService } from '@davesa/services/loading';
+import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { UserRolesV2Service } from '../../user-roles/userRolesV2.service';
 import { UserRole } from '../../user-roles/user-role.model';
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
@@ -80,7 +80,7 @@ interface PhonenumberType {
 export class UsersDetailsComponent implements OnInit, OnDestroy {
     _usersV2Service = inject(UsersV2Service);
     _userRolesV2Service = inject(UserRolesV2Service);
-    _davesaLoadingService = inject(DavesaLoadingService);
+    _axiomaimLoadingService = inject(AxiomaimLoadingService);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
     @ViewChild('tagsPanel') private _tagsPanel: TemplateRef<any>;
     @ViewChild('tagsPanelOrigin') private _tagsPanelOrigin: ElementRef;
@@ -134,7 +134,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
         private _changeDetectorRef: ChangeDetectorRef,
         private _usersListComponent: UsersListComponent,
         private _formBuilder: UntypedFormBuilder,
-        private _davesaConfirmationService: DavesaConfirmationService,
+        private _axiomaimConfirmationService: AxiomaimConfirmationService,
         private _renderer2: Renderer2,
         private _router: Router,
         private _overlay: Overlay,
@@ -251,7 +251,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
      */
     deleteUser(): void {
         // Open the confirmation dialog
-        const confirmation = this._davesaConfirmationService.open({
+        const confirmation = this._axiomaimConfirmationService.open({
             title: 'Delete user',
             message:
                 'Are you sure you want to delete this user? This action cannot be undone!',
@@ -320,10 +320,10 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
      */
     uploadAvatar(event: any): void {
         console.log('event', event.target.files[0])
-        this._davesaLoadingService.show()        
+        this._axiomaimLoadingService.show()        
         this._usersV2Service.uploadAvatar(event.target.files[0], 'users').subscribe({
             next: (response: any) => {
-                this._davesaLoadingService.hide();
+                this._axiomaimLoadingService.hide();
                 console.log('uploadAvatar', response)
                 this.user.avatarPath = response.filePath;
                 this.user.avatarFile = response.fileName;
@@ -334,7 +334,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
                 console.log('user', this.user);
             },
             error: (error: any) => {
-                this._davesaLoadingService.hide();
+                this._axiomaimLoadingService.hide();
                 console.error('error', error);
             },
         });

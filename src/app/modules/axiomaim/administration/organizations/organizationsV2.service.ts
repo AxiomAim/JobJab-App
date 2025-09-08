@@ -12,7 +12,7 @@ import { Country, Organization, OrganizationModel } from "./organizations.model"
 import { Storage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from '@angular/fire/storage'; // Import getDownloadURL
 import { Tag } from "app/core/models/tag.model";
 
-export const encryptStorage = new EncryptStorage("encrypt-davesa", {
+export const encryptStorage = new EncryptStorage("encrypt-axiomaim", {
   storageType: "sessionStorage",
 });
 

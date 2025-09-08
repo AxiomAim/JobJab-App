@@ -1,4 +1,4 @@
-import { Scheme, Theme } from '@davesa/services/config';
+import { Scheme, Theme } from '@axiomaim/services/config';
 import { v4 as uuidv4 } from 'uuid';
 import { UserRole } from '../user-roles/user-role.model';
 import { BaseDto } from 'app/core/models/base-dto.model';
@@ -31,6 +31,8 @@ export class UserModel implements BaseDto {
         signatureType: string,
         firstName: string,
         lastName: string,
+        company: string,
+        agreements: boolean,
         address: string,
         emailSignature: string,
         avatar: string,
@@ -79,6 +81,8 @@ export class UserModel implements BaseDto {
             this.signatureType = signatureType;            
             this.firstName = firstName;
             this.lastName = lastName;
+            this.company = company;
+            this.agreements = agreements;
             this.address = address;
             this.emailSignature = emailSignature;
             this.email = email;
@@ -130,6 +134,8 @@ export class UserModel implements BaseDto {
     public signatureType: string;
     public firstName: string;
     public lastName: string;
+    public company: string;
+    public agreements: boolean;
     public address: string;
     public emailSignature: string;
     public email: string;
@@ -186,6 +192,8 @@ export class UserModel implements BaseDto {
             signatureType: dto.signatureType ? dto.signatureType : '',
             firstName: dto.firstName ? dto.firstName : '',            
             lastName: dto.lastName ? dto.lastName : '',
+            company: dto.company ? dto.company : '',
+            agreements: dto.agreements ? dto.agreements : false,
             address: dto.address ? dto.address : '',
             emailSignature: dto.emailSignature ? dto.emailSignature : '',
             email: dto.email ? dto.email : '',
@@ -196,7 +204,7 @@ export class UserModel implements BaseDto {
             avatarPath: dto.avatarPath ? dto.avatarPath : '',
             avatarFile: dto.avatarFile ? dto.avatarFile : '',
             avatarType: dto.avatarType ? dto.avatarType : '',
-            background: dto.background ? dto.background : 'images/cards/davesa-card.jpg',
+            background: dto.background ? dto.background : 'images/cards/axiomaim-card.jpg',
             linkedIn: dto.linkedIn ? dto.linkedIn : '',
             phoneNumbers: dto.phoneNumbers ? dto.phoneNumbers : [],
             mobileCountry: dto.mobileCountry ? dto.mobileCountry : '',
@@ -242,6 +250,8 @@ export class UserModel implements BaseDto {
             signatureType: '',
             firstName: '',
             lastName: '',
+            company: '',
+            agreements: false,
             address: '',
             emailSignature: '',
             email: '',
@@ -252,7 +262,7 @@ export class UserModel implements BaseDto {
             avatarPath: '',
             avatarFile: '',
             avatarType: '',
-            background: 'images/cards/davesa-card.jpg',
+            background: 'images/cards/axiomaim-card.jpg',
             linkedIn: '',
             phoneNumbers: [],
             mobileCountry: '',
@@ -301,6 +311,8 @@ export interface User  extends BaseDto {
     signatureType: string;
     firstName: string;
     lastName: string;
+    company: string;
+    agreements: boolean;
     address: string;
     emailSignature: string;
     avatar: string;
@@ -378,6 +390,8 @@ const UserSchema = v.object({
         signatureType: v.pipe(v.string()),
         firstName: v.pipe(v.string()),
         lastName: v.pipe(v.string()),
+        company: v.pipe(v.string()),
+        agreements: v.pipe(v.boolean()),
         address: v.pipe(v.string()),
         emailSignature: v.pipe(v.string()),
         avatar: v.pipe(v.string()),

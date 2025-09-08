@@ -1,4 +1,4 @@
-<davesa-loading-bar></davesa-loading-bar>
+<axiomaim-loading-bar></axiomaim-loading-bar>
 @if(organization$ | async; as organization ) {
 
 <div class="-m-6 flex max-h-screen max-w-240 flex-col md:min-w-160">
@@ -69,9 +69,9 @@
                             <input id="company-confirm" matInput [formControlName]="'domain'" />
                             <mat-error *ngIf="composeForm.get('domain').hasError('required')"> Domain is required
                                 (example:
-                                'davesa.com')</mat-error>
+                                'axiomaim.com')</mat-error>
                             <mat-error *ngIf="composeForm.get('domain').hasError('pattern')">
-                                Please enter a valid domain format (e.g., davesa.com)
+                                Please enter a valid domain format (e.g., axiomaim.com)
                             </mat-error>
                             <!-- <mat-error *ngIf="checkDomain(composeForm.get('domain')).hasError('unavailableDomain')">
                             This domain is already taken!

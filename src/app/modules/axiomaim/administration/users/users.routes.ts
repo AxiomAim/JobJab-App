@@ -5,9 +5,9 @@ import {
     RouterStateSnapshot,
     Routes,
 } from '@angular/router';
-import { UsersComponent } from 'app/modules/davesa/administration/users/users.component';
-import { UsersDetailsComponent } from 'app/modules/davesa/administration/users/details/details.component';
-import { UsersListComponent } from 'app/modules/davesa/administration/users/list/list.component';
+import { UsersComponent } from 'app/modules/axiomaim/administration/users/users.component';
+import { UsersDetailsComponent } from 'app/modules/axiomaim/administration/users/details/details.component';
+import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
 import { catchError, map, throwError } from 'rxjs';
 import { UsersV2Service } from './usersV2.service';
 import { LoginUserService } from 'app/core/login-user/login-user.service';
