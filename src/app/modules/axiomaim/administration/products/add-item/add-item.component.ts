@@ -27,6 +27,7 @@ import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.s
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
 import { User } from '../../users/user.model';
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
+import { ProductsV2Service } from '../products-v2.service';
 
 @Component({
     selector: 'products-add-item',
@@ -76,6 +77,7 @@ import { AddressLookupComponent } from 'app/layout/common/address-lookup/address
 })
 export class ProductsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
+    _productsV2Service = inject(ProductsV2Service);
     _alertMessagesService = inject(AlertMessagesService);
 
     formFieldHelpers: string[] = [''];
@@ -97,7 +99,7 @@ export class ProductsAddItemComponent implements OnInit, AfterViewInit, OnDestro
     @Output() drawerStateChanged = new EventEmitter<boolean>();
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-    userForm: UntypedFormGroup;
+    productForm: UntypedFormGroup;
     #loginUser = signal<User | null>(null);
     showRole: string[] = ["admin"];
     user_roles: any[] = [];
@@ -161,7 +163,7 @@ export class ProductsAddItemComponent implements OnInit, AfterViewInit, OnDestro
      * Set Form Group 
      */
     setFormGroup() {
-        this.userForm = this._formBuilder.group({
+        this.productForm = this._formBuilder.group({
             email: ["", [Validators.required, Validators.email]],
             firstName: ["", [Validators.required]],
             lastName: ["", [Validators.required]],
@@ -204,15 +206,15 @@ export class ProductsAddItemComponent implements OnInit, AfterViewInit, OnDestro
      */
     private resetForm(): void {
         // Reset form values
-        this.userForm.reset();
+        this.productForm.reset();
         
         // Clear all validation states
-        this.userForm.markAsUntouched();
-        this.userForm.markAsPristine();
+        this.productForm.markAsUntouched();
+        this.productForm.markAsPristine();
         
         // Reset each form control individually to ensure clean state
-        Object.keys(this.userForm.controls).forEach(key => {
-            const control = this.userForm.get(key);
+        Object.keys(this.productForm.controls).forEach(key => {
+            const control = this.productForm.get(key);
             if (control) {
                 control.setErrors(null);
                 control.markAsUntouched();
@@ -221,7 +223,7 @@ export class ProductsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         });
         
         // Set default values for form fields that need them
-        this.userForm.patchValue({
+        this.productForm.patchValue({
             active: true,
             user_roles: [],
             site_account_id: [],

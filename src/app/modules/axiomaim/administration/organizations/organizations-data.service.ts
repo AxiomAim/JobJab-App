@@ -69,7 +69,7 @@ export class OrganizationsDataService extends BaseDataService<Organization> {
           } else {
             // Handle the case where the document doesn't exist
             // You can throw an error, return an empty Observable, etc.
-            throw new Error(`Organization with ID ${id} not found`); 
+            throw new Error(`Product with ID ${id} not found`); 
           }
         })
       );
@@ -80,8 +80,8 @@ export class OrganizationsDataService extends BaseDataService<Organization> {
 
     public createItem(data: Organization): Observable<Organization> {
         return this._firestore.createItem(this.baseCollection, data).pipe(take(1),
-          tap((createdOrganization) => { 
-            console.log('Item created successfully:', createdOrganization); 
+          tap((createdProduct) => { 
+            console.log('Item created successfully:', createdProduct); 
           }),
           catchError((error) => {
             console.error('Error creating Item:', error);
@@ -113,7 +113,7 @@ export class OrganizationsDataService extends BaseDataService<Organization> {
     }
 
   /**
-   * Gets a page of Organizations.
+   * Gets a page of Products.
    *
    * @param pageSize The number of items per page.
    * @param startAfterDoc Optional. A document to start after (for pagination).

@@ -43,7 +43,6 @@ import { Country, User } from '../user.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { UserRole } from '../../user-roles/user-role.model';
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
-import { Organization } from '../../organizations/organizations.model';
 import { UsersV2Service } from '../users-v2.service';
 import { UserRolesV2Service } from '../../user-roles/userRoles-v2.service';
 
@@ -123,7 +122,6 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     loginUser: User;
-    organization: Organization;
     showRole: string[] = ["admin"];
 
     /**

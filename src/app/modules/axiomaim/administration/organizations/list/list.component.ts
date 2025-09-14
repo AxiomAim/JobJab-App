@@ -27,24 +27,20 @@ import {
     RouterOutlet,
 } from '@angular/router';
 import { AxiomaimMediaWatcherService } from '@axiomaim/services/media-watcher';
-import { Category } from 'app/core/models/category.model';
 import {
+    BehaviorSubject,
     Observable,
     Subject,
     filter,
     fromEvent,
     switchMap,
     takeUntil,
-    tap,
 } from 'rxjs';
 import { Organization } from '../organizations.model';
-import { OrganizationsV2Service } from '../organizationsV2.service';
-import { GridModule, GridComponent, TextWrapSettingsModel, ToolbarItems } from '@syncfusion/ej2-angular-grids';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
-import { OrganizationsComposeComponent } from '../compose/compose.component';
-import { SortByIndexPipe } from '@axiomaim/pipes/sortByIndex.pipe';
-
+import { OrganizationsV2Service } from '../organizations-v2.service';
+import { OrganizationsAddItemComponent } from '../add-item/add-item.component';
+import { OrganizationsComponent } from '../organizations.component';
 
 @Component({
     selector: 'organizations-list',
@@ -63,39 +59,34 @@ import { SortByIndexPipe } from '@axiomaim/pipes/sortByIndex.pipe';
         MatButtonModule,
         NgClass,
         RouterLink,
+        AsyncPipe,
         I18nPluralPipe,
-        MatTooltipModule,
-        SortByIndexPipe,
-        GridModule
+        OrganizationsAddItemComponent
     ],
 })
 export class OrganizationsListComponent implements OnInit, OnDestroy {
     _organizationsV2Service = inject(OrganizationsV2Service);
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
 
-    organizations$: Observable<Organization[]>;
-    organization$: Observable<Organization>;
+    private _organizations: BehaviorSubject<Organization[] | null> = new BehaviorSubject(
+        null
+    );
+    get organizations$(): Observable<Organization[]> {
+        return this._organizations.asObservable();
+    }
 
-    organizations: Organization[] = [];
-    organization: Organization;
+    private _organization: BehaviorSubject<Organization | null> = new BehaviorSubject(
+        null
+    );
+    get organization$(): Observable<Organization> {
+        return this._organization.asObservable();
+    }
 
-    organizationsCount: number = 0;
-    organizationsTableColumns: string[] = ['name', 'email', 'phoneNumber', 'job'];
-    categories: Category[];
+    organizationCount: number = 0;
     drawerMode: 'side' | 'over';
     searchInputControl: UntypedFormControl = new UntypedFormControl();
-    selectedOrganization: Organization;
+    selectedProduct: Organization;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-    viewTable: boolean = false;
-
-    //ItemGrid
-    @ViewChild('itemdGrid') public itemdGrid: GridComponent;
-    public filters = { status: 'All', condition: 'All', other: 'All' };
-    public pageSettings?: Object;
-    public wrapSettings: TextWrapSettingsModel;
-    public toolbar: ToolbarItems[] = ['Search'];
-    public sortOptions: object;
-
 
     /**
      * Constructor
@@ -107,7 +98,7 @@ export class OrganizationsListComponent implements OnInit, OnDestroy {
         private _router: Router,
         private _axiomaimMediaWatcherService: AxiomaimMediaWatcherService,
         private _matDialog: MatDialog,
-
+        
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -118,36 +109,29 @@ export class OrganizationsListComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        this.toolbar = ['Search'];
-        this.wrapSettings = { wrapMode: 'Both' };
-        this.pageSettings = { pageSizes: ['5', '10','15','20', 'All'], };
-        this.sortOptions = { columns: [{ field: 'sort', direction: 'Ascending' }] };
-
-        // Get the organizations
-        this.organizations = this._organizationsV2Service.organizations() ? this._organizationsV2Service.organizations() : [];
-        console.log('this.organizations', this.organizations)
-        // this.organization$ = this._organizationsV2Service.organization$;
-        // this.organizations$ = this._organizationsV2Service.organizations$;
-        // this._organizationsV2Service.organizations$
-        //     .pipe(takeUntil(this._unsubscribeAll))
-        //     .subscribe((organizations: Organization[]) => {
+        // Get the quotes
+        this._organizations.next(this._organizationsV2Service.organizations());
+        this.organizations$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((quotes: Organization[]) => {
                 // Update the counts
-                this.organizationsCount = this.organizations.length;
+                this.organizationCount = quotes.length;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
-            // });
+            });
 
-        // Get the organization
-        // this._organizationsV2Service.organization$
-        //     .pipe(takeUntil(this._unsubscribeAll))
-        //     .subscribe((organization: Organization) => {
-                // Update the selected organization
-                this.selectedOrganization = this._organizationsV2Service.organization() ? this._organizationsV2Service.organization() : null;
+        // Get the product
+        this._organization.next(this._organizationsV2Service.organization());
+        this.organization$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((product: Organization) => {
+                // Update the selected product
+                this.selectedProduct = product;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
-            // });
+            });
 
         // Subscribe to search input field value changes
         this.searchInputControl.valueChanges
@@ -155,16 +139,18 @@ export class OrganizationsListComponent implements OnInit, OnDestroy {
                 takeUntil(this._unsubscribeAll),
                 switchMap((query) =>
                     // Search
-                    this._organizationsV2Service.searchCsvObjects(query)
+                    this._organizationsV2Service.search(query)
                 )
             )
-            .subscribe();
+            .subscribe((resProducts) => {
+                this._organizations.next(resProducts);
+            });
 
         // Subscribe to MatDrawer opened change
         this.matDrawer.openedChange.subscribe((opened) => {
             if (!opened) {
-                // Remove the selected organization when drawer closed
-                this.selectedOrganization = null;
+                // Remove the selected product when drawer closed
+                this.selectedProduct = null;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -197,7 +183,7 @@ export class OrganizationsListComponent implements OnInit, OnDestroy {
                 )
             )
             .subscribe(() => {
-
+                // this.createItem();
             });
     }
 
@@ -226,24 +212,6 @@ export class OrganizationsListComponent implements OnInit, OnDestroy {
     }
 
 
-    selectedRow(event: any) {
-        this._router.navigate(['apps/organizations/', event.data.id])
-    }
-
-
-    /**
-     * Open compose dialog
-     */
-    openComposeDialog(): void {
-        // Open the dialog
-        const dialogRef = this._matDialog.open(OrganizationsComposeComponent);
-
-        dialogRef.afterClosed().subscribe((result) => {
-            console.log('Compose dialog was closed!');
-        });
-    }
-
-        
     /**
      * Track by function for ngFor loops
      *
@@ -253,5 +221,4 @@ export class OrganizationsListComponent implements OnInit, OnDestroy {
     trackByFn(index: number, item: any): any {
         return item.id || index;
     }
-
 }

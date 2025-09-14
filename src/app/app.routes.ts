@@ -89,8 +89,16 @@ export const appRoutes: Route[] = [
 
             // Administration
             {path: 'administration', children: [
+                {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
                 {path: 'users', loadChildren: () => import('app/modules/axiomaim/administration/users/users.routes')},
                 {path: 'products', loadChildren: () => import('app/modules/axiomaim/administration/products/products.routes')},
+                {path: 'services', loadChildren: () => import('app/modules/axiomaim/administration/services/services.routes')},
+                {path: 'quotes', loadChildren: () => import('app/modules/axiomaim/administration/quotes/quotes.routes')},
+                {path: 'customers', loadChildren: () => import('app/modules/axiomaim/administration/customers/customers.routes')},
+                {path: 'jobs', loadChildren: () => import('app/modules/axiomaim/administration/jobs/jobs.routes')},
+                {path: 'invoices', loadChildren: () => import('app/modules/axiomaim/administration/invoices/invoices.routes')},
+                {path: 'technicians', loadChildren: () => import('app/modules/axiomaim/administration/technicians/technicians.routes')},
+                {path: 'leads', loadChildren: () => import('app/modules/axiomaim/administration/leads/leads.routes')},
                 // {path: 'user-roles', loadChildren: () => import('app/modules/axiomaim/administration/user-roles/user-roles.routes')},
                 // {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
             ]},

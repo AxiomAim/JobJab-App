@@ -5,12 +5,11 @@ import {
     RouterStateSnapshot,
     Routes,
 } from '@angular/router';
-import { UsersComponent } from 'app/modules/axiomaim/administration/users/users.component';
-import { UsersDetailsComponent } from 'app/modules/axiomaim/administration/users/details/details.component';
-import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
-import { catchError, map, of, throwError } from 'rxjs';
-import { LoginUserService } from 'app/core/login-user/login-user.service';
-import { UsersV2Service } from './services-v2.service';
+import { of } from 'rxjs';
+import { ServicesV2Service } from './services-v2.service';
+import { ServicesDetailsComponent } from './details/details.component';
+import { ServicesComponent } from './services.component';
+import { ServicesListComponent } from './list/list.component';
 
 
 /**
@@ -19,15 +18,15 @@ import { UsersV2Service } from './services-v2.service';
  * @param route
  * @param state
  */
-const userResolver = (
+const serviceResolver = (
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
 ) => {
-    const _usersV2Service = inject(UsersV2Service);
+    const _productsV2Service = inject(ServicesV2Service);
     const router = inject(Router);
     const oid = route.paramMap.get('id');
     
-    return _usersV2Service.getItem(oid).catch((error) => {
+    return _productsV2Service.getItem(oid).catch((error) => {
         // Log the error
         console.error('Error fetching site:', error);
 
@@ -51,7 +50,7 @@ const userResolver = (
  * @param nextState
  */
 const canDeactivateUsersDetails = (
-    component: UsersDetailsComponent,
+    component: ServicesDetailsComponent,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
     nextState: RouterStateSnapshot
@@ -83,23 +82,23 @@ const canDeactivateUsersDetails = (
 export default [
     {
         path: '',
-        component: UsersComponent,
+        component: ServicesComponent,
         resolve: {
         },
         children: [
             {
                 path: '',
-                component: UsersListComponent,
+                component: ServicesListComponent,
                 resolve: {
-                    users: () => inject(UsersV2Service).getAll(),
+                    users: () => inject(ServicesV2Service).getAll(),
                 },
                 children: [
                     {
                         path: ':id',
-                        component: UsersDetailsComponent,
+                        component: ServicesDetailsComponent,
                         resolve: {
-                            // userRoles: () => inject(UsersV2Service).getUserRoles(),
-                            user: userResolver,
+                            // userRoles: () => inject(ProductsV2Service).getUserRoles(),
+                            user: serviceResolver,
                         },
                         canDeactivate: [canDeactivateUsersDetails],
                     },

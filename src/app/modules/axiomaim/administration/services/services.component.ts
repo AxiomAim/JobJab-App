@@ -6,14 +6,14 @@ import {
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-    selector: 'users',
-    templateUrl: './users.component.html',
+    selector: 'services',
+    templateUrl: './services.component.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [RouterOutlet],
 })
-export class UsersComponent {
+export class ServicesComponent {
     /**
      * Constructor
      */

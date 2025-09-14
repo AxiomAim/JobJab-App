@@ -13,27 +13,27 @@ import {
   query, 
   WhereFilterOp
 } from '@angular/fire/firestore';
-import { User } from './services.model';
+import { Service } from './services.model';
 
 @Injectable(
     {
         providedIn: 'root',
     }
 )
-export class UsersDataService extends BaseDataService<User> {
+export class ServicesDataService extends BaseDataService<Service> {
     _firestore = inject(FirestoreService)
 
     constructor(
       public firestore: Firestore
 
     ) {
-        super('users');
+        super('services');
     }
     
-    public getAll(): Observable<User[]> {
+    public getAll(): Observable<Service[]> {
         return  this._firestore.getAll(this.baseCollection);
     }
-    public getItem(id: string): Observable<User> {
+    public getItem(id: string): Observable<Service> {
         return this._firestore.getItem(this.baseCollection, id);
     }
 
@@ -41,25 +41,25 @@ export class UsersDataService extends BaseDataService<User> {
     //     return this._firestore.updateItem<Item>(this.baseCollection, data.id, data);
     // }
     
-    public updateItem(data: Partial<User>): Observable<User> {
+    public updateItem(data: Partial<Service>): Observable<Service> {
         // Assuming 'id' is the primary key
         const { id, ...updateData } = data; 
         // Only update if there are actual changes
         if (Object.keys(updateData).length === 0) {
-          return of(data as User); // Or throw an error if this shouldn't happen
+          return of(data as Service); // Or throw an error if this shouldn't happen
         }
       
-        return this._firestore.updateItem<User>(this.baseCollection, id, updateData);
+        return this._firestore.updateItem<Service>(this.baseCollection, id, updateData);
       }
       
     // public deleteItem(id: string): Observable<Item> {
     //     return this._firestore.deleteItem(this.baseCollection, id);
     // }
 
-    public deleteItem(id: string): Observable<User> {
+    public deleteItem(id: string): Observable<Service> {
       // 1. Fetch the document before deleting
       return this._firestore.getItem(this.baseCollection, id).pipe(
-        map((item) => item as User),
+        map((item) => item as Service),
         switchMap((document) => {
           if (document) { 
             // 2. Delete the document if it exists
@@ -69,7 +69,7 @@ export class UsersDataService extends BaseDataService<User> {
           } else {
             // Handle the case where the document doesn't exist
             // You can throw an error, return an empty Observable, etc.
-            throw new Error(`User with ID ${id} not found`); 
+            throw new Error(`Product with ID ${id} not found`); 
           }
         })
       );
@@ -78,10 +78,10 @@ export class UsersDataService extends BaseDataService<User> {
     //     return this._firestore.createItem<Item>(this.baseCollection, data);
     // }
 
-    public createItem(data: User): Observable<User> {
+    public createItem(data: Service): Observable<Service> {
         return this._firestore.createItem(this.baseCollection, data).pipe(take(1),
-          tap((createdUser) => { 
-            console.log('Item created successfully:', createdUser); 
+          tap((createdProduct) => { 
+            console.log('Item created successfully:', createdProduct); 
           }),
           catchError((error) => {
             console.error('Error creating Item:', error);
@@ -91,21 +91,21 @@ export class UsersDataService extends BaseDataService<User> {
         );
       }
 
-    public getQuery(fieldName: string, operator: WhereFilterOp, value: string): Observable<User[]> {
+    public getQuery(fieldName: string, operator: WhereFilterOp, value: string): Observable<Service[]> {
         return this._firestore.getQuery(this.baseCollection, fieldName, operator, value);
     }
 
-    public bulkCreate(data: Partial<User>[]): Observable<User[]> { 
-      return this._firestore.bulkCreate<User>(this.baseCollection, data as User[]); 
+    public bulkCreate(data: Partial<Service>[]): Observable<Service[]> { 
+      return this._firestore.bulkCreate<Service>(this.baseCollection, data as Service[]); 
     }
 
-    public getQueryWhereclause(queries: FirestoreQuery[]): Observable<User[]> {
-      return this._firestore.getQueryWhereclause<User>(this.baseCollection, queries);
+    public getQueryWhereclause(queries: FirestoreQuery[]): Observable<Service[]> {
+      return this._firestore.getQueryWhereclause<Service>(this.baseCollection, queries);
   }
 
 
-    public bulkUpdate(data: Partial<User>[]): Observable<User[]> { 
-      return this._firestore.bulkUpdate<User>(this.baseCollection, data as User[]); 
+    public bulkUpdate(data: Partial<Service>[]): Observable<Service[]> { 
+      return this._firestore.bulkUpdate<Service>(this.baseCollection, data as Service[]); 
     }
 
     public bulkDelete(ids: string[]) { 
@@ -113,7 +113,7 @@ export class UsersDataService extends BaseDataService<User> {
     }
 
   /**
-   * Gets a page of Users.
+   * Gets a page of Products.
    *
    * @param pageSize The number of items per page.
    * @param startAfterDoc Optional. A document to start after (for pagination).
@@ -122,11 +122,11 @@ export class UsersDataService extends BaseDataService<User> {
    */
     public getPaged(
       pageSize: number,
-      startAfterDoc?: User,
+      startAfterDoc?: Service,
       orderByField?: string,
       orderByDirection: 'asc' | 'desc' = 'asc'
-    ): Observable<{ data: User[]; lastDoc: User | null }> {
-      return new Observable<{ data: User[]; lastDoc: User | null }>((observer) => {
+    ): Observable<{ data: Service[]; lastDoc: Service | null }> {
+      return new Observable<{ data: Service[]; lastDoc: Service | null }>((observer) => {
         const collectionRef = collection(this.firestore, this.baseCollection);
         let q = query(collectionRef, limit(pageSize));
   
@@ -140,12 +140,12 @@ export class UsersDataService extends BaseDataService<User> {
   
         getDocs(q)
           .then((querySnapshot) => {
-            const data: User[] = [];
-            let lastDoc: User | null = null;
+            const data: Service[] = [];
+            let lastDoc: Service | null = null;
   
             querySnapshot.forEach((doc) => {
-              data.push(doc.data() as User);
-              lastDoc = doc.data() as User; // Get the last document for next page
+              data.push(doc.data() as Service);
+              lastDoc = doc.data() as Service; // Get the last document for next page
             });
   
             observer.next({ data, lastDoc });

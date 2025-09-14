@@ -41,7 +41,6 @@ import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'r
 import { Product } from '../products.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
-import { Organization } from '../../organizations/organizations.model';
 import { ProductsV2Service } from '../products-v2.service';
 
 
@@ -99,7 +98,6 @@ export class ProductsDetailsComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     loginProduct: Product;
-    organization: Organization;
     showRole: string[] = ["admin"];
 
     /**

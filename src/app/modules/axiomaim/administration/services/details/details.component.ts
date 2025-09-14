@@ -1,7 +1,6 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { AsyncPipe, DatePipe, NgClass } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -37,15 +36,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
 import { Tag } from 'app/core/models/tag.model';
-import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
-import { Country, User } from '../services.model';
+import { Service } from '../services.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
-import { UserRolesV2Service } from '../../user-roles/userRolesV2.service';
-import { UserRole } from '../../user-roles/user-role.model';
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
-import { Organization } from '../../organizations/organizations.model';
-import { UsersV2Service } from '../services-v2.service';
+import { ServicesV2Service } from '../services-v2.service';
+import { User } from 'app/core/user/user.types';
+import { ServicesListComponent } from '../list/list.component';
 
 
 interface PhonenumberType {
@@ -54,7 +51,7 @@ interface PhonenumberType {
   }
 
 @Component({
-    selector: 'users-details',
+    selector: 'services-details',
     templateUrl: './details.component.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -77,53 +74,31 @@ interface PhonenumberType {
         SelectMultiComponent,
     ],
 })
-export class UsersDetailsComponent implements OnInit, OnDestroy {
-    _usersV2Service = inject(UsersV2Service);
-    _userRolesV2Service = inject(UserRolesV2Service);
+export class ServicesDetailsComponent implements OnInit, OnDestroy {
+    _servicesV2Service = inject(ServicesV2Service);
     _axiomaimLoadingService = inject(AxiomaimLoadingService);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
     @ViewChild('tagsPanel') private _tagsPanel: TemplateRef<any>;
     @ViewChild('tagsPanelOrigin') private _tagsPanelOrigin: ElementRef;
-    private _user: BehaviorSubject<User | null> = new BehaviorSubject(
+    private _service: BehaviorSubject<Service | null> = new BehaviorSubject(
         null
     );
-    get user$(): Observable<User> {
-        return this._user.asObservable();
+    get service$(): Observable<Service> {
+        return this._service.asObservable();
     }
-
-
-    userRoles: UserRole[] = [];
-
-    private _countries: BehaviorSubject<Country[] | null> = new BehaviorSubject(
-        []
-    );
-    get countries$(): Observable<Country[]> {
-        return this._countries.asObservable();
-    }
-
-    countries: Country[];
-    
-    phonenumberTypes: PhonenumberType[] = [
-        {value: 'mobile', viewValue: 'Mobile'},
-        {value: 'work', viewValue: 'Work'},
-        {value: 'home', viewValue: 'Home'},
-        {value: 'other', viewValue: 'Other'},
-        ];
-    
 
 
     editMode: boolean = false;
     tags: Tag[];
     tagsEditMode: boolean = false;
     filteredTags: Tag[];
-    user: User;
-    userForm: UntypedFormGroup;
-    users: User[];
+    service: Service;
+    serviceForm: UntypedFormGroup;
+    services: Service[];
     private _tagsPanelOverlayRef: OverlayRef;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     loginUser: User;
-    organization: Organization;
     showRole: string[] = ["admin"];
 
     /**
@@ -132,7 +107,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
     constructor(
         private _activatedRoute: ActivatedRoute,
         private _changeDetectorRef: ChangeDetectorRef,
-        private _usersListComponent: UsersListComponent,
+        private _servicesListComponent: ServicesListComponent,
         private _formBuilder: UntypedFormBuilder,
         private _axiomaimConfirmationService: AxiomaimConfirmationService,
         private _renderer2: Renderer2,
@@ -149,41 +124,28 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        this.loginUser = this._usersV2Service.loginUser();
-        // this.organization = this._usersV2Service.organization();
-        this.users = this._usersV2Service.users();
-        this.user = this._usersV2Service.user();
-        // this.userRoles = this._usersV2Service.userRoles();
+        this.services = this._servicesV2Service.services();
+        this.service = this._servicesV2Service.service();
         // Open the drawer
-        this._usersListComponent.matDrawer.open();
+        this._servicesListComponent.matDrawer.open();
         const phonePattern = "^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"; 
 
-        // Create the user form
-        this.userForm = this._formBuilder.group({
+        // Create the service form
+        this.serviceForm = this._formBuilder.group({
             id: [''],
             avatar: [null],
             firstName: ['', [Validators.required]],
             lastName: ['', [Validators.required]],
             phoneNumbers: this._formBuilder.array([]),
             address: [null],
-            activeUser:  [true, [Validators.required]],
+            activeProduct:  [true, [Validators.required]],
         });
 
         this._changeDetectorRef.markForCheck();
 
-        this._usersListComponent.matDrawer.open();
-        this.userForm.patchValue(this.user);
-        // this._countries.next(this._usersV2Service.countries());
+        this._servicesListComponent.matDrawer.open();
+        this.serviceForm.patchValue(this.service);
 
-        // Get the country telephone codes
-        this.countries$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((codes: Country[]) => {
-                this.countries = codes;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
     }
 
     /**
@@ -208,7 +170,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
      * Close the drawer
      */
     closeDrawer(): Promise<MatDrawerToggleResult> {
-        return this._usersListComponent.matDrawer.close();
+        return this._servicesListComponent.matDrawer.close();
     }
 
     /**
@@ -228,17 +190,17 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Update the user
+     * Update the service
      */
     updateItem(): void {        
-        this.user = {...this._user.getValue(), ...this.userForm.getRawValue()};
-        console.log('user', this.user);
-        // Get the user object
-        // const user = this.userForm.getRawValue();
+        this.service = {...this._service.getValue(), ...this.serviceForm.getRawValue()};
+        console.log('service', this.service);
+        // Get the service object
+        // const service = this.serviceForm.getRawValue();
 
-        // Update the user on the server
-        this._usersV2Service
-            .updateItem(this.user)
+        // Update the service on the server
+        this._servicesV2Service
+            .updateItem(this.service)
             .then(() => {
                 // Toggle the edit mode off
                 this.toggleEditMode(false);
@@ -246,14 +208,14 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Delete the user
+     * Delete the service
      */
-    deleteUser(): void {
+    deleteProduct(): void {
         // Open the confirmation dialog
         const confirmation = this._axiomaimConfirmationService.open({
-            title: 'Delete user',
+            title: 'Delete service',
             message:
-                'Are you sure you want to delete this user? This action cannot be undone!',
+                'Are you sure you want to delete this service? This action cannot be undone!',
             actions: {
                 confirm: {
                     label: 'Delete',
@@ -265,33 +227,33 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
         confirmation.afterClosed().subscribe((result) => {
             // If the confirm button pressed...
             if (result === 'confirmed') {
-                // Get the current user's id
-                const id = this.user.id;
+                // Get the current service's id
+                const id = this.service.id;
 
-                // Get the next/previous user's id
-                const currentUserIndex = this.users.findIndex(
+                // Get the next/previous service's id
+                const currentProductIndex = this.services.findIndex(
                     (item) => item.id === id
                 );
-                const nextUserIndex =
-                    currentUserIndex +
-                    (currentUserIndex === this.users.length - 1 ? -1 : 1);
-                const nextUserId =
-                    this.users.length === 1 && this.users[0].id === id
+                const nextProductIndex =
+                    currentProductIndex +
+                    (currentProductIndex === this.services.length - 1 ? -1 : 1);
+                const nextProductId =
+                    this.services.length === 1 && this.services[0].id === id
                         ? null
-                        : this.users[nextUserIndex].id;
+                        : this.services[nextProductIndex].id;
 
-                // Delete the user
-                this._usersV2Service
+                // Delete the service
+                this._servicesV2Service
                     .deleteItem(id)
                     .then((isDeleted) => {
-                        // Return if the user wasn't deleted...
+                        // Return if the service wasn't deleted...
                         if (!isDeleted) {
                             return;
                         }
 
-                        // Navigate to the next user if available
-                        if (nextUserId) {
-                            this._router.navigate(['../', nextUserId], {
+                        // Navigate to the next service if available
+                        if (nextProductId) {
+                            this._router.navigate(['../', nextProductId], {
                                 relativeTo: this._activatedRoute,
                             });
                         }
@@ -320,17 +282,17 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
     uploadAvatar(event: any): void {
         console.log('event', event.target.files[0])
         this._axiomaimLoadingService.show()        
-        // this._usersV2Service.uploadAvatar(event.target.files[0], 'users').subscribe({
+        // this._servicesV2Service.uploadAvatar(event.target.files[0], 'services').subscribe({
         //     next: (response: any) => {
         //         this._axiomaimLoadingService.hide();
         //         console.log('uploadAvatar', response)
-        //         this.user.avatarPath = response.filePath;
-        //         this.user.avatarFile = response.fileName;
-        //         this.user.avatarType = response.fileType;
-        //         this.user.avatarUrl = response.fileUrl;
-        //         this.user.avatar = response.fileUrl;                
-        //         this._user.next(this.user);
-        //         console.log('user', this.user);
+        //         this.service.avatarPath = response.filePath;
+        //         this.service.avatarFile = response.fileName;
+        //         this.service.avatarType = response.fileType;
+        //         this.service.avatarUrl = response.fileUrl;
+        //         this.service.avatar = response.fileUrl;                
+        //         this._service.next(this.service);
+        //         console.log('service', this.service);
         //     },
         //     error: (error: any) => {
         //         this._axiomaimLoadingService.hide();
@@ -344,7 +306,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
      */
     removeAvatar(): void {
         // Get the form control for 'avatar'
-        const avatarFormControl = this.userForm.get('avatar');
+        const avatarFormControl = this.serviceForm.get('avatar');
 
         // Set the avatar as null
         avatarFormControl.setValue(null);
@@ -352,16 +314,16 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
         // Set the file input value as null
         this._avatarFileInput.nativeElement.value = null;
 
-        // Update the user
-        this.user.avatar = null;
+        // Update the service
+        // this.service.avatar = null;
     }
 
     onOptionSelected(data: any[]) {
         console.log('onOptionSelected', data);
-        this.user.userRoles = data;
-        this._user.next(this.user);
-        // console.log('onOptionSelected', this.user);
-        // this.user$.subscribe((resUser: User) => {
+        // this.service.serviceRoles = data;
+        this._service.next(this.service);
+        // console.log('onOptionSelected', this.service);
+        // this.service$.subscribe((resProduct: Product) => {
 
         // });
     }
@@ -492,32 +454,18 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
 
     //     // If there is a tag...
     //     const tag = this.filteredTags[0];
-    //     const isTagApplied = this.user.tags.find((id) => id === tag.id);
+    //     const isTagApplied = this.service.tags.find((id) => id === tag.id);
 
-    //     // If the found tag is already applied to the user...
+    //     // If the found tag is already applied to the service...
     //     if (isTagApplied) {
-    //         // Remove the tag from the user
-    //         this.removeTagFromUser(tag);
+    //         // Remove the tag from the service
+    //         this.removeTagFromProduct(tag);
     //     } else {
-    //         // Otherwise add the tag to the user
-    //         this.addTagToUser(tag);
+    //         // Otherwise add the tag to the service
+    //         this.addTagToProduct(tag);
     //     }
     // }
 
-
-        /**
-     * Get country info by iso code
-     *
-     * @param iso
-     */
-        getCountryByIso(iso: string): Country {
-            if(iso) {
-                return this.countries.find((country) => country.iso === iso);
-    
-            }
-        }
-
-        
     /**
      * Track by function for ngFor loops
      *

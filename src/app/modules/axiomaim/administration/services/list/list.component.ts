@@ -36,13 +36,14 @@ import {
     switchMap,
     takeUntil,
 } from 'rxjs';
-import { User } from '../services.model';
+import { Service } from '../services.model';
 import { MatDialog } from '@angular/material/dialog';
-import { UsersComposeComponent } from '../compose/compose.component';
-import { UsersV2Service } from '../services-v2.service';
+import { ProductsComposeComponent } from '../compose/compose.component';
+import { ServicesV2Service } from '../services-v2.service';
+import { ServicesAddItemComponent } from '../add-item/add-item.component';
 
 @Component({
-    selector: 'users-list',
+    selector: 'services-list',
     templateUrl: './list.component.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,31 +61,31 @@ import { UsersV2Service } from '../services-v2.service';
         RouterLink,
         AsyncPipe,
         I18nPluralPipe,
+        ServicesAddItemComponent
     ],
 })
-export class UsersListComponent implements OnInit, OnDestroy {
-    _usersV2Service = inject(UsersV2Service);
+export class ServicesListComponent implements OnInit, OnDestroy {
+    _servicesV2Service = inject(ServicesV2Service);
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
 
-    private _users: BehaviorSubject<User[] | null> = new BehaviorSubject(
+    private _services: BehaviorSubject<Service[] | null> = new BehaviorSubject(
         null
     );
-    get users$(): Observable<User[]> {
-        return this._users.asObservable();
+    get services$(): Observable<Service[]> {
+        return this._services.asObservable();
     }
 
-    private _user: BehaviorSubject<User | null> = new BehaviorSubject(
+    private _service: BehaviorSubject<Service | null> = new BehaviorSubject(
         null
     );
-    get user$(): Observable<User> {
-        return this._user.asObservable();
+    get service$(): Observable<Service> {
+        return this._service.asObservable();
     }
 
-    userCount: number = 0;
-    usersTableColumns: string[] = ['name', 'email', 'phoneNumber', 'job'];
+    serviceCount: number = 0;
     drawerMode: 'side' | 'over';
     searchInputControl: UntypedFormControl = new UntypedFormControl();
-    selectedUser: User;
+    selectedProduct: Service;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -108,25 +109,25 @@ export class UsersListComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        // Get the users
-        this._users.next(this._usersV2Service.users());
-        this.users$
+        // Get the services
+        this._services.next(this._servicesV2Service.services());
+        this.services$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((users: User[]) => {
+            .subscribe((services: Service[]) => {
                 // Update the counts
-                this.userCount = users.length;
+                this.serviceCount = services.length;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
 
-        // Get the user
-        this._user.next(this._usersV2Service.user());
-        this.user$
+        // Get the product
+        this._service.next(this._servicesV2Service.service());
+        this.service$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((user: User) => {
-                // Update the selected user
-                this.selectedUser = user;
+            .subscribe((product: Service) => {
+                // Update the selected product
+                this.selectedProduct = product;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -138,18 +139,18 @@ export class UsersListComponent implements OnInit, OnDestroy {
                 takeUntil(this._unsubscribeAll),
                 switchMap((query) =>
                     // Search
-                    this._usersV2Service.search(query)
+                    this._servicesV2Service.search(query)
                 )
             )
-            .subscribe((resUsers) => {
-                this._users.next(resUsers);
+            .subscribe((resProducts) => {
+                this._services.next(resProducts);
             });
 
         // Subscribe to MatDrawer opened change
         this.matDrawer.openedChange.subscribe((opened) => {
             if (!opened) {
-                // Remove the selected user when drawer closed
-                this.selectedUser = null;
+                // Remove the selected product when drawer closed
+                this.selectedProduct = null;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -215,7 +216,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
      */
     openComposeDialog(): void {
         // Open the dialog
-        const dialogRef = this._matDialog.open(UsersComposeComponent);
+        const dialogRef = this._matDialog.open(ProductsComposeComponent);
 
         dialogRef.afterClosed().subscribe((result) => {
             console.log('Compose dialog was closed!');

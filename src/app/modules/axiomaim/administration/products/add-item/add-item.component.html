@@ -22,7 +22,7 @@
         <!-- form -->
         <div class="relative flex flex-auto flex-col overflow-y-auto items-center px-6 sm:px-12">
             <div class="w-full max-w-3xl">
-                <form [formGroup]="userForm">
+                <form [formGroup]="productForm">
                     <div class="mt-8">
                         <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
                             <mat-label>Email</mat-label>
@@ -53,7 +53,7 @@
                     </div>
                     <!-- </div> -->
                     <div class="mt-8">
-                        <address-lookup class="w-full" label="Address" [control]="userForm.controls['address']"
+                        <address-lookup class="w-full" label="Address" [control]="productForm.controls['address']"
                             placeholder="Enter address">
                         </address-lookup>
 
@@ -67,7 +67,8 @@
                             </button>
                             <!-- Save -->
                             <button class="ml-2" mat-flat-button [color]="'primary'"
-                                [disabled]="userForm.invalid || isLoading()" [matTooltip]="'Save'" (click)="onSubmit()">
+                                [disabled]="productForm.invalid || isLoading()" [matTooltip]="'Save'"
+                                (click)="onSubmit()">
                                 {{ isLoading() ? 'Saving...' : 'Save' }}
                             </button>
                         </div>

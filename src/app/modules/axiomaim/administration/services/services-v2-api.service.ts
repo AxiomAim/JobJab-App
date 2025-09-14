@@ -1,38 +1,38 @@
 import { createInjectable } from "ngxtension/create-injectable";
 import { inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
-import { UsersDataService } from "./services-data.service";
-import { User } from "./services.model";
+import { ServicesDataService } from "./services-data.service";
+import { Service } from "./services.model";
 
-export const UsersV2ApiService = createInjectable(() => {
-  const _usersDataService = inject(UsersDataService);
+export const ServicesV2ApiService = createInjectable(() => {
+  const _servicesDataService = inject(ServicesDataService);
   
-  const getAll = async ():Promise<User[]> => {
-    const response$ = _usersDataService.getAll();
+  const getAll = async ():Promise<Service[]> => {
+    const response$ = _servicesDataService.getAll();
     const response: any = await firstValueFrom(response$)
     return response;
   };
 
-  const getItem = async (id):Promise<User> => {
-    const response$ = _usersDataService.getItem(id);
+  const getItem = async (id):Promise<Service> => {
+    const response$ = _servicesDataService.getItem(id);
     const response = await firstValueFrom(response$)
     return response;
   };
 
-  const createItem = async (data: User):Promise<User> => {
-    const response$ = _usersDataService.createItem(data);
+  const createItem = async (data: Service):Promise<Service> => {
+    const response$ = _servicesDataService.createItem(data);
     const response: any = await firstValueFrom(response$)
     return response.data;
   };
 
-  const updateItem = async (data: User):Promise<User> => {
-    const response$ = _usersDataService.updateItem(data);
+  const updateItem = async (data: Service):Promise<Service> => {
+    const response$ = _servicesDataService.updateItem(data);
     const response: any = await firstValueFrom(response$)
     return response.data;
   };
 
   const deleteItem = async (id: string):Promise<object> => {
-    const response$ = _usersDataService.deleteItem(id);
+    const response$ = _servicesDataService.deleteItem(id);
     const response: any = await firstValueFrom(response$)
     return response.data;
   };

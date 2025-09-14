@@ -27,11 +27,9 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { AxiomaimLoadingBarComponent } from '@axiomaim/components/loading-bar';
 import { Router } from '@angular/router';
-import { Country, User, UserModel } from '../services.model';
-import { UserRole } from '../../user-roles/user-role.model';
-import { UserRolesV2Service } from '../../user-roles/userRolesV2.service';
+import { Service, ServiceModel } from '../services.model';
 import { SelectCheckboxComponent } from 'app/layout/common/select-checkbox/select-checkbox.component';
-import { UsersV2Service } from '../services-v2.service';
+import { ServicesV2Service } from '../services-v2.service';
 
 interface PhonenumerType {
     value: string;
@@ -39,7 +37,7 @@ interface PhonenumerType {
   }
 
 @Component({
-    selector: 'users-compose',
+    selector: 'products-compose',
     templateUrl: './compose.component.html',
     encapsulation: ViewEncapsulation.None,
     standalone: true,
@@ -62,14 +60,12 @@ interface PhonenumerType {
         SelectCheckboxComponent
     ],
 })
-export class UsersComposeComponent implements OnInit {
-    _usersV2Service = inject(UsersV2Service);
-    _userRolesV2Service = inject(UserRolesV2Service);
+export class ProductsComposeComponent implements OnInit {
+    _usersV2Service = inject(ServicesV2Service);
     _router = inject(Router);
     _axiomaimLoadingService = inject(AxiomaimLoadingService);
     _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
-    countries: Country[];
     
     phonenumberTypes: PhonenumerType[] = [
         {value: 'mobile', viewValue: 'Mobile'},
@@ -78,20 +74,13 @@ export class UsersComposeComponent implements OnInit {
         {value: 'other', viewValue: 'Other'},
       ];
 
-    user: User = UserModel.emptyDto();    
-    private _user: BehaviorSubject<User | null> = new BehaviorSubject(
+    user: Service = ServiceModel.emptyDto();    
+    private _user: BehaviorSubject<Service | null> = new BehaviorSubject(
         null
     );
-    get userRole$(): Observable<User> {
+    get userRole$(): Observable<Service> {
         return this._user.asObservable();
     }
-    private _userRoles: BehaviorSubject<UserRole[] | null> = new BehaviorSubject(
-        []
-    );
-    get userRoles$(): Observable<UserRole[]> {
-        return this._userRoles.asObservable();
-    }
-    userRoles: UserRole[] = [];
     composeForm: UntypedFormGroup;
     countdown: number = 5;
     fileFormat: "image/png, image/jpeg";
@@ -105,7 +94,7 @@ export class UsersComposeComponent implements OnInit {
      * Constructor
      */
     constructor(
-        public matDialogRef: MatDialogRef<UsersComposeComponent>,
+        public matDialogRef: MatDialogRef<ProductsComposeComponent>,
         private _formBuilder: UntypedFormBuilder,
         private _overlay: Overlay,
         private _renderer2: Renderer2,
@@ -125,11 +114,6 @@ export class UsersComposeComponent implements OnInit {
     ngOnInit(): void {
         this._user.next(this.user);
         // this.countries = this._usersV2Service.countries();
-        this._userRolesV2Service.getAll().subscribe((resUserRoles: UserRole[]) => {
-            this.userRoles = resUserRoles;
-            this._userRoles.next(resUserRoles);
-        });
-
         const phonePattern = "^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"; 
         // Create the form
         this.composeForm = this._formBuilder.group({
@@ -150,28 +134,6 @@ export class UsersComposeComponent implements OnInit {
         // Setup the phone numbers form array
         const phoneNumbersFormGroups = [];
 
-        if (this.user.phoneNumbers.length > 0) {
-            // Iterate through them
-            this.user.phoneNumbers.forEach((phoneNumber) => {
-                // Create an email form group
-                phoneNumbersFormGroups.push(
-                    this._formBuilder.group({
-                        country: [phoneNumber.country],
-                        phoneNumber: [phoneNumber.phoneNumber],
-                        label: [phoneNumber.label],
-                    })
-                );
-            });
-        } else {
-            // Create a phone number form group
-            phoneNumbersFormGroups.push(
-                this._formBuilder.group({
-                    country: ['us'],
-                    phoneNumber: [''],
-                    label: [''],
-                })
-            );
-        }
 
         // Add the phone numbers form groups to the phone numbers form array
         phoneNumbersFormGroups.forEach((phoneNumbersFormGroup) => {
@@ -193,10 +155,10 @@ export class UsersComposeComponent implements OnInit {
         console.log('composeForm', this.composeForm.valid)
         if (this.composeForm.valid) {
             this.user.id = this.composeForm.value.code;
-            const updateUser = { ...this.user, ...this.composeForm.value }
-            this.user = updateUser;
-            updateUser.displayName = `${updateUser.firstName} ${updateUser.lastName}`;
-            updateUser.emailSignature = `${updateUser.displayName} ${updateUser.email}`;
+            const updateProduct = { ...this.user, ...this.composeForm.value }
+            this.user = updateProduct;
+            updateProduct.displayName = `${updateProduct.firstName} ${updateProduct.lastName}`;
+            updateProduct.emailSignature = `${updateProduct.displayName} ${updateProduct.email}`;
             this._usersV2Service.createItem(this.user).then((res) => {
                 this.user = res;
                 this._router.navigate(['administraion/users']);
@@ -263,17 +225,6 @@ export class UsersComposeComponent implements OnInit {
     
     }
 
-    /**
-     * Get country info by iso code
-     *
-     * @param iso
-     */
-    getCountryByIso(iso: string): Country {
-        if(iso) {
-            return this.countries.find((country) => country.iso === iso);
-
-        }
-    }
     
     /**
      * Track by function for ngFor loops

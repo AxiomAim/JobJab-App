@@ -14,19 +14,19 @@
                     <!-- Title -->
                     <div>
                         <div class="text-4xl font-extrabold leading-none tracking-tight">
-                            Users
+                            Services
                         </div>
                         <div class="text-secondary ml-0.5 font-medium">
-                            @if (userCount > 0) {
-                            {{ userCount }}
+                            @if (serviceCount > 0) {
+                            {{ serviceCount }}
                             }
                             {{
-                            userCount
+                            serviceCount
                             | i18nPlural
                             : {
-                            '=0': 'No users',
-                            '=1': 'user',
-                            other: 'users',
+                            '=0': 'No services',
+                            '=1': 'service',
+                            other: 'services',
                             }
                             }}
                         </div>
@@ -42,14 +42,15 @@
                                         'heroicons_solid:magnifying-glass'
                                     "></mat-icon>
                                 <input matInput [formControl]="searchInputControl" [autocomplete]="'off'"
-                                    [placeholder]="'Search users'" />
+                                    [placeholder]="'Search services'" />
                             </mat-form-field>
                         </div>
-                        <!-- Add user button -->
-                        <button class="ml-4" mat-button [color]="'primary'" (click)="openComposeDialog()">
+                        <!-- Add service button -->
+                        <services-add-item></services-add-item>
+                        <!-- <button class="ml-4" mat-button [color]="'primary'" (click)="openComposeDialog()">
                             <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
                             <span class="ml-2 mr-1">Add</span>
-                        </button>
+                        </button> -->
 
                         <!-- <button class="ml-4" mat-button [color]="'primary'" (click)="refactor()">
                             <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
@@ -61,62 +62,62 @@
 
                 <!-- Users list -->
                 <div class="relative">
-                    @if (users$ | async; as users) {
-                    @if (users.length) {
+                    @if (services$ | async; as services) {
+                    @if (services.length) {
                     @for (
-                    user of users;
-                    track trackByFn(i, user);
+                    service of services;
+                    track trackByFn(i, service);
                     let i = $index
                     ) {
                     <!-- Group -->
                     <!-- @if (
                     i === 0 ||
-                    user.firstName.charAt(0) !==
-                    users[i - 1].firstName.charAt(0)
+                    service.firstName.charAt(0) !==
+                    services[i - 1].firstName.charAt(0)
                     ) {
                     <div
                         class="text-secondary sticky top-0 z-10 -mt-px border-b border-t bg-gray-50 px-6 py-1 font-medium uppercase dark:bg-gray-900 md:px-8">
-                        {{ user.firstName.charAt(0) }}
+                        {{ service.firstName.charAt(0) }}
                     </div>
                     } -->
                     <!-- User -->
                     <a class="z-20 flex cursor-pointer items-center border-b px-6 py-4 md:px-8" [ngClass]="{
                                         'dark:hover:bg-hover hover:bg-gray-100':
                                             !selectedUser ||
-                                            selectedUser.id !== user.id,
+                                            selectedUser.id !== service.id,
                                         'bg-primary-50 dark:bg-hover':
                                             selectedUser &&
-                                            selectedUser.id === user.id,
-                                    }" [routerLink]="['./', user.id]">
+                                            selectedUser.id === service.id,
+                                    }" [routerLink]="['./', service.id]">
                         <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
-                            @if (user.avatar) {
-                            <img class="h-full w-full object-cover" [src]="user.avatar" alt="User avatar" />
+                            @if (service.avatar) {
+                            <img class="h-full w-full object-cover" [src]="service.avatar" alt="User avatar" />
                             }
-                            @if (!user.avatar) {
+                            @if (!service.avatar) {
                             <div class="flex h-full w-full items-center justify-center rounded-full  text-lg uppercase text-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                                [ngClass]="user.activeUser ? 'bg-green-200' : 'bg-gray-200'">
-                                {{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0) }}
+                                [ngClass]="service.activeUser ? 'bg-green-200' : 'bg-gray-200'">
+                                {{ service.firstName?.charAt(0) }}{{ service.lastName?.charAt(0) }}
                             </div>
                             }
                         </div>
                         <div class="ml-4 min-w-0">
                             <div class="truncate font-medium leading-5">
-                                {{ user.displayName }}
+                                {{ service.displayName }}
                             </div>
                             <div class="text-secondary truncate leading-5">
-                                {{ user.email }}
+                                {{ service.email }}
                             </div>
                         </div>
                     </a>
                     }
                     } @else {
                     <div class="border-t p-8 text-center text-4xl font-semibold tracking-tight sm:p-16">
-                        There are no users!
+                        There are no services!
                     </div>
                     }
                     }
 
-                    <!-- No users -->
+                    <!-- No services -->
                 </div>
             </div>
         </mat-drawer-content>

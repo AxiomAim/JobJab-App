@@ -1,7 +1,6 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { AsyncPipe, DatePipe, NgClass } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -35,14 +34,21 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AxiomaimFindByKeyPipe } from '@axiomaim/pipes/find-by-key/find-by-key.pipe';
 import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
 import { Tag } from 'app/core/models/tag.model';
-import { OrganizationsListComponent } from 'app/modules/axiomaim/administration/organizations/list/list.component';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
-import { Country, Organization } from '../organizations.model';
-import { OrganizationsV2Service } from '../organizationsV2.service';
+import { Organization } from '../organizations.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
+import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
+import { OrganizationsV2Service } from '../organizations-v2.service';
+import { User } from 'app/core/user/user.types';
+import { OrganizationsListComponent } from '../list/list.component';
+
+
+interface PhonenumberType {
+    value: string;
+    viewValue: string;
+  }
 
 @Component({
     selector: 'organizations-details',
@@ -61,14 +67,11 @@ import { AxiomaimLoadingService } from '@axiomaim/services/loading';
         MatFormFieldModule,
         MatInputModule,
         MatCheckboxModule,
-        NgClass,
         MatSelectModule,
         MatOptionModule,
         MatDatepickerModule,
         TextFieldModule,
-        AsyncPipe
-        // AxiomaimFindByKeyPipe,
-        // DatePipe,
+        SelectMultiComponent,
     ],
 })
 export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
@@ -84,6 +87,7 @@ export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
         return this._organization.asObservable();
     }
 
+
     editMode: boolean = false;
     tags: Tag[];
     tagsEditMode: boolean = false;
@@ -91,10 +95,10 @@ export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
     organization: Organization;
     organizationForm: UntypedFormGroup;
     organizations: Organization[];
-    countries: Country[];
     private _tagsPanelOverlayRef: OverlayRef;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
+    loginUser: User;
     showRole: string[] = ["admin"];
 
     /**
@@ -120,145 +124,28 @@ export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
+        this.organizations = this._organizationsV2Service.organizations();
+        this.organization = this._organizationsV2Service.organization();
         // Open the drawer
         this._organizationsListComponent.matDrawer.open();
+        const phonePattern = "^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"; 
 
         // Create the organization form
         this.organizationForm = this._formBuilder.group({
             id: [''],
             avatar: [null],
-            name: ['', [Validators.required]],
-            emails: this._formBuilder.array([]),
+            firstName: ['', [Validators.required]],
+            lastName: ['', [Validators.required]],
             phoneNumbers: this._formBuilder.array([]),
-            title: [''],
-            company: [''],
-            birthday: [null],
             address: [null],
-            notes: [null],
-            tags: [[]],
+            activeProduct:  [true, [Validators.required]],
         });
 
-        // Get the organizations
-        this.organizations = this._organizationsV2Service.organizations();
-            // .pipe(takeUntil(this._unsubscribeAll))
-            // .subscribe((organizations: Organization[]) => {
-                // this.organizations = organizations;
+        this._changeDetectorRef.markForCheck();
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            // });
+        this._organizationsListComponent.matDrawer.open();
+        this.organizationForm.patchValue(this.organization);
 
-        // Get the organization
-        this.organization = this._organizationsV2Service.organization()
-        this._organization.next(this.organization);
-            // .pipe(takeUntil(this._unsubscribeAll))
-            // .subscribe((organization: Organization) => {
-                // Open the drawer in case it is closed
-                this._organizationsListComponent.matDrawer.open();
-
-                // Get the organization
-                // this.organization = organization;
-
-                // Clear the emails and phoneNumbers form arrays
-                (this.organizationForm.get('emails') as UntypedFormArray).clear();
-                (
-                    this.organizationForm.get('phoneNumbers') as UntypedFormArray
-                ).clear();
-
-                // Patch values to the form
-                this.organizationForm.patchValue(this.organization);
-
-                // Setup the emails form array
-                const emailFormGroups = [];
-
-                if (this.organization.emails.length > 0) {
-                    // Iterate through them
-                    this.organization.emails.forEach((email) => {
-                        // Create an email form group
-                        emailFormGroups.push(
-                            this._formBuilder.group({
-                                email: [email.email],
-                                label: [email.label],
-                            })
-                        );
-                    });
-                } else {
-                    // Create an email form group
-                    emailFormGroups.push(
-                        this._formBuilder.group({
-                            email: [''],
-                            label: [''],
-                        })
-                    );
-                }
-
-                // Add the email form groups to the emails form array
-                emailFormGroups.forEach((emailFormGroup) => {
-                    (this.organizationForm.get('emails') as UntypedFormArray).push(
-                        emailFormGroup
-                    );
-                });
-
-                // Setup the phone numbers form array
-                const phoneNumbersFormGroups = [];
-
-                if (this.organization.phoneNumbers.length > 0) {
-                    // Iterate through them
-                    this.organization.phoneNumbers.forEach((phoneNumber) => {
-                        // Create an email form group
-                        phoneNumbersFormGroups.push(
-                            this._formBuilder.group({
-                                country: [phoneNumber.country],
-                                phoneNumber: [phoneNumber.phoneNumber],
-                                label: [phoneNumber.label],
-                            })
-                        );
-                    });
-                } else {
-                    // Create a phone number form group
-                    phoneNumbersFormGroups.push(
-                        this._formBuilder.group({
-                            country: ['us'],
-                            phoneNumber: [''],
-                            label: [''],
-                        })
-                    );
-                }
-
-                // Add the phone numbers form groups to the phone numbers form array
-                phoneNumbersFormGroups.forEach((phoneNumbersFormGroup) => {
-                    (
-                        this.organizationForm.get('phoneNumbers') as UntypedFormArray
-                    ).push(phoneNumbersFormGroup);
-                });
-
-                // Toggle the edit mode off
-                this.toggleEditMode(false);
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            // });
-
-        // Get the country telephone codes
-        this.countries = this._organizationsV2Service.countries();
-            // .pipe(takeUntil(this._unsubscribeAll))
-            // .subscribe((codes: Country[]) => {
-            //     this.countries = codes;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            // });
-
-        // Get the tags
-        // this._organizationsV2Service.tags$
-        //     .pipe(takeUntil(this._unsubscribeAll))
-        //     .subscribe((tags: Tag[]) => {
-        //         this.tags = tags;
-        //         this.filteredTags = tags;
-
-        //         // Mark for check
-        //         this._changeDetectorRef.markForCheck();
-        //     });
     }
 
     /**
@@ -305,24 +192,16 @@ export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
     /**
      * Update the organization
      */
-    updateItem(): void {
-        
+    updateItem(): void {        
         this.organization = {...this._organization.getValue(), ...this.organizationForm.getRawValue()};
         console.log('organization', this.organization);
         // Get the organization object
         // const organization = this.organizationForm.getRawValue();
 
-        // Go through the organization object and clear empty values
-        this.organization .emails = this.organization .emails.filter((email) => email.email);
-
-        this.organization .phoneNumbers = this.organization .phoneNumbers.filter(
-            (phoneNumber) => phoneNumber.phoneNumber
-        );
-
         // Update the organization on the server
         this._organizationsV2Service
-            .updateItem(this.organization.id, this.organization)
-            .subscribe(() => {
+            .updateItem(this.organization)
+            .then(() => {
                 // Toggle the edit mode off
                 this.toggleEditMode(false);
             });
@@ -331,7 +210,7 @@ export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
     /**
      * Delete the organization
      */
-    deleteOrganization(): void {
+    deleteProduct(): void {
         // Open the confirmation dialog
         const confirmation = this._axiomaimConfirmationService.open({
             title: 'Delete organization',
@@ -352,29 +231,29 @@ export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
                 const id = this.organization.id;
 
                 // Get the next/previous organization's id
-                const currentOrganizationIndex = this.organizations.findIndex(
+                const currentProductIndex = this.organizations.findIndex(
                     (item) => item.id === id
                 );
-                const nextOrganizationIndex =
-                    currentOrganizationIndex +
-                    (currentOrganizationIndex === this.organizations.length - 1 ? -1 : 1);
-                const nextOrganizationId =
+                const nextProductIndex =
+                    currentProductIndex +
+                    (currentProductIndex === this.organizations.length - 1 ? -1 : 1);
+                const nextProductId =
                     this.organizations.length === 1 && this.organizations[0].id === id
                         ? null
-                        : this.organizations[nextOrganizationIndex].id;
+                        : this.organizations[nextProductIndex].id;
 
                 // Delete the organization
                 this._organizationsV2Service
                     .deleteItem(id)
-                    .subscribe((isDeleted) => {
+                    .then((isDeleted) => {
                         // Return if the organization wasn't deleted...
                         if (!isDeleted) {
                             return;
                         }
 
                         // Navigate to the next organization if available
-                        if (nextOrganizationId) {
-                            this._router.navigate(['../', nextOrganizationId], {
+                        if (nextProductId) {
+                            this._router.navigate(['../', nextProductId], {
                                 relativeTo: this._activatedRoute,
                             });
                         }
@@ -403,23 +282,23 @@ export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
     uploadAvatar(event: any): void {
         console.log('event', event.target.files[0])
         this._axiomaimLoadingService.show()        
-        this._organizationsV2Service.uploadAvatar(event.target.files[0], 'organizations').subscribe({
-            next: (response: any) => {
-                this._axiomaimLoadingService.hide();
-                console.log('uploadAvatar', response)
-                this.organization.avatarPath = response.filePath;
-                this.organization.avatarFile = response.fileName;
-                this.organization.avatarType = response.fileType;
-                this.organization.avatarUrl = response.fileUrl;
-                this.organization.avatar = response.fileUrl;                
-                this._organization.next(this.organization);
-                console.log('organization', this.organization);
-            },
-            error: (error: any) => {
-                this._axiomaimLoadingService.hide();
-                console.error('error', error);
-            },
-        });
+        // this._organizationsV2Service.uploadAvatar(event.target.files[0], 'organizations').subscribe({
+        //     next: (response: any) => {
+        //         this._axiomaimLoadingService.hide();
+        //         console.log('uploadAvatar', response)
+        //         this.organization.avatarPath = response.filePath;
+        //         this.organization.avatarFile = response.fileName;
+        //         this.organization.avatarType = response.fileType;
+        //         this.organization.avatarUrl = response.fileUrl;
+        //         this.organization.avatar = response.fileUrl;                
+        //         this._organization.next(this.organization);
+        //         console.log('organization', this.organization);
+        //     },
+        //     error: (error: any) => {
+        //         this._axiomaimLoadingService.hide();
+        //         console.error('error', error);
+        //     },
+        // });
     }
 
     /**
@@ -436,9 +315,18 @@ export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
         this._avatarFileInput.nativeElement.value = null;
 
         // Update the organization
-        this.organization.avatar = null;
+        // this.organization.avatar = null;
     }
 
+    onOptionSelected(data: any[]) {
+        console.log('onOptionSelected', data);
+        // this.organization.organizationRoles = data;
+        this._organization.next(this.organization);
+        // console.log('onOptionSelected', this.organization);
+        // this.organization$.subscribe((resProduct: Product) => {
+
+        // });
+    }
     /**
      * Open tags panel
      */
@@ -525,6 +413,7 @@ export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
         this.tagsEditMode = !this.tagsEditMode;
     }
 
+
     /**
      * Filter tags
      *
@@ -570,208 +459,12 @@ export class OrganizationsDetailsComponent implements OnInit, OnDestroy {
     //     // If the found tag is already applied to the organization...
     //     if (isTagApplied) {
     //         // Remove the tag from the organization
-    //         this.removeTagFromOrganization(tag);
+    //         this.removeTagFromProduct(tag);
     //     } else {
     //         // Otherwise add the tag to the organization
-    //         this.addTagToOrganization(tag);
+    //         this.addTagToProduct(tag);
     //     }
     // }
-
-    /**
-     * Create a new tag
-     *
-     * @param title
-     */
-    // createTag(title: string): void {
-    //     const tag = {
-    //         title,
-    //     };
-
-    //     // Create tag on the server
-    //     this._organizationsV2Service.createTag(tag).subscribe((response) => {
-    //         // Add the tag to the organization
-    //         this.addTagToOrganization(response);
-    //     });
-    // }
-
-    /**
-     * Update the tag title
-     *
-     * @param tag
-     * @param event
-     */
-    // updateTagTitle(tag: Tag, event): void {
-    //     // Update the title on the tag
-    //     tag.title = event.target.value;
-
-    //     // Update the tag on the server
-    //     this._organizationsV2Service
-    //         .updateTag(tag.id, tag)
-    //         .pipe(debounceTime(300))
-    //         .subscribe();
-
-    //     // Mark for check
-    //     this._changeDetectorRef.markForCheck();
-    // }
-
-    /**
-     * Delete the tag
-     *
-     * @param tag
-     */
-    deleteTag(tag: Tag): void {
-        // Delete the tag from the server
-        this._organizationsV2Service.deleteTag(tag.id).subscribe();
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-    /**
-     * Add tag to the organization
-     *
-     * @param tag
-     */
-    addTagToOrganization(tag: Tag): void {
-        // Add the tag
-        this.organization.tags.unshift(tag.id);
-
-        // Update the organization form
-        this.organizationForm.get('tags').patchValue(this.organization.tags);
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-    /**
-     * Remove tag from the organization
-     *
-     * @param tag
-     */
-    removeTagFromOrganization(tag: Tag): void {
-        // Remove the tag
-        this.organization.tags.splice(
-            this.organization.tags.findIndex((item) => item === tag.id),
-            1
-        );
-
-        // Update the organization form
-        this.organizationForm.get('tags').patchValue(this.organization.tags);
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-    /**
-     * Toggle organization tag
-     *
-     * @param tag
-     */
-    toggleOrganizationTag(tag: Tag): void {
-        if (this.organization.tags.includes(tag.id)) {
-            this.removeTagFromOrganization(tag);
-        } else {
-            this.addTagToOrganization(tag);
-        }
-    }
-
-    /**
-     * Should the create tag button be visible
-     *
-     * @param inputValue
-     */
-    shouldShowCreateTagButton(inputValue: string): boolean {
-        return !!!(
-            inputValue === '' ||
-            this.tags.findIndex(
-                (tag) => tag.title.toLowerCase() === inputValue.toLowerCase()
-            ) > -1
-        );
-    }
-
-    /**
-     * Add the email field
-     */
-    addEmailField(): void {
-        // Create an empty email form group
-        const emailFormGroup = this._formBuilder.group({
-            email: [''],
-            label: [''],
-        });
-
-        // Add the email form group to the emails form array
-        (this.organizationForm.get('emails') as UntypedFormArray).push(
-            emailFormGroup
-        );
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-    /**
-     * Remove the email field
-     *
-     * @param index
-     */
-    removeEmailField(index: number): void {
-        // Get form array for emails
-        const emailsFormArray = this.organizationForm.get(
-            'emails'
-        ) as UntypedFormArray;
-
-        // Remove the email field
-        emailsFormArray.removeAt(index);
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-    /**
-     * Add an empty phone number field
-     */
-    addPhoneNumberField(): void {
-        // Create an empty phone number form group
-        const phoneNumberFormGroup = this._formBuilder.group({
-            country: ['us'],
-            phoneNumber: [''],
-            label: [''],
-        });
-
-        // Add the phone number form group to the phoneNumbers form array
-        (this.organizationForm.get('phoneNumbers') as UntypedFormArray).push(
-            phoneNumberFormGroup
-        );
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-    /**
-     * Remove the phone number field
-     *
-     * @param index
-     */
-    removePhoneNumberField(index: number): void {
-        // Get form array for phone numbers
-        const phoneNumbersFormArray = this.organizationForm.get(
-            'phoneNumbers'
-        ) as UntypedFormArray;
-
-        // Remove the phone number field
-        phoneNumbersFormArray.removeAt(index);
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-    /**
-     * Get country info by iso code
-     *
-     * @param iso
-     */
-    getCountryByIso(iso: string): Country {
-        return this.countries.find((country) => country.iso === iso);
-    }
 
     /**
      * Track by function for ngFor loops

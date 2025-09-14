@@ -5,14 +5,15 @@ import {
     RouterStateSnapshot,
     Routes,
 } from '@angular/router';
-import { OrganizationsComponent } from 'app/modules/axiomaim/administration/organizations/organizations.component';
-import { OrganizationsDetailsComponent } from 'app/modules/axiomaim/administration/organizations/details/details.component';
-import { OrganizationsListComponent } from 'app/modules/axiomaim/administration/organizations/list/list.component';
-import { catchError, throwError } from 'rxjs';
-import { OrganizationsV2Service } from './organizationsV2.service';
+import { of } from 'rxjs';
+import { OrganizationsV2Service } from './organizations-v2.service';
+import { OrganizationsDetailsComponent } from './details/details.component';
+import { OrganizationsComponent } from './organizations.component';
+import { OrganizationsListComponent } from './list/list.component';
+
 
 /**
- * Organization resolver
+ * Site resolver
  *
  * @param route
  * @param state
@@ -21,36 +22,34 @@ const organizationResolver = (
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
 ) => {
-    const _organizationsV2Service = inject(OrganizationsV2Service);
+    const _productsV2Service = inject(OrganizationsV2Service);
     const router = inject(Router);
+    const oid = route.paramMap.get('id');
+    
+    return _productsV2Service.getItem(oid).catch((error) => {
+        // Log the error
+        console.error('Error fetching site:', error);
 
-    return _organizationsV2Service.getById(route.paramMap.get('id')).pipe(
-        // Error here means the requested organization is not available
-        catchError((error) => {
-            // Log the error
-            console.error(error);
+        // Get the parent url
+        const parentUrl = state.url.split('/').slice(0, -1).join('/');
 
-            // Get the parent url
-            const parentUrl = state.url.split('/').slice(0, -1).join('/');
+        // Navigate to there
+        router.navigateByUrl(parentUrl);
 
-            // Navigate to there
-            router.navigateByUrl(parentUrl);
-
-            // Throw an error
-            return throwError(error);
-        })
-    );
+        // Return an observable that emits an error or a default value
+        return of(null); // Or throwError(() => error); if you want the routing to potentially fail
+    });
 };
 
 /**
- * Can deactivate organizations details
+ * Can deactivate users details
  *
  * @param component
  * @param currentRoute
  * @param currentState
  * @param nextState
  */
-const canDeactivateOrganizationsDetails = (
+const canDeactivateUsersDetails = (
     component: OrganizationsDetailsComponent,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
@@ -62,15 +61,15 @@ const canDeactivateOrganizationsDetails = (
         nextRoute = nextRoute.firstChild;
     }
 
-    // If the next state doesn't contain '/organizations'
+    // If the next state doesn't contain '/users'
     // it means we are navigating away from the
-    // organizations app
-    if (!nextState.url.includes('/organizations')) {
+    // users app
+    if (!nextState.url.includes('/users')) {
         // Let it navigate
         return true;
     }
 
-    // If we are navigating to another organization...
+    // If we are navigating to another user...
     if (nextRoute.paramMap.get('id')) {
         // Just navigate
         return true;
@@ -88,24 +87,20 @@ export default [
         },
         children: [
             {
-                path: 'compose',
-                pathMatch: 'full',
-                component: OrganizationsComponent,
-            },
-    {
                 path: '',
                 component: OrganizationsListComponent,
                 resolve: {
-                    organizations: () => inject(OrganizationsV2Service).getAll(),
+                    users: () => inject(OrganizationsV2Service).getAll(),
                 },
                 children: [
                     {
                         path: ':id',
                         component: OrganizationsDetailsComponent,
                         resolve: {
-                            organization: organizationResolver,
+                            // userRoles: () => inject(ProductsV2Service).getUserRoles(),
+                            user: organizationResolver,
                         },
-                        canDeactivate: [canDeactivateOrganizationsDetails],
+                        canDeactivate: [canDeactivateUsersDetails],
                     },
                 ],
             },
