@@ -26,9 +26,10 @@ import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-m
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
 import { User } from '../../users/user.model';
+import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
 
 @Component({
-    selector: 'users-add-item',
+    selector: 'products-add-item',
     templateUrl: './add-item.component.html',
     styles: [
         `
@@ -62,17 +63,14 @@ import { User } from '../../users/user.model';
         MatOptionModule,
         MatTooltipModule,
         AlertMessagesComponent,
-        NgFor,
-        NgIf,
         MatCheckboxModule,
         MatDatepickerModule,
         TextFieldModule,
-        NgForOf,
         MatSlideToggleModule,
         MatChipsModule,
         MatSidenavModule,
         GridAllModule,
-        NgClass
+        AddressLookupComponent
 
     ]
 })
@@ -99,7 +97,7 @@ export class ProductsAddItemComponent implements OnInit, AfterViewInit, OnDestro
     @Output() drawerStateChanged = new EventEmitter<boolean>();
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-    productForm: UntypedFormGroup;
+    userForm: UntypedFormGroup;
     #loginUser = signal<User | null>(null);
     showRole: string[] = ["admin"];
     user_roles: any[] = [];
@@ -163,17 +161,14 @@ export class ProductsAddItemComponent implements OnInit, AfterViewInit, OnDestro
      * Set Form Group 
      */
     setFormGroup() {
-        this.productForm = this._formBuilder.group({
-            type: ["", [Validators.required]],
-            name: ["", [Validators.required]],
-            description: ["", [Validators.required]],
-            price: ["", [Validators.required]],
-            priceType: ["", [Validators.required]],
-            priceMeasure: ["", [Validators.required]],
-            image: [""],
-            discount: [""],
-            cartCount: [""],
-            categoryId: [""],
+        this.userForm = this._formBuilder.group({
+            email: ["", [Validators.required, Validators.email]],
+            firstName: ["", [Validators.required]],
+            lastName: ["", [Validators.required]],
+            company: ["", [Validators.required]],
+            address: ["", [Validators.required]],
+            mobileCountry: [""],
+            mobileNo: [""],
           });
     }
 
@@ -209,15 +204,15 @@ export class ProductsAddItemComponent implements OnInit, AfterViewInit, OnDestro
      */
     private resetForm(): void {
         // Reset form values
-        this.productForm.reset();
+        this.userForm.reset();
         
         // Clear all validation states
-        this.productForm.markAsUntouched();
-        this.productForm.markAsPristine();
+        this.userForm.markAsUntouched();
+        this.userForm.markAsPristine();
         
         // Reset each form control individually to ensure clean state
-        Object.keys(this.productForm.controls).forEach(key => {
-            const control = this.productForm.get(key);
+        Object.keys(this.userForm.controls).forEach(key => {
+            const control = this.userForm.get(key);
             if (control) {
                 control.setErrors(null);
                 control.markAsUntouched();
@@ -226,7 +221,7 @@ export class ProductsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         });
         
         // Set default values for form fields that need them
-        this.productForm.patchValue({
+        this.userForm.patchValue({
             active: true,
             user_roles: [],
             site_account_id: [],

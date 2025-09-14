@@ -40,6 +40,7 @@ import { Product } from '../products.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductsComposeComponent } from '../compose/compose.component';
 import { ProductsV2Service } from '../products-v2.service';
+import { ProductsAddItemComponent } from '../add-item/add-item.component';
 
 @Component({
     selector: 'products-list',
@@ -60,6 +61,7 @@ import { ProductsV2Service } from '../products-v2.service';
         RouterLink,
         AsyncPipe,
         I18nPluralPipe,
+        ProductsAddItemComponent
     ],
 })
 export class ProductsListComponent implements OnInit, OnDestroy {
