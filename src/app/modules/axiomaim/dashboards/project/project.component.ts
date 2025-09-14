@@ -2,6 +2,7 @@ import { CurrencyPipe, NgClass } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
+    inject,
     OnDestroy,
     OnInit,
     ViewEncapsulation,
@@ -15,9 +16,11 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { ProjectService } from 'app/modules/axiomaim/dashboards/project/project.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
-import { Subject, takeUntil } from 'rxjs';
+import { ReplaySubject, Subject, takeUntil } from 'rxjs';
+import { User } from '../../administration/users/user.model';
 
 @Component({
     selector: 'project',
@@ -39,6 +42,7 @@ import { Subject, takeUntil } from 'rxjs';
     ],
 })
 export class ProjectComponent implements OnInit, OnDestroy {
+    private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     chartGithubIssues: ApexOptions = {};
     chartTaskDistribution: ApexOptions = {};
     chartBudgetDistribution: ApexOptions = {};
@@ -48,6 +52,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     data: any;
     selectedProject: string = 'ACME Corp. Backend App';
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    public loginUser: User;
 
     /**
      * Constructor
@@ -55,7 +60,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
     constructor(
         private _projectService: ProjectService,
         private _router: Router
-    ) {}
+    ) {
+        this._firebaseAuthV2Service.loadFromStorage();
+        this.loginUser = this._firebaseAuthV2Service.loginUser();
+
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks

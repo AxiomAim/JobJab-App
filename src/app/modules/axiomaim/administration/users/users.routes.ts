@@ -8,101 +8,37 @@ import {
 import { UsersComponent } from 'app/modules/axiomaim/administration/users/users.component';
 import { UsersDetailsComponent } from 'app/modules/axiomaim/administration/users/details/details.component';
 import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
-import { catchError, map, throwError } from 'rxjs';
-import { UsersV2_Service } from './usersV2.service';
-import { LoginUserService } from 'app/core/login-user/login-user.service';
+import { of } from 'rxjs';
+import { UsersV2Service } from './users-v2.service';
+
 
 /**
- * User resolver
+ * Site resolver
  *
  * @param route
  * @param state
  */
-const usersResolver = (
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-) => {
-    const loginUserService = inject(LoginUserService);
-    const usersV2Service = inject(UsersV2_Service);
-    const router = inject(Router);
-    loginUserService.getOrganization().subscribe(organization => {
-        return usersV2Service.getAllByOrgId(organization.id).pipe(
-            map((users) => {
-                console.log('route:users', users);
-            }), // Do nothing, just return the user  
-            // Error here means the requested user is not available
-            catchError((error) => {
-                // Log the error
-                console.error(error);
-    
-                // Get the parent url
-                const parentUrl = state.url.split('/').slice(0, -1).join('/');
-    
-                // Navigate to there
-                router.navigateByUrl(parentUrl);
-    
-                // Throw an error
-                return throwError(error);
-            })
-        );    
-    });
-
-};
-
 const userResolver = (
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
 ) => {
-    const usersV2Service = inject(UsersV2_Service);
+    const _usersV2Service = inject(UsersV2Service);
     const router = inject(Router);
+    const oid = route.paramMap.get('id');
+    
+    return _usersV2Service.getItem(oid).catch((error) => {
+        // Log the error
+        console.error('Error fetching site:', error);
 
-    return usersV2Service.getById(route.paramMap.get('id')).pipe(
-        map((user) => {
-            console.log('route:user', user);
-        }), // Do nothing, just return the user  
-        // Error here means the requested user is not available
-        catchError((error) => {
-            // Log the error
-            console.error(error);
+        // Get the parent url
+        const parentUrl = state.url.split('/').slice(0, -1).join('/');
 
-            // Get the parent url
-            const parentUrl = state.url.split('/').slice(0, -1).join('/');
+        // Navigate to there
+        router.navigateByUrl(parentUrl);
 
-            // Navigate to there
-            router.navigateByUrl(parentUrl);
-
-            // Throw an error
-            return throwError(error);
-        })
-    );
-};
-
-const userOrgResolver = (
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-) => {
-    const usersV2Service = inject(UsersV2_Service);
-    const router = inject(Router);
-
-    return usersV2Service.getAllByOrgId(route.paramMap.get('orgId')).pipe(
-        map((user) => {
-            console.log('route:user', user);
-        }), // Do nothing, just return the user  
-        // Error here means the requested user is not available
-        catchError((error) => {
-            // Log the error
-            console.error(error);
-
-            // Get the parent url
-            const parentUrl = state.url.split('/').slice(0, -1).join('/');
-
-            // Navigate to there
-            router.navigateByUrl(parentUrl);
-
-            // Throw an error
-            return throwError(error);
-        })
-    );
+        // Return an observable that emits an error or a default value
+        return of(null); // Or throwError(() => error); if you want the routing to potentially fail
+    });
 };
 
 /**
@@ -154,16 +90,14 @@ export default [
                 path: '',
                 component: UsersListComponent,
                 resolve: {
-                    loginUser: () => inject(UsersV2_Service).initialize(),
-                    users: () => inject(UsersV2_Service).getAll(),
+                    users: () => inject(UsersV2Service).getAll(),
                 },
                 children: [
                     {
                         path: ':id',
                         component: UsersDetailsComponent,
                         resolve: {
-                            loginUser: () => inject(UsersV2_Service).initialize(),
-                            userRoles: () => inject(UsersV2_Service).getUserRoles(),
+                            // userRoles: () => inject(UsersV2Service).getUserRoles(),
                             user: userResolver,
                         },
                         canDeactivate: [canDeactivateUsersDetails],

@@ -1,18 +1,24 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { AxiomaimMockApiService } from '@axiomaim/lib/mock-api';
-import { user as userData } from 'app/mock-api/common/user/data';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
+// import { user as userData } from 'app/mock-api/common/user/data';
+import { User } from 'app/modules/axiomaim/administration/users/user.model';
 import { assign, cloneDeep } from 'lodash-es';
 
 @Injectable({ providedIn: 'root' })
 export class UserMockApi {
-    private _user: any = userData;
+    private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
+    private _user: User;
 
     /**
      * Constructor
      */
     constructor(private _axiomaimMockApiService: AxiomaimMockApiService) {
+        this._firebaseAuthV2Service.loadFromStorage();
+        this._user = this._firebaseAuthV2Service.loginUser();
         // Register Mock API handlers
         this.registerHandlers();
+
     }
 
     // -----------------------------------------------------------------------------------------------------

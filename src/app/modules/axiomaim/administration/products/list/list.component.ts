@@ -1,0 +1,234 @@
+import { AsyncPipe, DOCUMENT, I18nPluralPipe, NgClass } from '@angular/common';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    inject,
+    Inject,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+    ViewEncapsulation,
+} from '@angular/core';
+import {
+    FormsModule,
+    ReactiveFormsModule,
+    UntypedFormControl,
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
+import {
+    ActivatedRoute,
+    Router,
+    RouterLink,
+    RouterOutlet,
+} from '@angular/router';
+import { AxiomaimMediaWatcherService } from '@axiomaim/services/media-watcher';
+import {
+    BehaviorSubject,
+    Observable,
+    Subject,
+    filter,
+    fromEvent,
+    switchMap,
+    takeUntil,
+} from 'rxjs';
+import { Product } from '../products.model';
+import { MatDialog } from '@angular/material/dialog';
+import { ProductsComposeComponent } from '../compose/compose.component';
+import { ProductsV2Service } from '../products-v2.service';
+
+@Component({
+    selector: 'products-list',
+    templateUrl: './list.component.html',
+    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        MatSidenavModule,
+        RouterOutlet,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+        NgClass,
+        RouterLink,
+        AsyncPipe,
+        I18nPluralPipe,
+    ],
+})
+export class ProductsListComponent implements OnInit, OnDestroy {
+    _productsV2Service = inject(ProductsV2Service);
+    @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
+
+    private _products: BehaviorSubject<Product[] | null> = new BehaviorSubject(
+        null
+    );
+    get products$(): Observable<Product[]> {
+        return this._products.asObservable();
+    }
+
+    private _product: BehaviorSubject<Product | null> = new BehaviorSubject(
+        null
+    );
+    get product$(): Observable<Product> {
+        return this._product.asObservable();
+    }
+
+    productCount: number = 0;
+    productsTableColumns: string[] = ['name', 'email', 'phoneNumber', 'job'];
+    drawerMode: 'side' | 'over';
+    searchInputControl: UntypedFormControl = new UntypedFormControl();
+    selectedProduct: Product;
+    private _unsubscribeAll: Subject<any> = new Subject<any>();
+
+    /**
+     * Constructor
+     */
+    constructor(
+        private _activatedRoute: ActivatedRoute,
+        private _changeDetectorRef: ChangeDetectorRef,
+        @Inject(DOCUMENT) private _document: any,
+        private _router: Router,
+        private _axiomaimMediaWatcherService: AxiomaimMediaWatcherService,
+        private _matDialog: MatDialog,
+        
+    ) {}
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Lifecycle hooks
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * On init
+     */
+    ngOnInit(): void {
+        // Get the products
+        this._products.next(this._productsV2Service.products());
+        this.products$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((products: Product[]) => {
+                // Update the counts
+                this.productCount = products.length;
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+
+        // Get the product
+        this._product.next(this._productsV2Service.product());
+        this.product$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((product: Product) => {
+                // Update the selected product
+                this.selectedProduct = product;
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+
+        // Subscribe to search input field value changes
+        this.searchInputControl.valueChanges
+            .pipe(
+                takeUntil(this._unsubscribeAll),
+                switchMap((query) =>
+                    // Search
+                    this._productsV2Service.search(query)
+                )
+            )
+            .subscribe((resProducts) => {
+                this._products.next(resProducts);
+            });
+
+        // Subscribe to MatDrawer opened change
+        this.matDrawer.openedChange.subscribe((opened) => {
+            if (!opened) {
+                // Remove the selected product when drawer closed
+                this.selectedProduct = null;
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            }
+        });
+
+        // Subscribe to media changes
+        this._axiomaimMediaWatcherService.onMediaChange$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(({ matchingAliases }) => {
+                // Set the drawerMode if the given breakpoint is active
+                if (matchingAliases.includes('lg')) {
+                    this.drawerMode = 'side';
+                } else {
+                    this.drawerMode = 'over';
+                }
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+
+        // Listen for shortcuts
+        fromEvent(this._document, 'keydown')
+            .pipe(
+                takeUntil(this._unsubscribeAll),
+                filter<KeyboardEvent>(
+                    (event) =>
+                        (event.ctrlKey === true || event.metaKey) && // Ctrl or Cmd
+                        event.key === '/' // '/'
+                )
+            )
+            .subscribe(() => {
+                // this.createItem();
+            });
+    }
+
+    /**
+     * On destroy
+     */
+    ngOnDestroy(): void {
+        // Unsubscribe from all subscriptions
+        this._unsubscribeAll.next(null);
+        this._unsubscribeAll.complete();
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Public methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * On backdrop clicked
+     */
+    onBackdropClicked(): void {
+        // Go back to the list
+        this._router.navigate(['./'], { relativeTo: this._activatedRoute });
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+    }
+
+    /**
+     * Open compose dialog
+     */
+    openComposeDialog(): void {
+        // Open the dialog
+        const dialogRef = this._matDialog.open(ProductsComposeComponent);
+
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log('Compose dialog was closed!');
+        });
+    }
+
+    /**
+     * Track by function for ngFor loops
+     *
+     * @param index
+     * @param item
+     */
+    trackByFn(index: number, item: any): any {
+        return item.id || index;
+    }
+}

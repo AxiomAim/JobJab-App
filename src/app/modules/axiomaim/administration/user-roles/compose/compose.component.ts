@@ -29,7 +29,6 @@ import { AxiomaimLoadingBarComponent } from '@axiomaim/components/loading-bar';
 import { Router } from '@angular/router';
 import { UserRolesV2Service } from '../userRolesV2.service';
 import { UserRole, UserRoleModel } from '../user-role.model';
-import { SelectCheckboxComponent } from 'app/layout/common/select-checkbox/select-checkbox.component';
 
 interface PhonenumerType {
     value: string;

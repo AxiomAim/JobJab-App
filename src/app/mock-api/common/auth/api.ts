@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { AxiomaimMockApiService } from '@axiomaim/lib/mock-api';
-import { user as userData } from 'app/mock-api/common/user/data';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
+import { User } from 'app/modules/axiomaim/administration/users/user.model';
+// import { user as userData } from 'app/mock-api/common/user/data';
 import Base64 from 'crypto-js/enc-base64';
 import Utf8 from 'crypto-js/enc-utf8';
 import HmacSHA256 from 'crypto-js/hmac-sha256';
@@ -8,13 +10,16 @@ import { cloneDeep } from 'lodash-es';
 
 @Injectable({ providedIn: 'root' })
 export class AuthMockApi {
+    private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     private readonly _secret: any;
-    private _user: any = userData;
+    private _user: User;;
 
     /**
      * Constructor
      */
     constructor(private _axiomaimMockApiService: AxiomaimMockApiService) {
+        this._firebaseAuthV2Service.loadFromStorage();
+        this._user = this._firebaseAuthV2Service.loginUser();
         // Set the mock-api
         this._secret =
             'YOUR_VERY_CONFIDENTIAL_SECRET_FOR_SIGNING_JWT_TOKENS!!!';
@@ -52,10 +57,10 @@ export class AuthMockApi {
             .onPost('api/auth/sign-in', 1500)
             .reply(({ request }) => {
                 // Sign in successful
-                if (
-                    request.body.email === 'hughes.brian@company.com' &&
-                    request.body.password === 'admin'
-                ) {
+                // if (
+                //     request.body.email === 'hughes.brian@company.com' &&
+                //     request.body.password === 'admin'
+                // ) {
                     return [
                         200,
                         {
@@ -64,7 +69,7 @@ export class AuthMockApi {
                             tokenType: 'bearer',
                         },
                     ];
-                }
+                // }
 
                 // Invalid credentials
                 return [404, false];

@@ -17,7 +17,7 @@ import { NotificationsComponent } from 'app/layout/common/notifications/notifica
 import { QuickChatComponent } from 'app/layout/common/quick-chat/quick-chat.component';
 import { SearchComponent } from 'app/layout/common/search/search.component';
 import { ShortcutsComponent } from 'app/layout/common/shortcuts/shortcuts.component';
-import { UserComponent } from 'app/layout/common/user/user.component';
+import { LoginUserMenuComponent } from 'app/layout/common/login-user-menu/login-user-menu.component';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -35,7 +35,7 @@ import { Subject, takeUntil } from 'rxjs';
         ShortcutsComponent,
         MessagesComponent,
         NotificationsComponent,
-        UserComponent,
+        LoginUserMenuComponent,
         RouterOutlet,
         QuickChatComponent,
     ],

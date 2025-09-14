@@ -39,12 +39,11 @@ import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
 import { Tag } from 'app/core/models/tag.model';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { UserRole } from '../user-role.model';
-import { UserRolesV2Service } from '../userRolesV2.service';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
-import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
-import { UsersV2_Service } from '../../users/usersV2.service';
 import { UserRolesListComponent } from '../list/list.component';
 import { User } from '../../users/user.model';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
+import { UserRolesV2Service } from '../userRoles-v2.service';
 
 
 interface PhonenumerType {
@@ -77,7 +76,7 @@ interface PhonenumerType {
     ],
 })
 export class UserRolesDetailsComponent implements OnInit, OnDestroy {
-    _usersV2Service = inject(UsersV2_Service);
+    _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     _userRolesV2Service = inject(UserRolesV2Service);
     _axiomaimLoadingService = inject(AxiomaimLoadingService);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
@@ -133,9 +132,9 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        this._usersV2Service.loadFromStorage();
-        this.loginUser = this._usersV2Service.loginUser();
-        this._userRolesV2Service.getAll().subscribe((userRoles: UserRole[]) => {
+        this._firebaseAuthV2Service.loadFromStorage();
+        this.loginUser = this._firebaseAuthV2Service.loginUser();
+        this._userRolesV2Service.getAll().then((userRoles: UserRole[]) => {
             this.userRoles = userRoles;
             this._userRoles.next(userRoles);
         });
@@ -234,8 +233,8 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
 
         // Update the user on the server
         this._userRolesV2Service
-            .updateItem(this.userRole.id, this.userRole)
-            .subscribe(() => {
+            .updateItem(this.userRole)
+            .then(() => {
                 // Toggle the edit mode off
                 this.toggleEditMode(false);
             });
@@ -277,9 +276,9 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
                         : this.userRoles[nextUserRoleIndex].id;
 
                 // Delete the user
-                this._usersV2Service
+                this._userRolesV2Service
                     .deleteItem(id)
-                    .subscribe((isDeleted) => {
+                    .then((isDeleted) => {
                         // Return if the user wasn't deleted...
                         if (!isDeleted) {
                             return;

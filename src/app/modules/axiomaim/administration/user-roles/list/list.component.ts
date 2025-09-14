@@ -37,11 +37,11 @@ import {
     takeUntil,
 } from 'rxjs';
 import { UserRole } from '../user-role.model';
-import { UserRolesV2Service } from '../userRolesV2.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UserRolesComposeComponent } from '../compose/compose.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { GridModule } from '@syncfusion/ej2-angular-grids';
+import { UserRolesV2Service } from '../userRoles-v2.service';
 
 @Component({
     selector: 'user-roles-list',

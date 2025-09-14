@@ -27,11 +27,11 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { AxiomaimLoadingBarComponent } from '@axiomaim/components/loading-bar';
 import { Router } from '@angular/router';
-import { UsersV2_Service } from '../usersV2.service';
 import { Country, User, UserModel } from '../user.model';
 import { UserRole } from '../../user-roles/user-role.model';
-import { UserRolesV2Service } from '../../user-roles/userRolesV2.service';
 import { SelectCheckboxComponent } from 'app/layout/common/select-checkbox/select-checkbox.component';
+import { UsersV2Service } from '../users-v2.service';
+import { UserRolesV2Service } from '../../user-roles/userRoles-v2.service';
 
 interface PhonenumerType {
     value: string;
@@ -63,7 +63,7 @@ interface PhonenumerType {
     ],
 })
 export class UsersComposeComponent implements OnInit {
-    _usersV2Service = inject(UsersV2_Service);
+    _usersV2Service = inject(UsersV2Service);
     _userRolesV2Service = inject(UserRolesV2Service);
     _router = inject(Router);
     _axiomaimLoadingService = inject(AxiomaimLoadingService);
@@ -124,8 +124,8 @@ export class UsersComposeComponent implements OnInit {
      */ 
     ngOnInit(): void {
         this._user.next(this.user);
-        this.countries = this._usersV2Service.countries();
-        this._userRolesV2Service.getAll().subscribe((resUserRoles: UserRole[]) => {
+        // this.countries = this._usersV2Service.countries();
+        this._userRolesV2Service.getAll().then((resUserRoles: UserRole[]) => {
             this.userRoles = resUserRoles;
             this._userRoles.next(resUserRoles);
         });
@@ -197,7 +197,7 @@ export class UsersComposeComponent implements OnInit {
             this.user = updateUser;
             updateUser.displayName = `${updateUser.firstName} ${updateUser.lastName}`;
             updateUser.emailSignature = `${updateUser.displayName} ${updateUser.email}`;
-            this._usersV2Service.createItem(this.user).subscribe((res) => {
+            this._usersV2Service.createItem(this.user).then((res) => {
                 this.user = res;
                 this._router.navigate(['administraion/users']);
                 this.matDialogRef.close(this.user);

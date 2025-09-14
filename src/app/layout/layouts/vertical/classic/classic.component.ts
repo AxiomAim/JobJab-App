@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
@@ -17,8 +17,10 @@ import { NotificationsComponent } from 'app/layout/common/notifications/notifica
 import { QuickChatComponent } from 'app/layout/common/quick-chat/quick-chat.component';
 import { SearchComponent } from 'app/layout/common/search/search.component';
 import { ShortcutsComponent } from 'app/layout/common/shortcuts/shortcuts.component';
-import { UserComponent } from 'app/layout/common/user/user.component';
+import { LoginUserMenuComponent } from 'app/layout/common/login-user-menu/login-user-menu.component';
 import { Subject, takeUntil } from 'rxjs';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
+import { User } from 'app/modules/axiomaim/administration/users/user.model';
 
 @Component({
     selector: 'classic-layout',
@@ -35,12 +37,14 @@ import { Subject, takeUntil } from 'rxjs';
         ShortcutsComponent,
         MessagesComponent,
         NotificationsComponent,
-        UserComponent,
+        LoginUserMenuComponent,
         RouterOutlet,
         QuickChatComponent,
     ],
 })
 export class ClassicLayoutComponent implements OnInit, OnDestroy {
+    private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
+    loginUser: User;
     isScreenSmall: boolean;
     navigation: Navigation;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -54,7 +58,10 @@ export class ClassicLayoutComponent implements OnInit, OnDestroy {
         private _navigationService: NavigationService,
         private _axiomaimMediaWatcherService: AxiomaimMediaWatcherService,
         private _axiomaimNavigationService: AxiomaimNavigationService
-    ) {}
+    ) {
+        this._firebaseAuthV2Service.loadFromStorage();
+        this.loginUser = this._firebaseAuthV2Service.loginUser();
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors

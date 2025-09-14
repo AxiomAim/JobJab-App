@@ -1,0 +1,10 @@
+@if(alertMessage()) {
+<div class="flex flex-row items-center" [ngClass]=" setColor(alertMessage()?.severity)">
+  <div class="basis-10">
+    <a mat-icon-button class="" [matTooltip]="'Close'" (click)="onClose()">
+      <mat-icon class="m-2 text-gray text-sm" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    </a>
+  </div>
+  <div class="basis-full">{{alertMessage()?.text}}</div>
+</div>
+}

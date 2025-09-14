@@ -40,6 +40,7 @@ import { User } from '../user.model';
 import { MatDialog } from '@angular/material/dialog';
 import { UsersComposeComponent } from '../compose/compose.component';
 import { UsersV2Service } from '../users-v2.service';
+import { UsersAddItemComponent } from '../add-item/add-item.component';
 
 @Component({
     selector: 'users-list',
@@ -60,6 +61,7 @@ import { UsersV2Service } from '../users-v2.service';
         RouterLink,
         AsyncPipe,
         I18nPluralPipe,
+        UsersAddItemComponent
     ],
 })
 export class UsersListComponent implements OnInit, OnDestroy {

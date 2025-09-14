@@ -25,6 +25,7 @@ import { Router } from '@angular/router';
 import { Organization } from 'app/modules/axiomaim/administration/organizations/organizations.model';
 import { OrganizationsDataService } from 'app/modules/axiomaim/administration/organizations/organizations-data.service';
 import { AxiomaimConfigService, Scheme, Theme } from '@axiomaim/services/config';
+import { UsersV2Service } from 'app/modules/axiomaim/administration/users/users-v2.service';
 // import { OrganizationsV2Service } from 'app/modules/axiomaim/administration/organizations/organizationsV2.service';
 
 export const encryptStorage = new EncryptStorage(environment.LOCAL_STORAGE_KEY, {
@@ -42,6 +43,7 @@ export const FirebaseAuthV2Service = createInjectable(() => {
   const app = initializeApp(environment.firebaseConfig);
   const auth: Auth = getAuth(app);
   const _usersDataService = inject(UsersDataService);
+  const _usersV2Service = inject(UsersV2Service);
   const _organizationsDataService = inject(OrganizationsDataService);
   const _axiomaimConfigService = inject(AxiomaimConfigService);
 
@@ -76,6 +78,18 @@ export const FirebaseAuthV2Service = createInjectable(() => {
     },
     dynamicLinkDomain: 'example.page.link'
   };
+
+  const initiate = async (): Promise<boolean> => {
+    try {
+      console.log('Initiating FirebaseAuthV2Service');
+      loadFromStorage();          
+      return true;
+    } catch (error) {
+      console.error('Error in initiate:', error);
+      return false;
+    }
+  };
+
 
   const setLoginUser = (data: any) => {
     loginUser.set(data)
@@ -197,7 +211,28 @@ const initializeAuth = (id: string): Promise<void> => {
     });
   }
 
-  const signIn = (credentials: { email: string; password: string }): Observable<User> => {
+  const signIn = async (credentials: { email: string; password: string }): Promise<any> => {
+    signInWithEmailAndPassword(auth, credentials.email, credentials.password).then((auth: any) => {
+      authUser.set(auth)
+      _usersV2Service.getItem(auth.user.uid).then(async (thisUser: User) => {
+        let date: any = new Date().toISOString();
+        thisUser.login_at.push(date);
+        thisUser.status = 'online';
+        loginUser.set(thisUser);
+        setScheme();
+        setTheme();      
+        setToStorage()
+        await _usersV2Service.updateItem(thisUser);     
+        return loginUser();   
+      })
+    }).catch((error) => {
+      console.error('Error during signIn:', error);
+      throw error;
+    })
+  };
+
+
+  const signIn1 = (credentials: { email: string; password: string }): Observable<User> => {
     const domain = getDomainFromEmail(credentials.email);
     return new Observable((observer) => {
       signInWithEmailAndPassword(auth, credentials.email, credentials.password).then((auth: any) => {
@@ -420,6 +455,7 @@ const initializeAuth = (id: string): Promise<void> => {
   return {
     loginUser: computed(() => loginUser()),
     organization: computed(() => organization()),
+    initiate,
     loadFromStorage,
     setToStorage,
     removeFromStorage,

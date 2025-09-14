@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
@@ -11,16 +11,17 @@ import {
 import { AxiomaimMediaWatcherService } from '@axiomaim/services/media-watcher';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { Navigation } from 'app/core/navigation/navigation.types';
-import { UserService } from 'app/core/user/user.service';
-import { User } from 'app/core/user/user.types';
+// import { User } from 'app/core/user/user.types';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { MessagesComponent } from 'app/layout/common/messages/messages.component';
 import { NotificationsComponent } from 'app/layout/common/notifications/notifications.component';
 import { QuickChatComponent } from 'app/layout/common/quick-chat/quick-chat.component';
 import { SearchComponent } from 'app/layout/common/search/search.component';
 import { ShortcutsComponent } from 'app/layout/common/shortcuts/shortcuts.component';
-import { UserComponent } from 'app/layout/common/user/user.component';
+import { LoginUserMenuComponent } from 'app/layout/common/login-user-menu/login-user-menu.component';
 import { Subject, takeUntil } from 'rxjs';
+import { User } from 'app/modules/axiomaim/administration/users/user.model';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 
 @Component({
     selector: 'classy-layout',
@@ -30,7 +31,7 @@ import { Subject, takeUntil } from 'rxjs';
         AxiomaimLoadingBarComponent,
         AxiomaimVerticalNavigationComponent,
         NotificationsComponent,
-        UserComponent,
+        LoginUserMenuComponent,
         MatIconModule,
         MatButtonModule,
         LanguagesComponent,
@@ -43,9 +44,10 @@ import { Subject, takeUntil } from 'rxjs';
     ],
 })
 export class ClassyLayoutComponent implements OnInit, OnDestroy {
+    _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     isScreenSmall: boolean;
     navigation: Navigation;
-    user: User;
+    loginUser: User;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -55,10 +57,12 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy {
         private _activatedRoute: ActivatedRoute,
         private _router: Router,
         private _navigationService: NavigationService,
-        private _userService: UserService,
         private _axiomaimMediaWatcherService: AxiomaimMediaWatcherService,
         private _axiomaimNavigationService: AxiomaimNavigationService
-    ) {}
+    ) {
+        this._firebaseAuthV2Service.initiate();
+        this.loginUser = this._firebaseAuthV2Service.loginUser();
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -87,11 +91,11 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy {
             });
 
         // Subscribe to the user service
-        this._userService.user$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((user: User) => {
-                this.user = user;
-            });
+        // this._userService.user$
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((user: User) => {
+        //         this.loginUser = user;
+        //     });
 
         // Subscribe to media changes
         this._axiomaimMediaWatcherService.onMediaChange$

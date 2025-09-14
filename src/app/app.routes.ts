@@ -87,6 +87,14 @@ export const appRoutes: Route[] = [
                 {path: 'crypto', loadChildren: () => import('app/modules/axiomaim/dashboards/crypto/crypto.routes')},
             ]},
 
+            // Administration
+            {path: 'administration', children: [
+                {path: 'users', loadChildren: () => import('app/modules/axiomaim/administration/users/users.routes')},
+                {path: 'products', loadChildren: () => import('app/modules/axiomaim/administration/products/products.routes')},
+                // {path: 'user-roles', loadChildren: () => import('app/modules/axiomaim/administration/user-roles/user-roles.routes')},
+                // {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
+            ]},
+
             // Apps
             {path: 'apps', children: [
                 {path: 'academy', loadChildren: () => import('app/modules/axiomaim/apps/academy/academy.routes')},

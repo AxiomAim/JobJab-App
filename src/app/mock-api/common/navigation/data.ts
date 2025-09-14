@@ -40,6 +40,29 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         ],
     },
     {
+        id: 'administration',
+        title: 'Administration',
+        subtitle: 'Administration Tools',
+        type: 'group',
+        icon: 'heroicons_outline:home',
+        children: [
+            {
+                id: 'administration.users',
+                title: 'Users',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/administration/users',
+            },
+            {
+                id: 'administration.products',
+                title: 'Products',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/administration/products',
+            },
+        ],
+    },
+    {
         id: 'apps',
         title: 'Applications',
         subtitle: 'Custom made application designs',

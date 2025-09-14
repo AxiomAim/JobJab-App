@@ -1,6 +1,7 @@
 import { I18nPluralPipe } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { Subject, finalize, takeUntil, takeWhile, tap, timer } from 'rxjs';
 
@@ -11,6 +12,8 @@ import { Subject, finalize, takeUntil, takeWhile, tap, timer } from 'rxjs';
     imports: [RouterLink, I18nPluralPipe],
 })
 export class AuthSignOutComponent implements OnInit, OnDestroy {
+    private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
+    private _authService = inject(AuthService);
     countdown: number = 5;
     countdownMapping: any = {
         '=1': '# second',
@@ -22,7 +25,6 @@ export class AuthSignOutComponent implements OnInit, OnDestroy {
      * Constructor
      */
     constructor(
-        private _authService: AuthService,
         private _router: Router
     ) {}
 
@@ -33,7 +35,9 @@ export class AuthSignOutComponent implements OnInit, OnDestroy {
     /**
      * On init
      */
-    ngOnInit(): void {
+    async ngOnInit() {
+        await this._firebaseAuthV2Service.signOut();
+        await this._authService.signOut();
         // Sign out
         this._authService.signOut();
 

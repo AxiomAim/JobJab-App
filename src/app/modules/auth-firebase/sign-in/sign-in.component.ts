@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import {
     FormsModule,
     NgForm,
@@ -16,7 +16,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { axiomaimAnimations } from '@axiomaim/animations';
 import { AxiomaimAlertComponent, AxiomaimAlertType } from '@axiomaim/components/alert';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AuthService } from 'app/core/auth/auth.service';
+import { UsersV2Service } from 'app/modules/axiomaim/administration/users/users-v2.service';
 
 @Component({
     selector: 'auth-sign-in',
@@ -37,6 +39,9 @@ import { AuthService } from 'app/core/auth/auth.service';
     ],
 })
 export class AuthSignInComponent implements OnInit {
+    private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
+    private _authService = inject(AuthService);
+    private _usersV2Service = inject(UsersV2Service);
     @ViewChild('signInNgForm') signInNgForm: NgForm;
 
     alert: { type: AxiomaimAlertType; message: string } = {
@@ -51,7 +56,6 @@ export class AuthSignInComponent implements OnInit {
      */
     constructor(
         private _activatedRoute: ActivatedRoute,
-        private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
         private _router: Router
     ) {}
@@ -63,14 +67,16 @@ export class AuthSignInComponent implements OnInit {
     /**
      * On init
      */
-    ngOnInit(): void {
+    async ngOnInit() {
+        // await this._firebaseAuthV2Service.signOut();
+        // await this._authService.signOut();
         // Create the form
         this.signInForm = this._formBuilder.group({
             email: [
-                'hughes.brian@company.com',
+                '',
                 [Validators.required, Validators.email],
             ],
-            password: ['admin', Validators.required],
+            password: ['', Validators.required],
             rememberMe: [''],
         });
     }
@@ -82,7 +88,9 @@ export class AuthSignInComponent implements OnInit {
     /**
      * Sign in
      */
-    signIn(): void {
+    async signIn() {
+        const loginUser = await this._firebaseAuthV2Service.signIn(this.signInForm.value);
+        console.log('loginUser', loginUser);
         // Return if the form is invalid
         if (this.signInForm.invalid) {
             return;
