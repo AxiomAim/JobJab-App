@@ -5,6 +5,7 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    inject,
     OnDestroy,
     OnInit,
     TemplateRef,
@@ -19,6 +20,7 @@ import { RouterLink } from '@angular/router';
 import { NotificationsService } from 'app/layout/common/notifications/notifications.service';
 import { Notification } from 'app/layout/common/notifications/notifications.types';
 import { Subject, takeUntil } from 'rxjs';
+import { NotificationsV2Service } from './notifications-v2.service';
 
 @Component({
     selector: 'notifications',
@@ -37,6 +39,7 @@ import { Subject, takeUntil } from 'rxjs';
     ],
 })
 export class NotificationsComponent implements OnInit, OnDestroy {
+    _notificationsV2Service = inject(NotificationsV2Service);
     @ViewChild('notificationsOrigin') private _notificationsOrigin: MatButton;
     @ViewChild('notificationsPanel')
     private _notificationsPanel: TemplateRef<any>;

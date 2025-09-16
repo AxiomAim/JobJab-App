@@ -167,10 +167,10 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
             email: ["", [Validators.required, Validators.email]],
             firstName: ["", [Validators.required]],
             lastName: ["", [Validators.required]],
-            company: ["", [Validators.required]],
+            company: [""],
             address: ["", [Validators.required]],
-            mobileCountry: [""],
-            mobileNo: [""],
+            country: ["1"],
+            phone: ["", [Validators.required]],
           });
     }
 

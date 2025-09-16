@@ -28,6 +28,8 @@ import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-mes
 import { User } from '../../users/user.model';
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
 import { OrganizationsV2Service } from '../organizations-v2.service';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
     selector: 'organizations-add-item',
@@ -71,7 +73,10 @@ import { OrganizationsV2Service } from '../organizations-v2.service';
         MatChipsModule,
         MatSidenavModule,
         GridAllModule,
-        AddressLookupComponent
+        AddressLookupComponent,
+        MatStepperModule,
+        MatRadioModule,
+
 
     ]
 })
@@ -164,14 +169,38 @@ export class OrganizationsAddItemComponent implements OnInit, AfterViewInit, OnD
      */
     setFormGroup() {
         this.organizationForm = this._formBuilder.group({
-            email: ["", [Validators.required, Validators.email]],
-            firstName: ["", [Validators.required]],
-            lastName: ["", [Validators.required]],
-            company: ["", [Validators.required]],
-            address: ["", [Validators.required]],
-            mobileCountry: [""],
-            mobileNo: [""],
-          });
+            step1: this._formBuilder.group({
+                name: ['', Validators.required],
+                domain: ['', Validators.required],
+                email: ['', [Validators.required, Validators.email]],
+                phone: ['', Validators.required],
+                address: ['', Validators.required],
+            }),
+            step2: this._formBuilder.group({
+                facebook: ['', Validators.required],
+                x: ['', Validators.required],
+                linkedIn: ['', Validators.required],
+                instagram: ['', Validators.required],
+            }),
+            step3: this._formBuilder.group({
+                slides: this._formBuilder.array([]),
+            }),
+            step4: this._formBuilder.group({
+                testimonials: this._formBuilder.array([]),
+            }),
+            step5: this._formBuilder.group({
+                homeIntro: this._formBuilder.array([]),
+            }),
+            step6: this._formBuilder.group({
+                byEmail: this._formBuilder.group({
+                    companyNews: [true],
+                    featuredProducts: [false],
+                    messages: [true],
+                }),
+                pushNotifications: ['everything', Validators.required],
+            }),
+        });
+
     }
 
 
