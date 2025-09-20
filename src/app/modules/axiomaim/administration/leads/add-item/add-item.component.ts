@@ -1,5 +1,4 @@
-import { NgClass, NgFor, NgForOf, NgIf } from '@angular/common';
-import { Component, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild, ViewEncapsulation, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild, ViewEncapsulation, Output, EventEmitter, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -10,7 +9,7 @@ import {
     AxiomaimConfigService,
 } from '@axiomaim/services/config';
 import { debounceTime, Subject, takeUntil } from 'rxjs';
-import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -28,6 +27,7 @@ import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-mes
 import { User } from '../../users/user.model';
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
 import { LeadsV2Service } from '../leads-v2.service';
+import { Lead, LeadModel } from '../leads.model';
 
 @Component({
     selector: 'leads-add-item',
@@ -71,7 +71,9 @@ import { LeadsV2Service } from '../leads-v2.service';
         MatChipsModule,
         MatSidenavModule,
         GridAllModule,
-        AddressLookupComponent
+        AddressLookupComponent,
+        TextFieldModule,
+
 
     ]
 })
@@ -79,6 +81,7 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     _leadsV2Service = inject(LeadsV2Service);
     _alertMessagesService = inject(AlertMessagesService);
+    lead: Lead;
 
     formFieldHelpers: string[] = [''];
     fixedSubscriptInput: FormControl = new FormControl('', [
@@ -119,7 +122,9 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     constructor(
         private _formBuilder: UntypedFormBuilder,
         private _router: Router,
-        private _axiomaimConfigService: AxiomaimConfigService
+        private _axiomaimConfigService: AxiomaimConfigService,
+        private _changeDetectorRef: ChangeDetectorRef,
+
     ) {
         this.#loginUser.set(this._firebaseAuthV2Service.loginUser());
         console.log('#loginUser', this.#loginUser());
@@ -133,6 +138,7 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
+        this.lead = LeadModel.emptyDto()
         this.setFormGroup();
     }
 
@@ -169,9 +175,12 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
             lastName: ["", [Validators.required]],
             company: [""],
             address: ["", [Validators.required]],
+            project: ["", [Validators.required]],
             country: ["1"],
             phone: ["", [Validators.required]],
+
           });
+
     }
 
 
@@ -195,7 +204,7 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
         this.resetForm();
         
         // Reset additional form-related properties
-        this.resetAdditionalProperties();
+        // this.resetAdditionalProperties();
         
         // Close the drawer
         this.newItemDrawer.close();
@@ -224,10 +233,13 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
         
         // Set default values for form fields that need them
         this.leadForm.patchValue({
-            active: true,
-            user_roles: [],
-            site_account_id: [],
-            user_delegation_roles: []
+            email: null,
+            firstName: null,
+            lastName: null,
+            company: null,
+            address: null,
+            country: "1",
+            phone: null,
         }, { emitEvent: false });
     }
 
@@ -236,14 +248,6 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     private resetAdditionalProperties(): void {
         // Reset component-specific properties
-        this.user_roles = [];
-        this.site_account_id = [];
-        this.user_delegation_roles = [];
-        this.reLoad = true;
-        this.sitePermission = false;
-        this.complinePermission = false;
-        this.specializePermission = false;
-        this.isSiteMultiple = false;
     }
 
 
@@ -257,7 +261,14 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
      */
 
     async onSubmit() {
-
+        this._leadsV2Service.createItem(this.leadForm.value).then(
+            async (res) => {
+                console.log('Lead created successfully', res);
+                await this._leadsV2Service.getAll();
+                await this._alertMessagesService.showMessage('Lead created successfully', 'success');
+                this.close();
+            }
+        )
 
     }
               

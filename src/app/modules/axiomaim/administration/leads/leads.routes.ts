@@ -64,7 +64,7 @@ const canDeactivateUsersDetails = (
     // If the next state doesn't contain '/users'
     // it means we are navigating away from the
     // users app
-    if (!nextState.url.includes('/users')) {
+    if (!nextState.url.includes('/leads')) {
         // Let it navigate
         return true;
     }

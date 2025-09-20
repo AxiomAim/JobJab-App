@@ -16,11 +16,10 @@ export class LeadModel implements BaseDto {
             company?: string,
             birthday?: string | null,
             address?: string | null,
+            project?: string | null,
             notes?: {
-                type: string,
                 subject: string,
                 note: string,
-                created_at: string,
             }[],
             tags?: string[],
             created_at?: string,
@@ -40,6 +39,7 @@ export class LeadModel implements BaseDto {
             this.company = company;
             this.birthday = birthday;
             this.address = address;
+            this.project = project;
             this.notes = notes;
             this.tags = tags;
             this.created_at = created_at;
@@ -59,11 +59,10 @@ export class LeadModel implements BaseDto {
     public company?: string;
     public birthday?: string | null;
     public address?: string | null;
+    public project?: string | null;
     public notes?: {
-        type: string,
         subject: string,
         note: string,
-        created_at: string,
     }[];
     public tags?: string[];
     public created_at?: string;
@@ -87,7 +86,8 @@ export class LeadModel implements BaseDto {
             company: dto.company ? dto.company : '',
             birthday: dto.birthday ? dto.birthday : null,
             address: dto.address ? dto.address : null,
-            notes: dto.notes ? dto.notes : [],
+            project: dto.project ? dto.project : null,
+            notes: dto.notes ? dto.notes : [{subject: 'Initial Note', note: ''}],
             tags: dto.tags ? dto.tags : [],
             created_at: dto.created_at ? dto.created_at : date,
             updated_at: dto.updated_at ? dto.updated_at : date,
@@ -111,7 +111,8 @@ export class LeadModel implements BaseDto {
             company: '',
             birthday: null,
             address: null,
-            notes: [],
+            project: null,
+            notes: [{subject: 'Initial Note', note: ''}],
             tags: [],
             created_at: date,
             updated_at: date,
@@ -135,11 +136,10 @@ export interface Lead  extends BaseDto {
     company?: string;
     birthday?: string | null;
     address?: string | null;
+    project?: string | null;
     notes?: {
-        type: string;
         subject: string;
         note: string;
-        created_at: string;
     }[];
     tags?: string[];
     created_at?: string;

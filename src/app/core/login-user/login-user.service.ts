@@ -11,6 +11,7 @@ import { Scheme, Theme } from '@axiomaim/services/config';
 export class LoginUserService {
     private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     private _loginUserDataService = inject(UsersDataService);
+    
     // private _authService = inject(AuthService);
     private _router = inject(Router);
     // private _loginUser: ReplaySubject<User> = new ReplaySubject<User>(1);

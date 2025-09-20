@@ -100,12 +100,20 @@
                             </div>
                             }
                         </div>
-                        <div class="ml-4 min-w-0">
+                        <div class="flex-col flex-wrap ml-4 min-w-0">
                             <div class="truncate font-medium leading-5">
-                                {{ lead.displayName }}
+                                {{ lead.firstName }} {{ lead.lastName }}
                             </div>
                             <div class="text-secondary truncate leading-5">
                                 {{ lead.email }}
+                            </div>
+                        </div>
+                        <div class="flex-col flex-wrap ml-4 min-w-0">
+                            <div class="truncate font-medium leading-5">
+                                {{ lead.phone | phone }}
+                            </div>
+                            <div class="text-secondary truncate leading-5">
+                                {{ lead.address }}
                             </div>
                         </div>
                     </a>

@@ -26,6 +26,7 @@ import { Organization } from 'app/modules/axiomaim/administration/organizations/
 import { OrganizationsDataService } from 'app/modules/axiomaim/administration/organizations/organizations-data.service';
 import { AxiomaimConfigService, Scheme, Theme } from '@axiomaim/services/config';
 import { UsersV2Service } from 'app/modules/axiomaim/administration/users/users-v2.service';
+import { LocalV2Service } from '../services/local-v2.service';
 // import { OrganizationsV2Service } from 'app/modules/axiomaim/administration/organizations/organizationsV2.service';
 
 export const encryptStorage = new EncryptStorage(environment.LOCAL_STORAGE_KEY, {

@@ -41,6 +41,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LeadsV2Service } from '../leads-v2.service';
 import { LeadsAddItemComponent } from '../add-item/add-item.component';
 import { LeadsComponent } from '../leads.component';
+import { PhonePipe } from '@axiomaim/pipes/phone.pipe';
 
 @Component({
     selector: 'leads-list',
@@ -61,7 +62,8 @@ import { LeadsComponent } from '../leads.component';
         RouterLink,
         AsyncPipe,
         I18nPluralPipe,
-        LeadsAddItemComponent
+        LeadsAddItemComponent,
+        PhonePipe
     ],
 })
 export class LeadsListComponent implements OnInit, OnDestroy {
