@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
-import { UserService } from 'app/core/user/user.service';
 import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
+import { LoginUserService } from '../login-user/login-user.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private _authenticated: boolean = false;
     private _httpClient = inject(HttpClient);
-    private _userService = inject(UserService);
+    private _loginUserService = inject(LoginUserService);
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -67,7 +67,7 @@ export class AuthService {
                 this._authenticated = true;
 
                 // Store the user on the user service
-                this._userService.user = response.user;
+                this._loginUserService.loginUser = response.user;
 
                 // Return a new observable with the response
                 return of(response);
@@ -105,7 +105,7 @@ export class AuthService {
                     this._authenticated = true;
 
                     // Store the user on the user service
-                    this._userService.user = response.user;
+                    this._loginUserService.loginUser = response.user;
 
                     // Return true
                     return of(true);

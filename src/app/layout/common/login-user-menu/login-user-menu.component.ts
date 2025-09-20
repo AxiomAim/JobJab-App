@@ -15,8 +15,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
-import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
-import { UserService } from 'app/core/user/user.service';
+import { LoginUserService } from 'app/core/login-user/login-user.service';
 import { User } from 'app/modules/axiomaim/administration/users/user.model';
 // import { User } from 'app/core/user/user.types';
 import { Subject, takeUntil } from 'rxjs';
@@ -36,8 +35,7 @@ import { Subject, takeUntil } from 'rxjs';
     ],
 })
 export class LoginUserMenuComponent implements OnInit, OnDestroy {
-    private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
-    // private _loginUserService = inject(LoginUserService);
+    private _loginUserService = inject(LoginUserService);
 
 
     /* eslint-disable @typescript-eslint/naming-convention */
@@ -57,8 +55,6 @@ export class LoginUserMenuComponent implements OnInit, OnDestroy {
         private _router: Router,
         // private _userService: UserService
     ) {
-        this._firebaseAuthV2Service.loadFromStorage();
-        this.loginUser = this._firebaseAuthV2Service.loginUser();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -68,17 +64,22 @@ export class LoginUserMenuComponent implements OnInit, OnDestroy {
     /**
      * On init
      */
-    ngOnInit(): void {
-        // Subscribe to user changes
-        // this._loginUserService.loginUser$
-        //     .pipe(takeUntil(this._unsubscribeAll))
-        //     .subscribe((loginUser: User) => {
-        //         this.loginUser = loginUser;
-        //         console.log('loginUser', this.loginUser);
+    async ngOnInit()  {
 
-        //         // Mark for check
-        //         this._changeDetectorRef.markForCheck();
-        //     });
+        // Subscribe to user changes
+        this._loginUserService.loginUser$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((loginUser: User) => {
+                if(!loginUser) {
+                    console.log('!loginUser', loginUser);
+                    this._router.navigateByUrl('/sign-out');
+                    this._router.navigate(['/sign-out']);
+                }
+                this.loginUser = loginUser;
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
     }
 
     /**

@@ -56,11 +56,13 @@ export class AuthMockApi {
         this._axiomaimMockApiService
             .onPost('api/auth/sign-in', 1500)
             .reply(({ request }) => {
+                console.log('request.body', request.body)
+
                 // Sign in successful
-                // if (
-                //     request.body.email === 'hughes.brian@company.com' &&
-                //     request.body.password === 'admin'
-                // ) {
+                if (
+                    request.body.email === 'tig@tapwash.us' &&
+                    request.body.password === 'Havetim!25742'
+                ) {
                     return [
                         200,
                         {
@@ -69,7 +71,7 @@ export class AuthMockApi {
                             tokenType: 'bearer',
                         },
                     ];
-                // }
+                }
 
                 // Invalid credentials
                 return [404, false];

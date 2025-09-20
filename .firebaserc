@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "tap-wash"
+  },
+  "targets": {
+    "tap-wash": {
+      "hosting": {
+        "site": [
+          "tapwash-site"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

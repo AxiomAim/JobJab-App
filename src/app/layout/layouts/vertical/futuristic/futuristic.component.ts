@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
@@ -11,7 +11,6 @@ import {
 import { AxiomaimMediaWatcherService } from '@axiomaim/services/media-watcher';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { Navigation } from 'app/core/navigation/navigation.types';
-import { UserService } from 'app/core/user/user.service';
 // import { User } from 'app/core/user/user.types';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { MessagesComponent } from 'app/layout/common/messages/messages.component';
@@ -22,6 +21,7 @@ import { ShortcutsComponent } from 'app/layout/common/shortcuts/shortcuts.compon
 import { LoginUserMenuComponent } from 'app/layout/common/login-user-menu/login-user-menu.component';
 import { Subject, takeUntil } from 'rxjs';
 import { User } from 'app/modules/axiomaim/administration/users/user.model';
+import { LoginUserService } from 'app/core/login-user/login-user.service';
 
 @Component({
     selector: 'futuristic-layout',
@@ -44,6 +44,7 @@ import { User } from 'app/modules/axiomaim/administration/users/user.model';
     ],
 })
 export class FuturisticLayoutComponent implements OnInit, OnDestroy {
+    private _loginUserService = inject(LoginUserService);
     isScreenSmall: boolean;
     navigation: Navigation;
     user: User;
@@ -56,7 +57,6 @@ export class FuturisticLayoutComponent implements OnInit, OnDestroy {
         private _activatedRoute: ActivatedRoute,
         private _router: Router,
         private _navigationService: NavigationService,
-        private _userService: UserService,
         private _axiomaimMediaWatcherService: AxiomaimMediaWatcherService,
         private _axiomaimNavigationService: AxiomaimNavigationService
     ) {}
@@ -88,7 +88,7 @@ export class FuturisticLayoutComponent implements OnInit, OnDestroy {
             });
 
         // Subscribe to the user service
-        this._userService.user$
+        this._loginUserService.loginUser$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((user: User) => {
                 this.user = user;

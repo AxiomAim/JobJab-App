@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import {
     FormsModule,
     NgForm,
@@ -16,7 +16,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { axiomaimAnimations } from '@axiomaim/animations';
 import { AxiomaimAlertComponent, AxiomaimAlertType } from '@axiomaim/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
-import { UserService } from 'app/core/user/user.service';
+import { LoginUserService } from 'app/core/login-user/login-user.service';
 
 @Component({
     selector: 'auth-unlock-session',
@@ -36,6 +36,7 @@ import { UserService } from 'app/core/user/user.service';
     ],
 })
 export class AuthUnlockSessionComponent implements OnInit {
+    private _loginUserService = inject(LoginUserService);
     @ViewChild('unlockSessionNgForm') unlockSessionNgForm: NgForm;
 
     alert: { type: AxiomaimAlertType; message: string } = {
@@ -55,7 +56,6 @@ export class AuthUnlockSessionComponent implements OnInit {
         private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
         private _router: Router,
-        private _userService: UserService
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ export class AuthUnlockSessionComponent implements OnInit {
      */
     ngOnInit(): void {
         // Get the user's name
-        this._userService.user$.subscribe((user) => {
+        this._loginUserService.loginUser$.subscribe((user) => {
             this.name = user.displayName;
             this._email = user.email;
         });

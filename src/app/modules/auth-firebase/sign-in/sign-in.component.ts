@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ViewEncapsulation, NgZone } from '@angular/core';
 import {
     FormsModule,
     NgForm,
@@ -19,6 +19,18 @@ import { AxiomaimAlertComponent, AxiomaimAlertType } from '@axiomaim/components/
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { UsersV2Service } from 'app/modules/axiomaim/administration/users/users-v2.service';
+import {
+  getAuth,
+  PhoneAuthProvider,
+  multiFactor,
+  signInWithPhoneNumber,
+  RecaptchaVerifier,
+  Auth,
+  signInWithCredential,
+  OAuthProvider,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 
 @Component({
     selector: 'auth-sign-in',
@@ -57,7 +69,9 @@ export class AuthSignInComponent implements OnInit {
     constructor(
         private _activatedRoute: ActivatedRoute,
         private _formBuilder: UntypedFormBuilder,
-        private _router: Router
+        private _router: Router,
+        private ngZone: NgZone,
+
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -135,4 +149,70 @@ export class AuthSignInComponent implements OnInit {
             }
         );
     }
+
+      signInWithGoogle() {
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        console.log("🚀 ~ LoginComponent ~ .then ~ token:", token);
+        // The signed-in user info.
+        const user = result.user;
+        console.log(
+          "🚀 ~ LoginComponent ~ .then ~ user:",
+          user.email,
+          user.refreshToken
+        );
+
+        if (user) {
+          this._firebaseAuthV2Service.signInGooglePopup().then(
+            (response: any) => {
+              console.log("🚀 ~ LoginComponent ~ .then ~ response:", response);
+              if (response.user_roles.length > 1) {
+                const data = {
+                  user_roles: response["user_roles"],
+                  username: response.email,
+                  type: "google",
+                  token: {
+                    access_token: token,
+                    refresh_token: user.refreshToken,
+                  },
+                };
+                this.ngZone.run(() => {
+                  
+                });
+              } else {
+                const role_id = response.user_roles[0].role_id;
+                const temp = {
+                  role_id: role_id,
+                  username: response.email,
+                  type: "google",
+                  token: {
+                    access_token: token,
+                    refresh_token: user.refreshToken,
+                  },
+                };
+              }
+            },
+            (error) => {
+              console.log("error");
+            }
+          );
+        }
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  }
+
 }

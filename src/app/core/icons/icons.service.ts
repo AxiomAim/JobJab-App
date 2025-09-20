@@ -51,5 +51,12 @@ export class IconsService {
                 'icons/heroicons-mini.svg'
             )
         );
+        matIconRegistry.addSvgIconSetInNamespace(
+            'axiomaim',
+            domSanitizer.bypassSecurityTrustResourceUrl(
+                'icons/axiomaim.svg'
+            )
+        );
+
     }
 }

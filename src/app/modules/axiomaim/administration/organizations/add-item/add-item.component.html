@@ -10,7 +10,7 @@
     <div class="flex w-full flex-col ">
         <alert-messages />
         <div class="flex h-10 min-h-10 flex-row items-center bg-sky-900 px-6 text-white">
-            <mat-icon class="text-current icon-size-7" [svgIcon]="'davesa:davesa-c'"></mat-icon>
+            <mat-icon class="text-current icon-size-7" [svgIcon]="'axiomaim:davesa-c'"></mat-icon>
             <div class="ml-3 text-2xl font-semibold tracking-tight">
                 Add Item
             </div>
@@ -52,6 +52,9 @@
                             <input matInput [formControlName]="'phone'" [placeholder]="'Phone Number'" required />
                             <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:envelope'"></mat-icon>
                         </mat-form-field>
+                    </div>
+                    <div class="flex">
+                        <address-lookup class="flex-auto" [formControlName]="'address'"></address-lookup>
                     </div>
                     <div class="flex justify-end">
                         <button class="px-8" mat-flat-button [color]="'primary'" [disabled]="

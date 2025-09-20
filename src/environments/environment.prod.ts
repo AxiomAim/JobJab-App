@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  useEmultaors: true,
+  useEmultaors: false,
   url: '',
   firebaseConfig: {
     apiKey: "AIzaSyDBl6uBR-HISRRMHLfyxeI-qmFuL6R6NTw",
@@ -12,6 +12,5 @@ export const environment = {
     measurementId: "G-EPHR33ST9C"
   },
   LOCAL_STORAGE_KEY: 'TAP01-1900-0000-0000-encrypt00000',
-
 
 };

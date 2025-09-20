@@ -96,7 +96,11 @@
 
                 <!-- Single sign-on buttons -->
                 <div class="mt-8 flex items-center space-x-4">
-                    <button class="flex-auto" type="button" mat-stroked-button>
+                    <button class="flex-auto w-full p-4" type="button" mat-stroked-button (click)="signInWithGoogle()">
+                        <mat-icon class="icon-size-5" [svgIcon]="'axiomaim:google-c'"></mat-icon><span class="mx-1">
+                            Sign in with Google</span>
+                    </button>
+                    <!-- <button class="flex-auto" type="button" mat-stroked-button>
                         <mat-icon class="icon-size-5" [svgIcon]="'feather:facebook'"></mat-icon>
                     </button>
                     <button class="flex-auto" type="button" mat-stroked-button>
@@ -104,7 +108,7 @@
                     </button>
                     <button class="flex-auto" type="button" mat-stroked-button>
                         <mat-icon class="icon-size-5" [svgIcon]="'feather:github'"></mat-icon>
-                    </button>
+                    </button> -->
                 </div>
             </form>
         </div>
