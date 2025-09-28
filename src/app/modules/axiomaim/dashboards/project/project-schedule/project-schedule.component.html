@@ -1,0 +1,14 @@
+<ejs-schedule width="100%" height="550px" [selectedDate]="selectedDate" [views]="views" [eventSettings]="eventSettings"
+    [group]='group'>
+    <e-resources>
+        <e-resource field="OwnerId" title="Owner" name="Owners" [dataSource]="roomDataSource"
+            [allowMultiple]='allowMultipleRoom' textField='OwnerText' idField='Id' groupIdField='OwnerGroupId'
+            colorField='OwnerColor'>
+        </e-resource>
+    </e-resources>
+    <ng-template #groupHeaderTooltipTemplate let-data>
+        <div class='template-wrap'>
+            <div class="res-text">Name: {{data.resourceData.OwnerText}} </div>
+        </div>
+    </ng-template>
+</ejs-schedule>

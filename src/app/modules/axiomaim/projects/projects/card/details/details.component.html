@@ -1,0 +1,198 @@
+<davesa-card class="filter-article flex w-full flex-col">
+    <div davesaScrollbar [davesaScrollbarOptions]="{wheelPropagation: false, suppressScrollX: true}">
+
+        <!-- <div class="m-3 text-lg">{{ projectCard.title }}</div> -->
+        <form [formGroup]="projectCardForm">
+            <!-- Title -->
+            <div class="mt-8">clear
+                <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                    <mat-label>Title</mat-label>
+                    <input matInput [formControlName]="'title'" [placeholder]="'Title'" />
+                </mat-form-field>
+            </div>
+            <!-- Description -->
+            <quill-editor class="mt-2 w-full h-100" [formControlName]="'description'" [bounds]="'self'"
+                [modules]="quillModules"></quill-editor>
+
+            <div class="mt-8">
+                <cloud-storage (setFile)="setImage($event)" [title]="'Add Image'" [accept]="'*/image'"></cloud-storage>
+            </div>
+            <div class="flex flex-row">
+                <div class="flex flex-wrap" class="mt-2" *ngFor="let image of projectCard.images; trackBy: trackByFn">
+                    <div flex="1" class="m-3">
+                        <img class="h-50 max-w-50 transition-all duration-300 rounded-lg" [src]="image.imageUrl"
+                            alt="Card Image" />
+                        <div>
+                            <button mat-button-icon class="m-2" (click)="removeImage(image)" matTooltip="Delete Image">
+                                <mat-icon class="text-red-500" [svgIcon]="
+                                        'heroicons_outline:trash'
+                                    "></mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div flex="1" class="mt-2">
+                <!-- Tasks -->
+                @if (projectCard?.tasks) {
+                Tasks
+                <div class="mx-2 mt-4 space-y-1.5">
+                    @for (task of projectCard.tasks; track trackByFn($index, task)) {
+                    <div class="group flex items-center">
+                        <mat-checkbox class="flex items-center" [color]="'primary'" [(ngModel)]="task.completed"
+                            (change)="updateTaskOnTestCard(note, task)"></mat-checkbox>
+                        <input class="w-full px-1 py-0.5" [ngClass]="{
+                                            'text-secondary line-through':
+                                                task.completed,
+                                        }" [placeholder]="'Task'" [(ngModel)]="task.title"
+                            (input)="updateTaskOnTestCard(note, task)" />
+                        <mat-icon class="ml-auto hidden cursor-pointer icon-size-5 group-hover:flex"
+                            [svgIcon]="'heroicons_solid:x-mark'" (click)="removeTaskFromNote(note, task)"></mat-icon>
+                    </div>
+                    }
+                    <div class="flex items-center">
+                        <mat-icon class="text-hint -ml-0.5 icon-size-5" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                        <input class="ml-1.5 w-full px-1 py-0.5" [placeholder]="'Add task'" (keydown.enter)="
+                                        addTestCardTask(aimCard, newTaskInput.value);
+                                        newTaskInput.value = ''
+                                    " #newTaskInput />
+                    </div>
+                </div>
+                }
+
+            </div>
+
+            <button mat-button (click)="addTasksOnTestCard(projectCard)" matTooltip="Add Checklist">
+                <mat-icon [svgIcon]="'heroicons_outline:clipboard-document-list'">
+                </mat-icon>
+            </button>
+
+            <!-- <div
+            class="-mx-6 mt-10 flex items-center border-t bg-gray-50 py-4 pl-1 pr-4 dark:bg-transparent sm:-mx-12 sm:pl-7 sm:pr-12"> -->
+            <div class="flex items-center ">
+                <!-- Cancel -->
+                <button class="ml-auto" mat-button [matTooltip]="'Cancel'" (click)="close()">
+                    Cancel
+                </button>
+                <!-- Save -->
+                <button class="ml-2" mat-button [color]="'primary'" [disabled]="projectCardForm.invalid"
+                    [matTooltip]="'Save'" (click)="onSubmit()">
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+</davesa-card>
+
+
+<!-- <davesa-card class="filter-post flex w-full max-w-140 flex-col">
+    <div class="mx-6 mb-1 mt-6 flex items-center sm:mx-8">
+        <img class="mr-4 h-10 w-10 rounded-full" src="images/avatars/female-01.jpg" alt="Card cover image" />
+        <div class="flex flex-col">
+            <span class="font-semibold leading-none">Caroline Lundu</span>
+            <span class="text-secondary mt-1 text-sm leading-none">#65 29 minutes ago</span>
+        </div>
+        <button class="-mr-4 ml-auto" mat-icon-button [matMenuTriggerFor]="postCardMenu08">
+            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:ellipsis-vertical'"></mat-icon>
+        </button>
+        <mat-menu #postCardMenu08="matMenu">
+            <button mat-menu-item>
+                <span class="flex items-center">
+                    <mat-icon class="mr-3 icon-size-5" [svgIcon]="'heroicons_solid:arrow-up-tray'"></mat-icon>
+                    <span>Save post</span>
+                </span>
+            </button>
+            <button mat-menu-item>
+                <span class="flex items-center">
+                    <mat-icon class="mr-3 icon-size-5" [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                    <span>Hide post</span>
+                </span>
+            </button>
+            <button mat-menu-item>
+                <span class="flex items-center">
+                    <mat-icon class="mr-3 icon-size-5" [svgIcon]="'heroicons_solid:clock'"></mat-icon>
+                    <span>Snooze for 30 days</span>
+                </span>
+            </button>
+            <button mat-menu-item>
+                <span class="flex items-center">
+                    <mat-icon class="mr-3 icon-size-5" [svgIcon]="'heroicons_solid:minus-circle'"></mat-icon>
+                    <span>Hide all</span>
+                </span>
+            </button>
+            <mat-divider class="my-2"></mat-divider>
+            <button mat-menu-item>
+                <span class="flex items-center">
+                    <mat-icon class="mr-3 icon-size-5" [svgIcon]="
+                            'heroicons_solid:exclamation-triangle'
+                        "></mat-icon>
+                    <span>Report post</span>
+                </span>
+            </button>
+            <button mat-menu-item>
+                <span class="flex items-center">
+                    <mat-icon class="mr-3 icon-size-5" [svgIcon]="'heroicons_solid:bell'"></mat-icon>
+                    <span>Turn on notifications for this post</span>
+                </span>
+            </button>
+        </mat-menu>
+    </div>
+    <div class="m-6 sm:mx-8">
+        <p>
+            #65 We'll put a happy little sky in here. We touch the
+            canvas, the canvas takes what it wants. A little happy
+            sunlight shining through there. Let's build some happy
+            little clouds up here. I was blessed with a very steady
+            hand; and it comes in very handy when you're doing these
+            little delicate things. This is the fun part.
+        </p>
+        <p class="mt-4">
+            Isn't it great to do something you can't fail at? Little
+            trees and bushes grow however makes them happy. Trees
+            get lonely too, so we'll give him a little friend. There
+            are no mistakes. You can fix anything that happens.
+        </p>
+    </div>
+    <div class="mx-3 flex items-center sm:mx-5">
+        <button class="mr-1 px-3" mat-button>
+            <mat-icon class="text-red-500 icon-size-5" [svgIcon]="'heroicons_solid:heart'"></mat-icon>
+            <span class="ml-2">Unlike</span>
+        </button>
+        <button class="mr-1 px-3" mat-button>
+            <mat-icon class="icon-size-5" [svgIcon]="
+                    'heroicons_solid:chat-bubble-left-ellipsis'
+                "></mat-icon>
+            <span class="ml-2">Comment</span>
+        </button>
+        <button class="mr-1 px-3" mat-button>
+            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:share'"></mat-icon>
+            <span class="ml-2">Share</span>
+        </button>
+    </div>
+    <hr class="mx-6 mb-6 mt-4 border-b sm:mx-8" />
+    <div class="mx-6 mb-4 flex flex-col sm:mx-8 sm:mb-6 sm:flex-row sm:items-center">
+        <div class="flex items-center">
+            <img class="text-card ring-bg-card m-0.5 h-6 w-6 rounded-full ring-2" src="images/avatars/female-02.jpg"
+                alt="Card cover image" />
+            <img class="text-card ring-bg-card m-0.5 -ml-3 h-6 w-6 rounded-full ring-2"
+                src="images/avatars/female-04.jpg" alt="Card cover image" />
+            <img class="text-card ring-bg-card m-0.5 -ml-3 h-6 w-6 rounded-full ring-2" src="images/avatars/male-09.jpg"
+                alt="Card cover image" />
+            <img class="text-card ring-bg-card m-0.5 -ml-3 h-6 w-6 rounded-full ring-2" src="images/avatars/male-07.jpg"
+                alt="Card cover image" />
+            <div class="ml-3 text-md tracking-tight">
+                You and 24 more liked this
+            </div>
+        </div>
+        <div class="hidden flex-auto sm:flex"></div>
+        <div class="mt-4 flex items-center sm:mt-0">
+            <button class="-ml-2 mr-1 px-3 sm:ml-0" mat-button>
+                4 shares
+            </button>
+            <button class="px-3 sm:-mr-3" mat-button>
+                No comments
+            </button>
+        </div>
+    </div>
+</davesa-card> -->

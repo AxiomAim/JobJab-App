@@ -30,7 +30,7 @@ import { Subject, takeUntil } from 'rxjs';
         MatButtonModule,
         MatMenuModule,
         MatIconModule,
-        NgClass,
+        // NgClass,
         MatDividerModule,
     ],
 })

@@ -566,6 +566,50 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 --------------------------------------------------------------------------------
+Package: @syncfusion/ej2-schedule
+License: "SEE LICENSE IN license"
+
+Essential JS 2 library is available under the Syncfusion Essential Studio program,  and can be licensed either under the Syncfusion Community License Program or the Syncfusion commercial license.
+
+To be qualified for the Syncfusion Community License Program you must have a gross revenue of less than one (1) million U.S. dollars ($1,000,000.00 USD) per year and have less than five (5) developers in your organization, and agree to be bound by Syncfusion’s terms and conditions. 
+
+Customers who do not qualify for the community license can contact sales@syncfusion.com for commercial licensing options.
+
+Under no circumstances can you use this product without (1) either a Community License or a commercial license and (2) without agreeing and abiding by Syncfusion’s license containing all terms and conditions. 
+
+The Syncfusion license that contains the terms and conditions can be found at 
+https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
+--------------------------------------------------------------------------------
+Package: @syncfusion/ej2-angular-schedule
+License: "SEE LICENSE IN license"
+
+Essential JS 2 library is available under the Syncfusion Essential Studio program,  and can be licensed either under the Syncfusion Community License Program or the Syncfusion commercial license.
+
+To be qualified for the Syncfusion Community License Program you must have a gross revenue of less than one (1) million U.S. dollars ($1,000,000.00 USD) per year and have less than five (5) developers in your organization, and agree to be bound by Syncfusion’s terms and conditions. 
+
+Customers who do not qualify for the community license can contact sales@syncfusion.com for commercial licensing options.
+
+Under no circumstances can you use this product without (1) either a Community License or a commercial license and (2) without agreeing and abiding by Syncfusion’s license containing all terms and conditions. 
+
+The Syncfusion license that contains the terms and conditions can be found at 
+https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
+
+--------------------------------------------------------------------------------
+Package: @syncfusion/ej2-angular-calendars
+License: "SEE LICENSE IN license"
+
+Essential JS 2 library is available under the Syncfusion Essential Studio program,  and can be licensed either under the Syncfusion Community License Program or the Syncfusion commercial license.
+
+To be qualified for the Syncfusion Community License Program you must have a gross revenue of less than one (1) million U.S. dollars ($1,000,000.00 USD) per year and have less than five (5) developers in your organization, and agree to be bound by Syncfusion’s terms and conditions. 
+
+Customers who do not qualify for the community license can contact sales@syncfusion.com for commercial licensing options.
+
+Under no circumstances can you use this product without (1) either a Community License or a commercial license and (2) without agreeing and abiding by Syncfusion’s license containing all terms and conditions. 
+
+The Syncfusion license that contains the terms and conditions can be found at 
+https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
+
+--------------------------------------------------------------------------------
 Package: ng-apexcharts
 License: undefined
 
@@ -574,6 +618,41 @@ License: undefined
 Package: @ng-select/ng-select
 License: "MIT"
 
+
+--------------------------------------------------------------------------------
+Package: @syncfusion/ej2-pdf-export
+License: "SEE LICENSE IN license"
+
+
+--------------------------------------------------------------------------------
+Package: @syncfusion/ej2-grids
+License: "SEE LICENSE IN license"
+
+Essential JS 2 library is available under the Syncfusion Essential Studio program,  and can be licensed either under the Syncfusion Community License Program or the Syncfusion commercial license.
+
+To be qualified for the Syncfusion Community License Program you must have a gross revenue of less than one (1) million U.S. dollars ($1,000,000.00 USD) per year and have less than five (5) developers in your organization, and agree to be bound by Syncfusion’s terms and conditions. 
+
+Customers who do not qualify for the community license can contact sales@syncfusion.com for commercial licensing options.
+
+Under no circumstances can you use this product without (1) either a Community License or a commercial license and (2) without agreeing and abiding by Syncfusion’s license containing all terms and conditions. 
+
+The Syncfusion license that contains the terms and conditions can be found at 
+https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
+
+--------------------------------------------------------------------------------
+Package: @syncfusion/ej2-angular-grids
+License: "SEE LICENSE IN license"
+
+Essential JS 2 library is available under the Syncfusion Essential Studio program,  and can be licensed either under the Syncfusion Community License Program or the Syncfusion commercial license.
+
+To be qualified for the Syncfusion Community License Program you must have a gross revenue of less than one (1) million U.S. dollars ($1,000,000.00 USD) per year and have less than five (5) developers in your organization, and agree to be bound by Syncfusion’s terms and conditions. 
+
+Customers who do not qualify for the community license can contact sales@syncfusion.com for commercial licensing options.
+
+Under no circumstances can you use this product without (1) either a Community License or a commercial license and (2) without agreeing and abiding by Syncfusion’s license containing all terms and conditions. 
+
+The Syncfusion license that contains the terms and conditions can be found at 
+https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
 
 --------------------------------------------------------------------------------
 Package: @syncfusion/ej2-angular-base
@@ -592,21 +671,6 @@ https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
 
 
 
-
---------------------------------------------------------------------------------
-Package: @syncfusion/ej2-data
-License: "SEE LICENSE IN license"
-
-Essential JS 2 library is available under the Syncfusion Essential Studio program,  and can be licensed either under the Syncfusion Community License Program or the Syncfusion commercial license.
-
-To be qualified for the Syncfusion Community License Program you must have a gross revenue of less than one (1) million U.S. dollars ($1,000,000.00 USD) per year and have less than five (5) developers in your organization, and agree to be bound by Syncfusion’s terms and conditions. 
-
-Customers who do not qualify for the community license can contact sales@syncfusion.com for commercial licensing options.
-
-Under no circumstances can you use this product without (1) either a Community License or a commercial license and (2) without agreeing and abiding by Syncfusion’s license containing all terms and conditions. 
-
-The Syncfusion license that contains the terms and conditions can be found at 
-https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
 
 --------------------------------------------------------------------------------
 Package: @syncfusion/ej2-buttons
@@ -656,6 +720,21 @@ https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
 
 
 --------------------------------------------------------------------------------
+Package: @syncfusion/ej2-data
+License: "SEE LICENSE IN license"
+
+Essential JS 2 library is available under the Syncfusion Essential Studio program,  and can be licensed either under the Syncfusion Community License Program or the Syncfusion commercial license.
+
+To be qualified for the Syncfusion Community License Program you must have a gross revenue of less than one (1) million U.S. dollars ($1,000,000.00 USD) per year and have less than five (5) developers in your organization, and agree to be bound by Syncfusion’s terms and conditions. 
+
+Customers who do not qualify for the community license can contact sales@syncfusion.com for commercial licensing options.
+
+Under no circumstances can you use this product without (1) either a Community License or a commercial license and (2) without agreeing and abiding by Syncfusion’s license containing all terms and conditions. 
+
+The Syncfusion license that contains the terms and conditions can be found at 
+https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
+
+--------------------------------------------------------------------------------
 Package: @syncfusion/ej2-lists
 License: "SEE LICENSE IN license"
 
@@ -671,7 +750,7 @@ The Syncfusion license that contains the terms and conditions can be found at
 https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
 
 --------------------------------------------------------------------------------
-Package: @syncfusion/ej2-notifications
+Package: @syncfusion/ej2-calendars
 License: "SEE LICENSE IN license"
 
 Essential JS 2 library is available under the Syncfusion Essential Studio program,  and can be licensed either under the Syncfusion Community License Program or the Syncfusion commercial license.
@@ -701,14 +780,7 @@ The Syncfusion license that contains the terms and conditions can be found at
 https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
 
 --------------------------------------------------------------------------------
-Package: @syncfusion/ej2-dropdowns
-License: "SEE LICENSE IN license"
-
-Licensing information is available in the following link 
-
-https://www.syncfusion.com/sales/licensing
---------------------------------------------------------------------------------
-Package: @syncfusion/ej2-calendars
+Package: @syncfusion/ej2-notifications
 License: "SEE LICENSE IN license"
 
 Essential JS 2 library is available under the Syncfusion Essential Studio program,  and can be licensed either under the Syncfusion Community License Program or the Syncfusion commercial license.
@@ -722,6 +794,13 @@ Under no circumstances can you use this product without (1) either a Community L
 The Syncfusion license that contains the terms and conditions can be found at 
 https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
 
+--------------------------------------------------------------------------------
+Package: @syncfusion/ej2-dropdowns
+License: "SEE LICENSE IN license"
+
+Licensing information is available in the following link 
+
+https://www.syncfusion.com/sales/licensing
 --------------------------------------------------------------------------------
 Package: @syncfusion/ej2-file-utils
 License: "SEE LICENSE IN license"
@@ -759,41 +838,6 @@ License: "SEE LICENSE IN license"
 Licensing information is available in the following link
  
 https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
---------------------------------------------------------------------------------
-Package: @syncfusion/ej2-pdf-export
-License: "SEE LICENSE IN license"
-
-
---------------------------------------------------------------------------------
-Package: @syncfusion/ej2-grids
-License: "SEE LICENSE IN license"
-
-Essential JS 2 library is available under the Syncfusion Essential Studio program,  and can be licensed either under the Syncfusion Community License Program or the Syncfusion commercial license.
-
-To be qualified for the Syncfusion Community License Program you must have a gross revenue of less than one (1) million U.S. dollars ($1,000,000.00 USD) per year and have less than five (5) developers in your organization, and agree to be bound by Syncfusion’s terms and conditions. 
-
-Customers who do not qualify for the community license can contact sales@syncfusion.com for commercial licensing options.
-
-Under no circumstances can you use this product without (1) either a Community License or a commercial license and (2) without agreeing and abiding by Syncfusion’s license containing all terms and conditions. 
-
-The Syncfusion license that contains the terms and conditions can be found at 
-https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
-
---------------------------------------------------------------------------------
-Package: @syncfusion/ej2-angular-grids
-License: "SEE LICENSE IN license"
-
-Essential JS 2 library is available under the Syncfusion Essential Studio program,  and can be licensed either under the Syncfusion Community License Program or the Syncfusion commercial license.
-
-To be qualified for the Syncfusion Community License Program you must have a gross revenue of less than one (1) million U.S. dollars ($1,000,000.00 USD) per year and have less than five (5) developers in your organization, and agree to be bound by Syncfusion’s terms and conditions. 
-
-Customers who do not qualify for the community license can contact sales@syncfusion.com for commercial licensing options.
-
-Under no circumstances can you use this product without (1) either a Community License or a commercial license and (2) without agreeing and abiding by Syncfusion’s license containing all terms and conditions. 
-
-The Syncfusion license that contains the terms and conditions can be found at 
-https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
-
 --------------------------------------------------------------------------------
 Package: crypto-js
 License: "MIT"
@@ -902,21 +946,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 --------------------------------------------------------------------------------
-Package: @syncfusion/ej2-base
-License: "SEE LICENSE IN license"
-
-Essential JS 2 library is available under the Syncfusion Essential Studio program,  and can be licensed either under the Syncfusion Community License Program or the Syncfusion commercial license.
-
-To be qualified for the Syncfusion Community License Program you must have a gross revenue of less than one (1) million U.S. dollars ($1,000,000.00 USD) per year and have less than five (5) developers in your organization, and agree to be bound by Syncfusion’s terms and conditions. 
-
-Customers who do not qualify for the community license can contact sales@syncfusion.com for commercial licensing options.
-
-Under no circumstances can you use this product without (1) either a Community License or a commercial license and (2) without agreeing and abiding by Syncfusion’s license containing all terms and conditions. 
-
-The Syncfusion license that contains the terms and conditions can be found at 
-https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
-
---------------------------------------------------------------------------------
 Package: survey-core
 License: "MIT"
 
@@ -946,6 +975,21 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+--------------------------------------------------------------------------------
+Package: @syncfusion/ej2-base
+License: "SEE LICENSE IN license"
+
+Essential JS 2 library is available under the Syncfusion Essential Studio program,  and can be licensed either under the Syncfusion Community License Program or the Syncfusion commercial license.
+
+To be qualified for the Syncfusion Community License Program you must have a gross revenue of less than one (1) million U.S. dollars ($1,000,000.00 USD) per year and have less than five (5) developers in your organization, and agree to be bound by Syncfusion’s terms and conditions. 
+
+Customers who do not qualify for the community license can contact sales@syncfusion.com for commercial licensing options.
+
+Under no circumstances can you use this product without (1) either a Community License or a commercial license and (2) without agreeing and abiding by Syncfusion’s license containing all terms and conditions. 
+
+The Syncfusion license that contains the terms and conditions can be found at 
+https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
 
 --------------------------------------------------------------------------------
 Package: @jsverse/transloco

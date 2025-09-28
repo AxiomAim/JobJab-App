@@ -8,13 +8,13 @@
         @if (!showAvatar || !loginUser.avatar) {
         <mat-icon [svgIcon]="'heroicons_outline:user-circle'"></mat-icon>
         }
-        <span class="absolute bottom-0 right-0 h-2 w-2 rounded-full" [ngClass]="{
+        <!-- <span class="absolute bottom-0 right-0 h-2 w-2 rounded-full" [ngClass]="{
                 'mb-px mr-px': !showAvatar || !loginUser.avatar,
                 'bg-green-500': loginUser.status === 'online',
                 'bg-amber-500': loginUser.status === 'away',
                 'bg-red-500': loginUser.status === 'busy',
                 'bg-gray-400': loginUser.status === 'not-visible',
-            }"></span>
+            }"></span> -->
     </span>
 </button>
 

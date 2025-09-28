@@ -68,13 +68,6 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 link: '/administration/services',
             },
             {
-                id: 'administration.quotes',
-                title: 'Quotes',
-                type: 'basic',
-                icon: 'heroicons_outline:clipboard-document-check',
-                link: '/administration/quotes',
-            },
-            {
                 id: 'administration.customers',
                 title: 'Customers',
                 type: 'basic',
@@ -115,6 +108,53 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 type: 'basic',
                 icon: 'heroicons_outline:clipboard-document-check',
                 link: '/administration/organizations',
+            },
+        ],
+    },
+    {
+        id: 'services',
+        title: 'Services',
+        subtitle: 'Service Tools',
+        type: 'group',
+        icon: 'heroicons_outline:home',
+        children: [
+            {
+                id: 'services.services',
+                title: 'Services',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/services/services',
+            },
+            {
+                id: 'services.subscriptions',
+                title: 'Subscriptions',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/services/subscriptions',
+            },
+
+        ],
+    },
+    {
+        id: 'projects',
+        title: 'Projects',
+        subtitle: 'Project Tools',
+        type: 'group',
+        icon: 'heroicons_outline:home',
+        children: [
+            {
+                id: 'projects.quotes',
+                title: 'Quotes',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/projects/quotes',
+            },
+            {
+                id: 'projects.project-teams',
+                title: 'Teams',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/projects/project-teams',
             },
         ],
     },

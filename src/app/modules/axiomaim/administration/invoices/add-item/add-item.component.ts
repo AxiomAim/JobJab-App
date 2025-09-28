@@ -280,4 +280,7 @@ export class InvoicesAddItemComponent implements OnInit, AfterViewInit, OnDestro
       return this.formFieldHelpers.join(' ');
   }
     
+  setIsLoading(loading: boolean): void {
+      this.isLoading.set(loading);  
+  }
 }

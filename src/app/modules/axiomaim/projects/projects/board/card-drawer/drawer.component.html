@@ -1,0 +1,94 @@
+@if (card) {
+<davesa-card class="filter-post flex max-w-72 max-h-30 flex-col mb-2">
+    <div class="flex flex-row">
+        <button mat-icon-button [matTooltip]="'Davesa Configue App'" (click)="cardDrawer.toggle()" #messagesOrigin>
+            <mat-icon class="hover:animate-bounce icon-size-6" [svgIcon]="'heroicons_outline:book-open'"></mat-icon>
+        </button>
+
+        <div class="m-3 text-md">{{ card.title }}</div>
+        <!-- <div class="m-3 text-md" [ngClass]="card.type.color">{{ card.type.viewValue }}</div> -->
+
+    </div>
+    <!-- Actions -->
+    <div class="flex align-bottom dark:bg-transparent mb-2">
+        <user-button class="ml-3 mt-2 flex shrink" [userId]="card.userId" [userDetails]="true"
+            [showEmail]="false"></user-button>
+    </div>
+</davesa-card>
+}
+
+<davesa-drawer class="z-999 w-3/4 min-w-screen sm:w-full sm:min-w-1/2  pt-30" fixed [mode]="'over'"
+    [name]="'cardDrawer'" [position]="'right'" #cardDrawer>
+    <div class="bg-card flex w-full flex-col overflow-auto  pt-15">
+        <div class="flex h-20 min-h-20 flex-row items-center bg-sky-500 px-6 text-white">
+            <mat-icon class="text-current icon-size-7" [svgIcon]="'davesa:davesa-c'"></mat-icon>
+            <div class="ml-3 text-2xl font-semibold tracking-tight">
+                {{ card.title }}
+            </div>
+            <div class="flex flex-col">
+
+                <!-- <div class="m-3 text-3xl font-medium pt-20">{{ card.title }}</div> -->
+
+                <!-- <div flex="1" class="mt-2">
+                    @if (card?.tasks) {
+                    Tasks
+                    <div class="mx-2 mt-4 space-y-1.5">
+                        @for (task of projectCard.tasks; track trackByFn($index, task)) {
+                        <div class="group flex items-center">
+                            <mat-checkbox class="flex items-center" [color]="'primary'" [(ngModel)]="task.completed"
+                                (change)="updateTaskOnTestCard(note, task)"></mat-checkbox>
+                            <input class="w-full px-1 py-0.5" [ngClass]="{
+                                            'text-secondary line-through':
+                                                task.completed,
+                                        }" [placeholder]="'Task'" [(ngModel)]="task.title"
+                                (input)="updateTaskOnTestCard(note, task)" />
+                            <mat-icon class="ml-auto hidden cursor-pointer icon-size-5 group-hover:flex"
+                                [svgIcon]="'heroicons_solid:x-mark'"
+                                (click)="removeTaskFromNote(note, task)"></mat-icon>
+                        </div>
+                        }
+                        <div class="flex items-center">
+                            <mat-icon class="text-hint -ml-0.5 icon-size-5"
+                                [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                            <input class="ml-1.5 w-full px-1 py-0.5" [placeholder]="'Add task'" (keydown.enter)="
+                                        addTestCardTask(aimCard, newTaskInput.value);
+                                        newTaskInput.value = ''
+                                    " #newTaskInput />
+                        </div>
+                    </div>
+                    }
+                </div> -->
+
+            </div>
+            <button class="ml-auto" mat-icon-button (click)="addTasksOnTestCard(card)" matTooltip="Add Task List">
+                <mat-icon class="text-current" [svgIcon]="'heroicons_outline:clipboard-document-list'"></mat-icon>
+            </button>
+            <button class="w-10 text-red-500" mat-icon-button (click)="onDeleteCard(card)" matTooltip="Add Task List">
+                <mat-icon class="text-current" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+            </button>
+            <button class="w-10" mat-icon-button (click)="cardDrawer.close()" matTooltip="Close Card">
+                <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+            </button>
+        </div>
+
+        <div class="flex flex-col">
+            <div class="flex  m-4">
+                <select-autocomplete class="w-200" [labelName]="'User Assignment'" [items]="board.users"
+                    [selectedItems]="card.user" [bindLabel]="'displayName'" [bindValue]="'id'"
+                    (selectOption)="onOptionSelected($event, 'user')" [multiple]="false"></select-autocomplete>
+
+                <select-autocomplete class="w-200" [labelName]="'Type'" [items]="typeOptions"
+                    [selectedItems]="card.type" [bindLabel]="'viewValue'" [bindValue]="'value'"
+                    (selectOption)="onOptionSelected($event, 'type')" [multiple]="false"></select-autocomplete>
+
+                <select-autocomplete class="w-200" [labelName]="'Priority'" [items]="priorityOptions"
+                    [selectedItems]="card.priority" [bindLabel]="'viewValue'" [bindValue]="'value'"
+                    (selectOption)="onOptionSelected($event, 'priority')" [multiple]="false"></select-autocomplete>
+
+            </div>
+        </div>
+
+
+    </div>
+
+</davesa-drawer>

@@ -22,6 +22,7 @@ import { FinanceMockApi } from 'app/mock-api/dashboards/finance/api';
 import { ProjectMockApi } from 'app/mock-api/dashboards/project/api';
 import { ActivitiesMockApi } from 'app/mock-api/pages/activities/api';
 import { IconsMockApi } from 'app/mock-api/ui/icons/api';
+import { BillingCycleMockApi } from './common/billing-cycle/api';
 
 @Injectable({ providedIn: 'root' })
 export class MockApiService {
@@ -48,4 +49,7 @@ export class MockApiService {
     shortcutsMockApi = inject(ShortcutsMockApi);
     tasksMockApi = inject(TasksMockApi);
     userMockApi = inject(UserMockApi);
+    billingCycleMockApi = inject(BillingCycleMockApi);
+
+    
 }
