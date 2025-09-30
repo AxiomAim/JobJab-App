@@ -37,22 +37,21 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
 import { Tag } from 'app/core/models/tag.model';
+import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
-import { UserRole } from '../user-role.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
-import { UserRolesListComponent } from '../list/list.component';
-import { User } from '../../users/user.model';
-import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
-import { UserRolesV2Service } from '../userRoles-v2.service';
+import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
+import { UserRolesV2Service } from '../user-roles-v2.service';
+import { UserRole } from '../user-roles.model';
 
 
-interface PhonenumerType {
+interface PhonenumberType {
     value: string;
     viewValue: string;
   }
 
 @Component({
-    selector: 'users-details',
+    selector: 'user-roles-details',
     templateUrl: './details.component.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,11 +71,10 @@ interface PhonenumerType {
         MatOptionModule,
         MatDatepickerModule,
         TextFieldModule,
-        AsyncPipe,
+        SelectMultiComponent,
     ],
 })
 export class UserRolesDetailsComponent implements OnInit, OnDestroy {
-    _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     _userRolesV2Service = inject(UserRolesV2Service);
     _axiomaimLoadingService = inject(AxiomaimLoadingService);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
@@ -89,24 +87,17 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
         return this._userRole.asObservable();
     }
 
-    private _userRoles: BehaviorSubject<UserRole[] | null> = new BehaviorSubject(
-        []
-    );
-    get userRoles$(): Observable<UserRole[]> {
-        return this._userRoles.asObservable();
-    }
-
-    userRoles: UserRole[] = [];
     editMode: boolean = false;
     tags: Tag[];
     tagsEditMode: boolean = false;
     filteredTags: Tag[];
     userRole: UserRole;
-    userForm: UntypedFormGroup;
+    userRoleForm: UntypedFormGroup;
+    userRoles: UserRole[];
     private _tagsPanelOverlayRef: OverlayRef;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-    loginUser: User;
+    loginUser: UserRole;
     showRole: string[] = ["admin"];
 
     /**
@@ -115,7 +106,7 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
     constructor(
         private _activatedRoute: ActivatedRoute,
         private _changeDetectorRef: ChangeDetectorRef,
-        private _userRolesListComponent: UserRolesListComponent,
+        private _usersListComponent: UsersListComponent,
         private _formBuilder: UntypedFormBuilder,
         private _axiomaimConfirmationService: AxiomaimConfirmationService,
         private _renderer2: Renderer2,
@@ -132,53 +123,29 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        this._firebaseAuthV2Service.loadFromStorage();
-        this.loginUser = this._firebaseAuthV2Service.loginUser();
-        this._userRolesV2Service.getAll().then((userRoles: UserRole[]) => {
-            this.userRoles = userRoles;
-            this._userRoles.next(userRoles);
-        });
+        // this.organization = this._usersV2Service.organization();
+        this.userRoles = this._userRolesV2Service.userRoles();
+        // this.userRoles = this._usersV2Service.userRoles();
         // Open the drawer
-        this._userRolesListComponent.matDrawer.open();
+        this._usersListComponent.matDrawer.open();
         const phonePattern = "^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"; 
 
         // Create the user form
-        this.userForm = this._formBuilder.group({
+        this.userRoleForm = this._formBuilder.group({
             id: [''],
-            name: ['', [Validators.required]],
+            avatar: [null],
+            firstName: ['', [Validators.required]],
+            lastName: ['', [Validators.required]],
+            phoneNumbers: this._formBuilder.array([]),
+            address: [null],
+            activeUser:  [true, [Validators.required]],
         });
 
-        // Get the users
-        this.userRoles = this._userRolesV2Service.userRoles();
-            // .pipe(takeUntil(this._unsubscribeAll))
-            // .subscribe((users: UserRole[]) => {
-                // this.users = users;
+        this._changeDetectorRef.markForCheck();
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            // });
-
-        this._userRole.next(this._userRolesV2Service.userRole());
-
-        // Get the user
-        this.userRole$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((userRole: UserRole) => {
-                // Open the drawer in case it is closed
-                this._userRolesListComponent.matDrawer.open();
-
-                // Get the user
-                this.userRole = userRole;
-
-                // Patch values to the form
-                this.userForm.patchValue(userRole);
-
-                // Toggle the edit mode off
-                this.toggleEditMode(false);
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        this._usersListComponent.matDrawer.open();
+        this.userRoleForm.patchValue(this.userRole);
+        // this._countries.next(this._usersV2Service.countries());
 
     }
 
@@ -204,7 +171,7 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
      * Close the drawer
      */
     closeDrawer(): Promise<MatDrawerToggleResult> {
-        return this._userRolesListComponent.matDrawer.close();
+        return this._usersListComponent.matDrawer.close();
     }
 
     /**
@@ -227,7 +194,8 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
      * Update the user
      */
     updateItem(): void {        
-        this.userRole = {...this._userRole.getValue(), ...this.userForm.getRawValue()};
+        this.userRole = {...this._userRole.getValue(), ...this.userRoleForm.getRawValue()};
+        console.log('user', this.userRole);
         // Get the user object
         // const user = this.userForm.getRawValue();
 
@@ -241,14 +209,14 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Delete the user
+     * Delete the user role
      */
     deleteUserRole(): void {
         // Open the confirmation dialog
         const confirmation = this._axiomaimConfirmationService.open({
-            title: 'Delete user',
+            title: 'Delete user role',
             message:
-                'Are you sure you want to delete this user? This action cannot be undone!',
+                'Are you sure you want to delete this user role? This action cannot be undone!',
             actions: {
                 confirm: {
                     label: 'Delete',
@@ -264,16 +232,16 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
                 const id = this.userRole.id;
 
                 // Get the next/previous user's id
-                const currentUserRoleIndex = this.userRoles.findIndex(
+                const currentUserIndex = this.userRoles.findIndex(
                     (item) => item.id === id
                 );
-                const nextUserRoleIndex =
-                    currentUserRoleIndex +
-                    (currentUserRoleIndex === this.userRoles.length - 1 ? -1 : 1);
-                const nextUserRoleId =
+                const nextUserIndex =
+                    currentUserIndex +
+                    (currentUserIndex === this.userRoles.length - 1 ? -1 : 1);
+                const nextUserId =
                     this.userRoles.length === 1 && this.userRoles[0].id === id
                         ? null
-                        : this.userRoles[nextUserRoleIndex].id;
+                        : this.userRoles[nextUserIndex].id;
 
                 // Delete the user
                 this._userRolesV2Service
@@ -285,8 +253,8 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
                         }
 
                         // Navigate to the next user if available
-                        if (nextUserRoleId) {
-                            this._router.navigate(['../', nextUserRoleId], {
+                        if (nextUserId) {
+                            this._router.navigate(['../', nextUserId], {
                                 relativeTo: this._activatedRoute,
                             });
                         }
@@ -309,10 +277,10 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
 
 
     onOptionSelected(data: any[]) {
-        this.userRoles = data;
+        console.log('onOptionSelected', data);
         this._userRole.next(this.userRole);
         // console.log('onOptionSelected', this.user);
-        // this.user$.subscribe((resUserRole: UserRole) => {
+        // this.user$.subscribe((resUser: User) => {
 
         // });
     }
@@ -448,12 +416,13 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
     //     // If the found tag is already applied to the user...
     //     if (isTagApplied) {
     //         // Remove the tag from the user
-    //         this.removeTagFromUserRole(tag);
+    //         this.removeTagFromUser(tag);
     //     } else {
     //         // Otherwise add the tag to the user
-    //         this.addTagToUserRole(tag);
+    //         this.addTagToUser(tag);
     //     }
     // }
+
 
         
     /**

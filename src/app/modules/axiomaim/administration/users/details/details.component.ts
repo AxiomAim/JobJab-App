@@ -41,10 +41,10 @@ import { UsersListComponent } from 'app/modules/axiomaim/administration/users/li
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { Country, User } from '../user.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
-import { UserRole } from '../../user-roles/user-role.model';
+import { UserRole } from '../../user-roles/user-roles.model';
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
 import { UsersV2Service } from '../users-v2.service';
-import { UserRolesV2Service } from '../../user-roles/userRoles-v2.service';
+import { UserRolesV2Service } from '../../user-roles/user-roles-v2.service';
 
 
 interface PhonenumberType {

@@ -1,6 +1,6 @@
 import { Scheme, Theme } from '@axiomaim/services/config';
 import { v4 as uuidv4 } from 'uuid';
-import { UserRole } from '../user-roles/user-role.model';
+import { UserRole } from '../user-roles/user-roles.model';
 import { BaseDto } from 'app/core/models/base-dto.model';
 import * as v from 'valibot';
 

@@ -54,6 +54,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 link: '/administration/users',
             },
             {
+                id: 'administration.user-roles',
+                title: 'User Roles',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/administration/user-roles',
+            },
+            {
                 id: 'administration.products',
                 title: 'Products',
                 type: 'basic',

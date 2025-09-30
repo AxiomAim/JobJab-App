@@ -13,8 +13,7 @@ import {
   query, 
   WhereFilterOp
 } from '@angular/fire/firestore';
-import { UserRole } from './user-role.model';
-
+import { UserRole } from './user-roles.model';
 
 @Injectable(
     {
@@ -28,7 +27,7 @@ export class UserRolesDataService extends BaseDataService<UserRole> {
       public firestore: Firestore
 
     ) {
-        super('user-roles-prod');
+        super('user-roles');
     }
     
     public getAll(): Observable<UserRole[]> {
@@ -70,7 +69,7 @@ export class UserRolesDataService extends BaseDataService<UserRole> {
           } else {
             // Handle the case where the document doesn't exist
             // You can throw an error, return an empty Observable, etc.
-            throw new Error(`UserRole with ID ${id} not found`); 
+            throw new Error(`User with ID ${id} not found`); 
           }
         })
       );
@@ -81,8 +80,8 @@ export class UserRolesDataService extends BaseDataService<UserRole> {
 
     public createItem(data: UserRole): Observable<UserRole> {
         return this._firestore.createItem(this.baseCollection, data).pipe(take(1),
-          tap((createdUserRole) => { 
-            console.log('Item created successfully:', createdUserRole); 
+          tap((createdUser) => { 
+            console.log('Item created successfully:', createdUser); 
           }),
           catchError((error) => {
             console.error('Error creating Item:', error);
@@ -114,7 +113,7 @@ export class UserRolesDataService extends BaseDataService<UserRole> {
     }
 
   /**
-   * Gets a page of UserRoles.
+   * Gets a page of Users.
    *
    * @param pageSize The number of items per page.
    * @param startAfterDoc Optional. A document to start after (for pagination).

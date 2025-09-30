@@ -38,7 +38,6 @@ import {
 } from 'rxjs';
 import { User } from '../user.model';
 import { MatDialog } from '@angular/material/dialog';
-import { UsersComposeComponent } from '../compose/compose.component';
 import { UsersV2Service } from '../users-v2.service';
 import { UsersAddItemComponent } from '../add-item/add-item.component';
 
@@ -212,17 +211,6 @@ export class UsersListComponent implements OnInit, OnDestroy {
         this._changeDetectorRef.markForCheck();
     }
 
-    /**
-     * Open compose dialog
-     */
-    openComposeDialog(): void {
-        // Open the dialog
-        const dialogRef = this._matDialog.open(UsersComposeComponent);
-
-        dialogRef.afterClosed().subscribe((result) => {
-            console.log('Compose dialog was closed!');
-        });
-    }
 
     /**
      * Track by function for ngFor loops

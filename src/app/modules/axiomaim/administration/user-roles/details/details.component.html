@@ -1,9 +1,9 @@
-@if(userRole$ | async; as userRole) {
+@if(userRole) {
 <div class="flex w-full flex-col">
     <!-- View mode -->
     @if (!editMode) {
     <!-- Header -->
-    <div class="relative h-40 w-full bg-accent-100 px-8 dark:bg-accent-700 sm:h-48 sm:px-12">
+    <div class="relative h-40 w-full bg-accent-100 px-8 dark:bg-accent-700 sm:h-40 sm:px-12">
         <!-- Background -->
         @if (userRole.background) {
         <img class="absolute inset-0 h-full w-full object-cover" [src]="userRole.background" />
@@ -22,11 +22,17 @@
             <!-- Avatar and actions -->
             <div class="-mt-16 flex flex-auto items-end">
                 <!-- Avatar -->
-                <div>
+                <div
+                    class="ring-bg-card flex h-32 w-32 items-center justify-center overflow-hidden rounded-full ring-4 bg-card">
+                    @if (userRole.avatar) {
+                    <img class="h-full w-full object-cover" [src]="userRole.avatar" />
+                    }
+                    @if (!userRole.avatar) {
                     <div
-                        class="flex h-full w-full items-center justify-center overflow-hidden rounded bg-gray-200 text-md font-bold uppercase leading-none text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                        {{ userRole.code }}
+                        class="flex h-full w-full items-center justify-center overflow-hidden rounded bg-gray-200 text-8xl font-bold uppercase leading-none text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                        {{ userRole.firstName.charAt(0) }}{{ userRole.lastName.charAt(0) }}
                     </div>
+                    }
                 </div>
                 <!-- Actions -->
                 <div class="mb-1 ml-auto flex items-center">
@@ -39,9 +45,31 @@
 
             <!-- Company -->
             <div class="mt-3 truncate text-4xl font-bold">
-                {{ userRole.name }}
+                {{ userRole.displayName }}
             </div>
 
+
+            <div class="mt-4 flex flex-col space-y-8 border-t pt-6">
+                <!-- Title -->
+                <!-- @if (userRole.title) {
+                    <div class="flex sm:items-center">
+                        <mat-icon [svgIcon]="'heroicons_outline:briefcase'"></mat-icon>
+                        <div class="ml-6 leading-6">
+                            {{ userRole.title }}
+                        </div>
+                    </div>
+                    } -->
+
+                <!-- Address -->
+                @if (userRole.address) {
+                <div class="flex sm:items-center">
+                    <mat-icon [svgIcon]="'heroicons_outline:map-pin'"></mat-icon>
+                    <div class="ml-6 leading-6">
+                        {{ userRole.address }}
+                    </div>
+                </div>
+                }
+            </div>
         </div>
     </div>
     }
@@ -65,7 +93,7 @@
     <!-- User form -->
     <div class="relative flex flex-auto flex-col items-center px-6 sm:px-12">
         <div class="w-full max-w-3xl">
-            <form [formGroup]="userForm">
+            <form [formGroup]="userRoleForm">
                 <!-- Avatar -->
                 <div class="-mt-16 flex flex-auto items-end">
                     <div
@@ -96,28 +124,148 @@
                             </div>
                         </div>
                         <!-- Image/Letter -->
+                        @if (userRole.avatar) {
+                        <img class="h-full w-full object-cover bg-card" [src]="userRole.avatar" />
+                        }
+                        @if (!userRole.avatar) {
                         <div
                             class="flex h-full w-full items-center justify-center overflow-hidden rounded bg-gray-200 text-8xl font-bold uppercase leading-none text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                            {{ userRole.code }}
+                            {{ userRole.displayName.charAt(0) }}
                         </div>
+                        }
                     </div>
                 </div>
                 <!-- Active -->
-                <!-- <div class="mt-8">
+                <div class="mt-8">
                     <section class="example-section">
                         <mat-checkbox class="example-margin" [formControlName]="'activeUser'">Active User</mat-checkbox>
                     </section>
-                </div> -->
+                </div>
 
                 <!-- First Name -->
                 <div class="mt-8">
                     <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                        <mat-label>'Name'</mat-label>
+                        <mat-label>'First Name'</mat-label>
                         <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
                             [svgIcon]="'heroicons_solid:building-office-2'"></mat-icon>
-                        <input matInput [formControlName]="'name'" [placeholder]="'Name'" />
+                        <input matInput [formControlName]="'firstName'" [placeholder]="'First Name'" />
                     </mat-form-field>
                 </div>
+
+                <!-- Last Name -->
+                <div class="mt-8">
+                    <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                        <mat-label>'Last Name'</mat-label>
+                        <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                            [svgIcon]="'heroicons_solid:building-office-2'"></mat-icon>
+                        <input matInput [formControlName]="'lastName'" [placeholder]="'Last Name'" />
+                    </mat-form-field>
+                </div>
+
+                <!-- Phone Numbers -->
+                <div class="mt-8">
+                    <div class="space-y-4">
+                        @for (
+                        phoneNumber of userRoleForm.get('phoneNumbers')[
+                        'controls'
+                        ];
+                        track trackByFn(i, phoneNumber);
+                        let i = $index;
+                        let first = $first;
+                        let last = $last
+                        ) {
+                        <div class="relative flex">
+                            <mat-form-field class="flex-auto" [subscriptSizing]="'dynamic'">
+                                @if (first) {
+                                <mat-label>Phone</mat-label>
+                                }
+                                <input matInput [formControl]="
+                                    phoneNumber.get('phoneNumber')
+                                " [placeholder]="'Phone'" />
+                                <mat-select class="mr-1.5" [formControl]="
+                                    phoneNumber.get('country')
+                                " matPrefix>
+                                    <mat-select-trigger>
+                                        <span class="flex items-center">
+                                            <span class="mr-1 hidden h-4 w-6 overflow-hidden sm:flex"
+                                                [style.background]="
+                                                'url(\'/images/apps/organizations/flags.png\') no-repeat 0 0'
+                                            " [style.backgroundSize]="
+                                                '24px 3876px'
+                                            " [style.backgroundPosition]="
+                                                getCountryByIso(
+                                                    phoneNumber.get(
+                                                        'country'
+                                                    ).value
+                                                ).flagImagePos
+                                            "></span>
+                                            <span class="text-default font-medium sm:mx-0.5">{{
+                                                getCountryByIso(
+                                                phoneNumber.get(
+                                                'country'
+                                                ).value
+                                                ).code
+                                                }}</span>
+                                        </span>
+                                    </mat-select-trigger>
+                                    @for (
+                                    country of countries;
+                                    track trackByFn($index, country)
+                                    ) {
+                                    <mat-option [value]="country.iso">
+                                        <span class="flex items-center">
+                                            <span class="h-4 w-6 overflow-hidden" [style.background]="
+                                                    'url(\'/images/apps/organizations/flags.png\') no-repeat 0 0'
+                                                " [style.backgroundSize]="
+                                                    '24px 3876px'
+                                                " [style.backgroundPosition]="
+                                                    country.flagImagePos
+                                                "></span>
+                                            <span class="ml-2">{{
+                                                country.company
+                                                }}</span>
+                                            <span class="ml-2 font-medium">{{
+                                                country.code
+                                                }}</span>
+                                        </span>
+                                    </mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field class="ml-2 w-full max-w-24 flex-auto sm:ml-4 sm:max-w-40"
+                                [subscriptSizing]="'dynamic'">
+                                @if (first) {
+                                <mat-label>Label</mat-label>
+                                }
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    [svgIcon]="'heroicons_solid:tag'"></mat-icon>
+                                <mat-label>Label</mat-label>
+                                <mat-select required>
+                                    @for (number of phonenumberTypes; track trackByFn($index, number)) {
+                                    <mat-option [value]="number.value">{{number.viewValue}}</mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+
+                            @if (!(first && last)) {
+                            <div class="flex w-10 items-center pl-2" [ngClass]="{ 'mt-6': first }">
+                                <button class="h-8 min-h-8 w-8" mat-icon-button (click)="
+                                        removePhoneNumberField(i)
+                                    " matTooltip="Remove">
+                                    <mat-icon class="icon-size-5" [svgIcon]="
+                                            'heroicons_solid:trash'
+                                        "></mat-icon>
+                                </button>
+                            </div>
+                            }
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <select-multi [labelName]="'User Roles'" [items]="userRoleRoles"
+                    [selectedItems]="userRole.userRoleRoles" [bindLabel]="'code'"
+                    (optionSelected)="onOptionSelected($event)"></select-multi>
 
 
                 <!-- Actions -->
@@ -132,7 +280,7 @@
                         Cancel
                     </button>
                     <!-- Save -->
-                    <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="userForm.invalid"
+                    <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="userRoleForm.invalid"
                         [matTooltip]="'Save'" (click)="updateItem()">
                         Save
                     </button>

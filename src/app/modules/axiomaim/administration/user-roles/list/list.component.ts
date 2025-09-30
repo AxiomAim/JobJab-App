@@ -36,12 +36,10 @@ import {
     switchMap,
     takeUntil,
 } from 'rxjs';
-import { UserRole } from '../user-role.model';
+import { UserRole } from '../user-roles.model';
 import { MatDialog } from '@angular/material/dialog';
-import { UserRolesComposeComponent } from '../compose/compose.component';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { GridModule } from '@syncfusion/ej2-angular-grids';
-import { UserRolesV2Service } from '../userRoles-v2.service';
+import { UserRolesV2Service } from '../user-roles-v2.service';
+import { UserRolesAddItemComponent } from '../add-item/add-item.component';
 
 @Component({
     selector: 'user-roles-list',
@@ -60,10 +58,9 @@ import { UserRolesV2Service } from '../userRoles-v2.service';
         MatButtonModule,
         NgClass,
         RouterLink,
+        AsyncPipe,
         I18nPluralPipe,
-        MatTooltipModule,
-        GridModule,
-        AsyncPipe
+        UserRolesAddItemComponent
     ],
 })
 export class UserRolesListComponent implements OnInit, OnDestroy {
@@ -85,10 +82,9 @@ export class UserRolesListComponent implements OnInit, OnDestroy {
     }
 
     userRoleCount: number = 0;
-    userRolesTableColumns: string[] = ['name', 'email', 'phoneNumber', 'job'];
     drawerMode: 'side' | 'over';
     searchInputControl: UntypedFormControl = new UntypedFormControl();
-    selectedUserRole: UserRole;
+    selectedUser: UserRole;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -112,26 +108,25 @@ export class UserRolesListComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        // Get the userRoles
+        // Get the users
         this._userRoles.next(this._userRolesV2Service.userRoles());
         this.userRoles$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((userRoles: UserRole[]) => {
-                console.log('userRoles', userRoles)
+            .subscribe((users: UserRole[]) => {
                 // Update the counts
-                this.userRoleCount = userRoles.length;
+                this.userRoleCount = users.length;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
 
-        // Get the userRole
+        // Get the user
         this._userRole.next(this._userRolesV2Service.userRole());
         this.userRole$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((userRole: UserRole) => {
-                // Update the selected userRole
-                this.selectedUserRole = userRole;
+            .subscribe((user: UserRole) => {
+                // Update the selected user
+                this.selectedUser = user;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -146,15 +141,15 @@ export class UserRolesListComponent implements OnInit, OnDestroy {
                     this._userRolesV2Service.search(query)
                 )
             )
-            .subscribe((resUserRoles) => {
-                this._userRoles.next(resUserRoles);
+            .subscribe((resUsers) => {
+                this._userRoles.next(resUsers);
             });
 
         // Subscribe to MatDrawer opened change
         this.matDrawer.openedChange.subscribe((opened) => {
             if (!opened) {
                 // Remove the selected user when drawer closed
-                this.selectedUserRole = null;
+                this.selectedUser = null;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -215,17 +210,6 @@ export class UserRolesListComponent implements OnInit, OnDestroy {
         this._changeDetectorRef.markForCheck();
     }
 
-    /**
-     * Open compose dialog
-     */
-    openComposeDialog(): void {
-        // Open the dialog
-        const dialogRef = this._matDialog.open(UserRolesComposeComponent);
-
-        dialogRef.afterClosed().subscribe((result) => {
-            console.log('Compose dialog was closed!');
-        });
-    }
     /**
      * Track by function for ngFor loops
      *

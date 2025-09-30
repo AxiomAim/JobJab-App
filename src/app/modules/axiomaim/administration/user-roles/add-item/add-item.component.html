@@ -1,0 +1,79 @@
+<!-- Settings toggle -->
+<button mat-button [matTooltip]="'New User'" (click)="openDrawer()" #messagesOrigin>
+    <mat-icon class="icon-size-6" [svgIcon]="'mat_outline:add'"></mat-icon>
+    <span class="text-md">Add</span>
+</button>
+
+<axiomaim-drawer class="z-999 w-3/4 min-w-3/4 sm:w-3/4 sm:min-w-3/4 mt-16 " fixed [mode]="'over'"
+    [name]="'newItemDrawer'" [position]="'right'" #newItemDrawer>
+
+    <div class="flex w-full flex-col ">
+        <alert-messages />
+        <div class="flex h-10 min-h-10 flex-row items-center bg-sky-900 px-6 text-white">
+            <mat-icon class="text-current icon-size-7" [svgIcon]="'axiomaim:davesa-c'"></mat-icon>
+            <div class="ml-3 text-2xl font-semibold tracking-tight">
+                Add Item
+            </div>
+            <button class="ml-auto" mat-icon-button (click)="close()" [disabled]="isLoading()">
+                <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+            </button>
+        </div>
+
+        <!-- form -->
+        <div class="relative flex flex-auto flex-col overflow-y-auto items-center px-6 sm:px-12">
+            <div class="w-full max-w-3xl">
+                <form [formGroup]="userForm">
+                    <div class="mt-8">
+                        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                            <mat-label>Email</mat-label>
+                            <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                [svgIcon]="'mat_solid:email'"></mat-icon>
+                            <input matInput [formControlName]="'email'" [placeholder]="'Email'" [spellcheck]="false" />
+                        </mat-form-field>
+                    </div>
+
+                    <!-- <div class="flex flex-wrap gap-2"> -->
+                    <div class="mt-8">
+                        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                            <mat-label>First Name</mat-label>
+                            <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
+                            <input matInput [formControlName]="'firstName'" [placeholder]="'First Name'"
+                                [spellcheck]="false" />
+                        </mat-form-field>
+                    </div>
+                    <div class="mt-8">
+                        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                            <mat-label>Last Name</mat-label>
+                            <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
+                            <input matInput [formControlName]="'lastName'" [placeholder]="'Last Name'"
+                                [spellcheck]="false" />
+                        </mat-form-field>
+                    </div>
+                    <!-- </div> -->
+                    <div class="mt-8">
+                        <address-lookup class="w-full" label="Address" [control]="userForm.controls['address']"
+                            placeholder="Enter address">
+                        </address-lookup>
+
+                        <!-- Actions -->
+                        <div
+                            class="-mx-6 mt-10 flex items-center border-t bg-gray-50 py-4 pl-1 pr-4 dark:bg-transparent sm:-mx-12 sm:pl-7 sm:pr-12">
+                            <!-- Cancel -->
+                            <button class="ml-auto" mat-button [matTooltip]="'Cancel'" (click)="close()"
+                                [disabled]="isLoading()">
+                                Cancel
+                            </button>
+                            <!-- Save -->
+                            <button class="ml-2" mat-flat-button [color]="'primary'"
+                                [disabled]="userForm.invalid || isLoading()" [matTooltip]="'Save'" (click)="onSubmit()">
+                                {{ isLoading() ? 'Saving...' : 'Save' }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</axiomaim-drawer>

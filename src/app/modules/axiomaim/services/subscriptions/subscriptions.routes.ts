@@ -11,6 +11,7 @@ import { SubscriptionsDetailsComponent } from './details/details.component';
 import { SubscriptionComponent } from './subscriptions.component';
 import { SubscriptionsListComponent } from './list/list.component';
 import { BillingCyclesService } from './billing-cycle.service';
+import { SubscriptionsOptionComponent } from './details/option/option.component';
 
 
 /**
@@ -103,6 +104,16 @@ export default [
                             user: quoteResolver,
                         },
                         canDeactivate: [canDeactivateUsersDetails],
+                        children: [
+                            {
+                                path: 'option',
+                                component: SubscriptionsOptionComponent,
+                                resolve: {
+
+                                },
+                            },
+                        ],
+                        
                     },
                 ],
             },

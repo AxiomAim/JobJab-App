@@ -8,49 +8,48 @@ import {
 import { UserRolesComponent } from 'app/modules/axiomaim/administration/user-roles/user-roles.component';
 import { UserRolesDetailsComponent } from 'app/modules/axiomaim/administration/user-roles/details/details.component';
 import { UserRolesListComponent } from 'app/modules/axiomaim/administration/user-roles/list/list.component';
-import { catchError, throwError } from 'rxjs';
-import { UserRolesV2Service } from './userRolesV2.service';
+import { of } from 'rxjs';
+import { UserRolesV2Service } from './user-roles-v2.service';
+
 
 /**
- * User resolver
+ * Site resolver
  *
  * @param route
  * @param state
  */
-const userRolesResolver = (
+const userRoleResolver = (
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
 ) => {
-    const userRolesV2Service = inject(UserRolesV2Service);
+    const _userRolesV2Service = inject(UserRolesV2Service);
     const router = inject(Router);
+    const oid = route.paramMap.get('id');
+    
+    return _userRolesV2Service.getItem(oid).catch((error) => {
+        // Log the error
+        console.error('Error fetching site:', error);
 
-    return userRolesV2Service.getById(route.paramMap.get('id')).pipe(
-        // Error here means the requested user is not available
-        catchError((error) => {
-            // Log the error
-            console.error(error);
+        // Get the parent url
+        const parentUrl = state.url.split('/').slice(0, -1).join('/');
 
-            // Get the parent url
-            const parentUrl = state.url.split('/').slice(0, -1).join('/');
+        // Navigate to there
+        router.navigateByUrl(parentUrl);
 
-            // Navigate to there
-            router.navigateByUrl(parentUrl);
-
-            // Throw an error
-            return throwError(error);
-        })
-    );
+        // Return an observable that emits an error or a default value
+        return of(null); // Or throwError(() => error); if you want the routing to potentially fail
+    });
 };
 
 /**
- * Can deactivate user-roles details
+ * Can deactivate users details
  *
  * @param component
  * @param currentRoute
  * @param currentState
  * @param nextState
  */
-const canDeactivateUserRolesDetails = (
+const canDeactivateUsersDetails = (
     component: UserRolesDetailsComponent,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
@@ -62,9 +61,9 @@ const canDeactivateUserRolesDetails = (
         nextRoute = nextRoute.firstChild;
     }
 
-    // If the next state doesn't contain '/user-roles'
+    // If the next state doesn't contain '/users'
     // it means we are navigating away from the
-    // user-roles app
+    // users app
     if (!nextState.url.includes('/user-roles')) {
         // Let it navigate
         return true;
@@ -98,9 +97,10 @@ export default [
                         path: ':id',
                         component: UserRolesDetailsComponent,
                         resolve: {
-                            userRoles: userRolesResolver,
+                            // userRoles: () => inject(UsersV2Service).getUserRoles(),
+                            userRole: userRoleResolver,
                         },
-                        canDeactivate: [canDeactivateUserRolesDetails],
+                        canDeactivate: [canDeactivateUsersDetails],
                     },
                 ],
             },

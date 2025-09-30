@@ -90,6 +90,7 @@ export const appRoutes: Route[] = [
             // Administration
             {path: 'administration', children: [
                 {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
+                {path: 'user-roles', loadChildren: () => import('app/modules/axiomaim/administration/user-roles/user-roles.routes')},
                 {path: 'users', loadChildren: () => import('app/modules/axiomaim/administration/users/users.routes')},
                 {path: 'products', loadChildren: () => import('app/modules/axiomaim/administration/products/products.routes')},
                 {path: 'customers', loadChildren: () => import('app/modules/axiomaim/administration/customers/customers.routes')},
@@ -97,7 +98,6 @@ export const appRoutes: Route[] = [
                 {path: 'invoices', loadChildren: () => import('app/modules/axiomaim/administration/invoices/invoices.routes')},
                 {path: 'technicians', loadChildren: () => import('app/modules/axiomaim/administration/technicians/technicians.routes')},
                 {path: 'leads', loadChildren: () => import('app/modules/axiomaim/administration/leads/leads.routes')},
-                // {path: 'user-roles', loadChildren: () => import('app/modules/axiomaim/administration/user-roles/user-roles.routes')},
                 // {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
             ]},
 

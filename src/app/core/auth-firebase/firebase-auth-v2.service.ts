@@ -452,6 +452,9 @@ const initializeAuth = (id: string): Promise<void> => {
             _axiomaimConfigService.config = { layout };
         });
   }
+
+
+  
     
   return {
     loginUser: computed(() => loginUser()),
