@@ -9,10 +9,10 @@ import { LayoutComponent } from 'app/layout/layout.component';
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 export const appRoutes: Route[] = [
 
-    // Redirect empty path to '/dashboards/project'
-    {path: '', pathMatch : 'full', redirectTo: 'dashboards/project'},
+    // Redirect empty path to '/dashboards/crm'
+    {path: '', pathMatch : 'full', redirectTo: 'dashboards/crm'},
 
-    // Redirect signed-in user to the '/dashboards/project'
+    // Redirect signed-in user to the '/dashboards/crm'
     //
     // After the user signs in, the sign-in page will redirect the user to the 'signed-in-redirect'
     // path. Below is another redirection for that path to redirect the user to the desired
@@ -20,7 +20,7 @@ export const appRoutes: Route[] = [
     {
         path: 'signed-in-redirect',
         pathMatch : 'full',
-        redirectTo: 'dashboards/project'
+        redirectTo: 'dashboards/crm'
     },
 
     // Auth routes for guests
@@ -81,6 +81,7 @@ export const appRoutes: Route[] = [
 
             // Dashboards
             {path: 'dashboards', children: [
+                {path: 'crm', loadChildren: () => import('app/modules/axiomaim/dashboards/crm/crm.routes')},
                 {path: 'project', loadChildren: () => import('app/modules/axiomaim/dashboards/project/project.routes')},
                 {path: 'analytics', loadChildren: () => import('app/modules/axiomaim/dashboards/analytics/analytics.routes')},
                 {path: 'finance', loadChildren: () => import('app/modules/axiomaim/dashboards/finance/finance.routes')},

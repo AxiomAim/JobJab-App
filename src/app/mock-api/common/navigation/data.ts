@@ -10,6 +10,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         icon: 'heroicons_outline:home',
         children: [
             {
+                id: 'dashboards.crm',
+                title: 'CRM',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/dashboards/crm',
+            },
+            {
                 id: 'dashboards.project',
                 title: 'Project',
                 type: 'basic',
@@ -46,6 +53,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         type: 'group',
         icon: 'heroicons_outline:home',
         children: [
+            {
+                id: 'administration.organizations',
+                title: 'Organizations',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/administration/organizations',
+            },
             {
                 id: 'administration.users',
                 title: 'Users',

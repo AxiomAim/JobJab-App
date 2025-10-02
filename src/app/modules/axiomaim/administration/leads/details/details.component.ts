@@ -43,6 +43,7 @@ import { SelectMultiComponent } from 'app/layout/common/select-multi/select-mult
 import { LeadsV2Service } from '../leads-v2.service';
 import { User } from 'app/core/user/user.types';
 import { LeadsListComponent } from '../list/list.component';
+import { AxiomaimTouchService } from '@axiomaim/services/touch-dialog';
 
 
 interface PhonenumberType {
@@ -87,7 +88,6 @@ export class LeadsDetailsComponent implements OnInit, OnDestroy {
         return this._lead.asObservable();
     }
 
-
     editMode: boolean = false;
     tags: Tag[];
     tagsEditMode: boolean = false;
@@ -110,6 +110,7 @@ export class LeadsDetailsComponent implements OnInit, OnDestroy {
         private _leadsListComponent: LeadsListComponent,
         private _formBuilder: UntypedFormBuilder,
         private _axiomaimConfirmationService: AxiomaimConfirmationService,
+        private _axiomaimTouchService: AxiomaimTouchService,
         private _renderer2: Renderer2,
         private _router: Router,
         private _overlay: Overlay,
@@ -465,6 +466,81 @@ export class LeadsDetailsComponent implements OnInit, OnDestroy {
     //         this.addTagToProduct(tag);
     //     }
     // }
+
+
+    /**
+     * Touch the lead
+     */
+    touchLead(): void {
+        // Open the confirmation dialog
+        const confirmation = this._axiomaimTouchService.open({
+            title: 'Add Touch',
+            message:
+                'Record a Touch Point for this Lead',
+            icon: {
+                show: true,
+                name: 'heroicons_solid:finger-print',
+                color: 'primary',
+            },
+            actions: {
+                confirm: {
+                    label: 'Save',
+                },
+            },
+        });
+
+        // Subscribe to the confirmation dialog closed action
+        confirmation.afterClosed().subscribe((result) => {
+            // If the confirm button pressed...
+            if (result === 'confirmed') {
+                // Get the current lead's id
+                const id = this.lead.id;
+
+                // Get the next/previous lead's id
+                const currentProductIndex = this.leads.findIndex(
+                    (item) => item.id === id
+                );
+                const nextProductIndex =
+                    currentProductIndex +
+                    (currentProductIndex === this.leads.length - 1 ? -1 : 1);
+                const nextProductId =
+                    this.leads.length === 1 && this.leads[0].id === id
+                        ? null
+                        : this.leads[nextProductIndex].id;
+
+                // Delete the lead
+                this._leadsV2Service
+                    .deleteItem(id)
+                    .then((isDeleted) => {
+                        // Return if the lead wasn't deleted...
+                        if (!isDeleted) {
+                            return;
+                        }
+
+                        // Navigate to the next lead if available
+                        if (nextProductId) {
+                            this._router.navigate(['../', nextProductId], {
+                                relativeTo: this._activatedRoute,
+                            });
+                        }
+                        // Otherwise, navigate to the parent
+                        else {
+                            this._router.navigate(['../'], {
+                                relativeTo: this._activatedRoute,
+                            });
+                        }
+
+                        // Toggle the edit mode off
+                        this.toggleEditMode(false);
+                    });
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            }
+        });
+    }
+
+
 
     /**
      * Track by function for ngFor loops
