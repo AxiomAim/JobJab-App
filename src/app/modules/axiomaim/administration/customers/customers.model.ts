@@ -4,6 +4,7 @@ import { BaseDto } from 'app/core/models/base-dto.model';
 export class CustomerModel implements BaseDto {
     constructor(
         id: string,
+        orgId: string,
         type: string,
         name: string,
         description: string,
@@ -14,11 +15,12 @@ export class CustomerModel implements BaseDto {
         discount: number,
         cartCount: number,
         categoryId: number,
-        created_at?: string,
-        updated_at?: string,
-        deleted_at?: string,
+        createdAt?: string,
+        updatedAt?: string,
+        deletedAt?: string,
         ) {
             this.id = id;
+            this.orgId = orgId;
             this.type = type;
             this.name = name;
             this.description = description;
@@ -29,11 +31,12 @@ export class CustomerModel implements BaseDto {
             this.discount = discount;
             this.cartCount = cartCount;
             this.categoryId = categoryId;
-            this.created_at = created_at;
-            this.updated_at = updated_at;
-            this.deleted_at = deleted_at;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.deletedAt = deletedAt;
     }
     public id: string;
+    public orgId: string;
     public type: string;
     public name: string;
     public description: string;
@@ -44,15 +47,16 @@ export class CustomerModel implements BaseDto {
     public discount: number;
     public cartCount: number;
     public categoryId: number;
-    public created_at?: string;
-    public updated_at?: string;
-    public deleted_at?: string;
+    public createdAt?: string;
+    public updatedAt?: string;
+    public deletedAt?: string;
 
     public static toDto(dto: Customer): Customer {
         let date: any = new Date().toISOString();
 
         return {
             id: dto.id ? dto.id : '',
+            orgId: dto.orgId ? dto.orgId : '',
             type: dto.type ? dto.type : '',
             name: dto.name ? dto.name : '',
             description: dto.description ? dto.description : '',
@@ -63,9 +67,9 @@ export class CustomerModel implements BaseDto {
             discount: dto.discount ? dto.discount : 0,
             cartCount: dto.cartCount ? dto.cartCount : 0,
             categoryId: dto.categoryId ? dto.categoryId : 0,
-            created_at: dto.created_at ? dto.created_at : '',
-            updated_at: dto.updated_at ? dto.updated_at : '',
-            deleted_at: dto.deleted_at ? dto.deleted_at : '',
+            createdAt: dto.createdAt ? dto.createdAt : '',
+            updatedAt: dto.updatedAt ? dto.updatedAt : '',
+            deletedAt: dto.deletedAt ? dto.deletedAt : '',
         };
     }
 
@@ -73,6 +77,7 @@ export class CustomerModel implements BaseDto {
         let date: any = new Date().toISOString();
         return {
             id: uuidv4().toString(),
+            orgId: '',
             type: '',
             name: '',
             description: '',
@@ -83,9 +88,9 @@ export class CustomerModel implements BaseDto {
             discount: 0,
             cartCount: 0,
             categoryId: 0,
-            created_at: date,
-            updated_at: date,
-            deleted_at: '',
+            createdAt: date,
+            updatedAt: date,
+            deletedAt: '',
 
         }
     }
@@ -93,7 +98,8 @@ export class CustomerModel implements BaseDto {
 
 export interface Customer  extends BaseDto {
     id: string;
-    type: string,
+    orgId: string;
+    type: string;
     name: string;
     description: string;
     price: number;
@@ -103,8 +109,8 @@ export interface Customer  extends BaseDto {
     discount: number;
     cartCount: number;
     categoryId: number;
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;    
+    createdAt?: string;
+    updatedAt?: string;
+    deletedAt?: string;    
 }
 

@@ -34,13 +34,13 @@ import { DateTime } from 'luxon';
 import { Subject, takeUntil } from 'rxjs';
 import { ScrumboardBoardAddCardComponent } from './add-card/add-card.component';
 import { ScrumboardBoardAddListComponent } from './add-list/add-list.component';
-import { ServiceOfferingsV2Service } from '../date-services/service-offerings-v2.service';
-import { ServiceOffering } from '../date-services/service-offerings.model';
-import { ServiceOfferingListV2Service } from '../date-services/service-offerings-list-v2.service';
-import { ServiceOfferingList, ServiceOfferingListModel } from '../date-services/service-offerings-list.model';
-import { ServicesV2Service } from '../date-services/services-v2.service';
+import { ServiceOfferingsV2Service } from '../data-services/service-offerings-v2.service';
+import { ServiceOffering } from '../data-services/service-offerings.model';
+import { ServiceOfferingListV2Service } from '../data-services/service-offerings-list-v2.service';
+import { ServiceOfferingList, ServiceOfferingListModel } from '../data-services/service-offerings-list.model';
+import { ServicesV2Service } from '../data-services/services-v2.service';
 import { ServicesEditItemComponent } from '../edit-item/edit-item.component';
-import { Service } from '../date-services/services.model';
+import { Service } from '../data-services/services.model';
 import { ServicesAddServiceComponent } from './add-service/add-service.component';
 
 @Component({

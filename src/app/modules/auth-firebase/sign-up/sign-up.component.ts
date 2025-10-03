@@ -19,7 +19,7 @@ import { AxiomaimAlertComponent, AxiomaimAlertType } from '@axiomaim/components/
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { LocalV2Service } from 'app/core/services/local-v2.service';
-import { UserModel } from 'app/modules/axiomaim/administration/users/user.model';
+import { UserModel } from 'app/modules/axiomaim/administration/users/users.model';
 import { UsersV2Service } from 'app/modules/axiomaim/administration/users/users-v2.service';
 
 @Component({
@@ -76,7 +76,7 @@ export class AuthSignUpComponent implements OnInit {
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
             password: ['', Validators.required],
-            company: [''],
+            company: ['', Validators.required],
             agreements: ['', Validators.requiredTrue],
         });
     }
@@ -99,26 +99,31 @@ export class AuthSignUpComponent implements OnInit {
         // Hide the alert
         this.showAlert = false;
 
+        console.log('signUpForm', this.signUpForm.value);
         // firebase-auth v2 sign up
         const newAuth = await this._firebaseAuthV2Service.signUp(this.signUpForm.value);
         console.log('newAuth', newAuth);
-        await this.createUser(newAuth, this.signUpForm.value);
-        newAuth.catch((err) => {
-            // Re-enable the form
-            this.signUpForm.enable();
+        // this._firebaseAuthV2Service.sendEmailVerification(newAuth);
+        // Navigate to the confirmation required page
+        this._router.navigateByUrl('/confirmation-required');
 
-            // Reset the form
-            this.signUpNgForm.resetForm();
+        // await this.createUser(newAuth, this.signUpForm.value);
+        // newAuth.catch((err) => {
+        //     // Re-enable the form
+        //     this.signUpForm.enable();
 
-            // Set the alert
-            this.alert = {
-                type: 'error',
-                message: 'Something went wrong, please try again.',
-            };
+        //     // Reset the form
+        //     this.signUpNgForm.resetForm();
 
-            // Show the alert
-            this.showAlert = true;  
-        })
+        //     // Set the alert
+        //     this.alert = {
+        //         type: 'error',
+        //         message: 'Something went wrong, please try again.',
+        //     };
+
+        //     // Show the alert
+        //     this.showAlert = true;  
+        // })
     }
 
     async createUser(auth: any, signup: any) {

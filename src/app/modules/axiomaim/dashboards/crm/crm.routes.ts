@@ -1,14 +1,14 @@
 import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
 import { CRMComponent } from 'app/modules/axiomaim/dashboards/crm/crm.component';
-import { CRMService } from 'app/modules/axiomaim/dashboards/crm/crm.service';
+import { CRMV2Service } from 'app/modules/axiomaim/dashboards/crm/crmV2.service';
 
 export default [
     {
         path: '',
         component: CRMComponent,
         resolve: {
-            data: () => inject(CRMService).getData(),
+            totalLeads: () => inject(CRMV2Service).getTotalLeads(),
         },
     },
 ] as Routes;

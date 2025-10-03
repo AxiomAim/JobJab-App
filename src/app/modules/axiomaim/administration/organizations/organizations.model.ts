@@ -1,10 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BaseDto } from 'app/core/models/base-dto.model';
-import { User } from '../users/user.model';
+import { User } from '../users/users.model';
 
 export class OrganizationModel implements BaseDto {
     constructor(
             id: string,
+            orgId: string,
+            userId: string,
             name: string,
             description: string,
             domain: string,
@@ -25,11 +27,13 @@ export class OrganizationModel implements BaseDto {
             google: string,
             instagram: string,
             myApp: MyApp,
-            created_at?: string,
-            updated_at?: string,
-            deleted_at?: string,    
+            createdAt?: string,
+            updatedAt?: string,
+            deletedAt?: string,    
         ) {
             this.id = id;
+            this.orgId = orgId;
+            this.userId = userId;
             this.name = name;
             this.description = description;
             this.domain = domain;
@@ -50,11 +54,13 @@ export class OrganizationModel implements BaseDto {
             this.google = google;
             this.instagram = instagram;
             this.myApp = myApp;
-            this.created_at = created_at;
-            this.updated_at = updated_at;
-            this.deleted_at = deleted_at;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.deletedAt = deletedAt;
     }
     public id: string;
+    public orgId: string;
+    public userId: string;
     public name: string;
     public description: string;
     public domain: string;
@@ -75,15 +81,17 @@ export class OrganizationModel implements BaseDto {
     public google: string;
     public instagram: string;
     public myApp: MyApp;
-    public created_at?: string;
-    public updated_at?: string;
-    public deleted_at?: string;
+    public createdAt?: string;
+    public updatedAt?: string;
+    public deletedAt?: string;
 
     public static toDto(dto: Organization): Organization {
         let date: any = new Date().toISOString();
 
         return {
             id: dto.id ? dto.id : '',
+            orgId: dto.id ? dto.id : '',
+            userId: dto.userId ? dto.userId : '',
             name: dto.name ? dto.name : '',
             description: dto.description ? dto.description : '',
             domain: dto.domain ? dto.domain : '',
@@ -104,16 +112,19 @@ export class OrganizationModel implements BaseDto {
             google: dto.google ? dto.google : '',
             instagram: dto.instagram ? dto.instagram : '',
             myApp: dto.myApp ? dto.myApp : {title:0, description:'', play:'', playButton:'', appstore:'', appstoreButton:'', image:''},
-            created_at: dto.created_at ? dto.created_at : date,
-            updated_at: dto.updated_at ? dto.updated_at : date,
-            deleted_at: dto.deleted_at ? dto.deleted_at : '',
+            createdAt: dto.createdAt ? dto.createdAt : date,
+            updatedAt: dto.updatedAt ? dto.updatedAt : date,
+            deletedAt: dto.deletedAt ? dto.deletedAt : '',
         };
     }
 
     public static emptyDto():Organization {
         let date: any = new Date().toISOString();
+        let id: any = uuidv4().toString();
         return {
-            id: uuidv4().toString(),
+            id: id,
+            orgId: id,
+            userId: '',
             name: '',
             description: '',
             domain: '',
@@ -134,9 +145,9 @@ export class OrganizationModel implements BaseDto {
             google: '',
             instagram: '',
             myApp: {title:0, description:'', play:'', playButton:'', appstore:'', appstoreButton:'', image:''},
-            created_at: date,
-            updated_at: date,
-            deleted_at: '',
+            createdAt: date,
+            updatedAt: date,
+            deletedAt: '',
 
         }
     }
@@ -144,6 +155,8 @@ export class OrganizationModel implements BaseDto {
 
 export interface Organization  extends BaseDto {
     id: string;
+    orgId: string;
+    userId: string;
     name: string;
     description: string;
     domain: string;
@@ -164,9 +177,9 @@ export interface Organization  extends BaseDto {
     google: string;
     instagram: string;
     myApp: MyApp;
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;    
+    createdAt?: string;
+    updatedAt?: string;
+    deletedAt?: string;    
 }
 
 export interface Slides {

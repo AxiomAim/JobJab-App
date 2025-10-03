@@ -20,7 +20,7 @@ import { SearchComponent } from 'app/layout/common/search/search.component';
 import { ShortcutsComponent } from 'app/layout/common/shortcuts/shortcuts.component';
 import { LoginUserMenuComponent } from 'app/layout/common/login-user-menu/login-user-menu.component';
 import { Subject, takeUntil } from 'rxjs';
-import { User } from 'app/modules/axiomaim/administration/users/user.model';
+import { User } from 'app/modules/axiomaim/administration/users/users.model';
 import { LoginUserService } from 'app/core/login-user/login-user.service';
 
 @Component({

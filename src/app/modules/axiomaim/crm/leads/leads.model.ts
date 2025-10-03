@@ -4,6 +4,8 @@ import { BaseDto } from 'app/core/models/base-dto.model';
 export class LeadModel implements BaseDto {
     constructor(
             id: string,
+            orgId: string,
+            userId: string,
             avatar?: string | null,
             status?: string | null,            
             background?: string | null,
@@ -22,11 +24,13 @@ export class LeadModel implements BaseDto {
                 note: string,
             }[],
             tags?: string[],
-            created_at?: string,
-            updated_at?: string,
-            deleted_at?: string,
+            createdAt?: string,
+            updatedAt?: string,
+            deletedAt?: string,
         ) {
             this.id = id;
+            this.orgId = orgId;
+            this.userId = userId;
             this.avatar = avatar;
             this.status = status;
             this.background = background;
@@ -42,11 +46,13 @@ export class LeadModel implements BaseDto {
             this.project = project;
             this.notes = notes;
             this.tags = tags;
-            this.created_at = created_at;
-            this.updated_at = updated_at;
-            this.deleted_at = deleted_at;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.deletedAt = deletedAt;
     }
     public id: string;
+    public orgId: string;
+    public userId: string;
     public avatar?: string | null;
     public status?: string | null;
     public background?: string | null;
@@ -65,15 +71,17 @@ export class LeadModel implements BaseDto {
         note: string,
     }[];
     public tags?: string[];
-    public created_at?: string;
-    public updated_at?: string;
-    public deleted_at?: string;
+    public createdAt?: string;
+    public updatedAt?: string;
+    public deletedAt?: string;
 
     public static toDto(dto: Lead): Lead {
         let date: any = new Date().toISOString();
 
         return {
             id: dto.id ? dto.id : '',
+            orgId: dto.orgId ? dto.orgId : '',
+            userId: dto.userId ? dto.userId : '',
             avatar: dto.avatar ? dto.avatar : null,
             status: dto.status ? dto.status : null,
             background: dto.background ? dto.background : null,
@@ -89,9 +97,9 @@ export class LeadModel implements BaseDto {
             project: dto.project ? dto.project : null,
             notes: dto.notes ? dto.notes : [{subject: 'Initial Note', note: ''}],
             tags: dto.tags ? dto.tags : [],
-            created_at: dto.created_at ? dto.created_at : date,
-            updated_at: dto.updated_at ? dto.updated_at : date,
-            deleted_at: dto.deleted_at ? dto.deleted_at : null,
+            createdAt: dto.createdAt ? dto.createdAt : date,
+            updatedAt: dto.updatedAt ? dto.updatedAt : date,
+            deletedAt: dto.deletedAt ? dto.deletedAt : null,
         };
     }
 
@@ -99,6 +107,8 @@ export class LeadModel implements BaseDto {
         let date: any = new Date().toISOString();
         return {
             id: uuidv4().toString(),
+            orgId: '',
+            userId: '',
             avatar: null,
             status: null,
             background: null,
@@ -114,9 +124,9 @@ export class LeadModel implements BaseDto {
             project: null,
             notes: [{subject: 'Initial Note', note: ''}],
             tags: [],
-            created_at: date,
-            updated_at: date,
-            deleted_at: null,
+            createdAt: date,
+            updatedAt: date,
+            deletedAt: null,
 
         }
     }
@@ -124,6 +134,8 @@ export class LeadModel implements BaseDto {
 
 export interface Lead  extends BaseDto {
     id: string;
+    orgId: string;
+    userId: string;
     avatar?: string | null;
     status?: string | null;
     background?: string | null;
@@ -142,9 +154,9 @@ export interface Lead  extends BaseDto {
         note: string;
     }[];
     tags?: string[];
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    deletedAt?: string;
 
 }
 

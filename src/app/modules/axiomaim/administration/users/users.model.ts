@@ -40,9 +40,9 @@ export class UserModel implements BaseDto {
         scheme?: Scheme,
         login_at?: string[],
         login_info?: any[],
-        created_at?: string,
-        updated_at?: string,
-        deleted_at?: string,
+        createdAt?: string,
+        updatedAt?: string,
+        deletedAt?: string,
         ) {
             this.id = id;
             this.orgId = orgId;
@@ -77,9 +77,9 @@ export class UserModel implements BaseDto {
             this.scheme = scheme;    
             this.login_at = login_at;
             this.login_info = login_info;
-            this.created_at = created_at;
-            this.updated_at = updated_at;
-            this.deleted_at = deleted_at;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.deletedAt = deletedAt;
     }
     public id: string;
     public orgId: string;
@@ -131,9 +131,9 @@ export class UserModel implements BaseDto {
     public selected?: boolean;
     public login_at?: string[];
     public login_info?: any[];
-    public created_at?: string;
-    public updated_at?: string;
-    public deleted_at?: string;
+    public createdAt?: string;
+    public updatedAt?: string;
+    public deletedAt?: string;
 
     public static toDto(dto: User): User {
         let date: any = new Date().toISOString();
@@ -174,9 +174,9 @@ export class UserModel implements BaseDto {
             selected: dto.selected ? dto.selected : false,
             login_at: dto.login_at ? dto.login_at : [],
             login_info: dto.login_info ? dto.login_info : [],
-            created_at: dto.created_at ? dto.created_at : '',
-            updated_at: dto.updated_at ? dto.updated_at : '',
-            deleted_at: dto.deleted_at ? dto.deleted_at : '',
+            createdAt: dto.createdAt ? dto.createdAt : '',
+            updatedAt: dto.updatedAt ? dto.updatedAt : '',
+            deletedAt: dto.deletedAt ? dto.deletedAt : '',
         };
     }
 
@@ -218,9 +218,9 @@ export class UserModel implements BaseDto {
             selected: false,
             login_at: [],
             login_info: [],
-            created_at: date,
-            updated_at: date,
-            deleted_at: '',
+            createdAt: date,
+            updatedAt: date,
+            deletedAt: '',
 
         }
     }
@@ -262,9 +262,9 @@ export interface User  extends BaseDto {
     selected?: boolean;
     login_at?: string[];
     login_info?: any[];
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;    
+    createdAt?: string;
+    updatedAt?: string;
+    deletedAt?: string;    
 }
 
 export interface Permissions {
@@ -339,9 +339,9 @@ const UserSchema = v.object({
         selected: v.pipe(v.boolean()),
         login_at: v.pipe(v.string()),
         login_info: v.pipe(v.any()),
-        created_at: v.pipe(v.string()),
-        updated_at: v.pipe(v.string()),
-        deleted_at: v.pipe(v.string()),    
+        createdAt: v.pipe(v.string()),
+        updatedAt: v.pipe(v.string()),
+        deletedAt: v.pipe(v.string()),    
 });
 
 const CountrySchema = v.object({

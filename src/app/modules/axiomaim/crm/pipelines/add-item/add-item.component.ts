@@ -24,13 +24,13 @@ import { GridAllModule } from '@syncfusion/ej2-angular-grids';
 import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-messages.component';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
-import { User } from '../../users/user.model';
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
-import { LeadsV2Service } from '../leads-v2.service';
-import { Lead, LeadModel } from '../leads.model';
+import { PipelinesV2Service } from '../pipelines-v2.service';
+import { Pipeline, PipelineModel } from '../pipelines.model';
+import { User } from 'app/modules/axiomaim/administration/users/users.model';
 
 @Component({
-    selector: 'leads-add-item',
+    selector: 'pipelines-add-item',
     templateUrl: './add-item.component.html',
     styles: [
         `
@@ -77,11 +77,11 @@ import { Lead, LeadModel } from '../leads.model';
 
     ]
 })
-export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PipelinesAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
-    _leadsV2Service = inject(LeadsV2Service);
+    _pipelinesV2Service = inject(PipelinesV2Service);
     _alertMessagesService = inject(AlertMessagesService);
-    lead: Lead;
+    pipeline: Pipeline;
 
     formFieldHelpers: string[] = [''];
     fixedSubscriptInput: FormControl = new FormControl('', [
@@ -102,7 +102,7 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     @Output() drawerStateChanged = new EventEmitter<boolean>();
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-    leadForm: UntypedFormGroup;
+    pipelineForm: UntypedFormGroup;
     #loginUser = signal<User | null>(null);
     showRole: string[] = ["admin"];
     user_roles: any[] = [];
@@ -138,7 +138,7 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        this.lead = LeadModel.emptyDto()
+        this.pipeline = PipelineModel.emptyDto()
         this.setFormGroup();
     }
 
@@ -169,7 +169,7 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
      * Set Form Group 
      */
     setFormGroup() {
-        this.leadForm = this._formBuilder.group({
+        this.pipelineForm = this._formBuilder.group({
             email: ["", [Validators.required, Validators.email]],
             firstName: ["", [Validators.required]],
             lastName: ["", [Validators.required]],
@@ -215,15 +215,15 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     private resetForm(): void {
         // Reset form values
-        this.leadForm.reset();
+        this.pipelineForm.reset();
         
         // Clear all validation states
-        this.leadForm.markAsUntouched();
-        this.leadForm.markAsPristine();
+        this.pipelineForm.markAsUntouched();
+        this.pipelineForm.markAsPristine();
         
         // Reset each form control individually to ensure clean state
-        Object.keys(this.leadForm.controls).forEach(key => {
-            const control = this.leadForm.get(key);
+        Object.keys(this.pipelineForm.controls).forEach(key => {
+            const control = this.pipelineForm.get(key);
             if (control) {
                 control.setErrors(null);
                 control.markAsUntouched();
@@ -232,7 +232,7 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
         });
         
         // Set default values for form fields that need them
-        this.leadForm.patchValue({
+        this.pipelineForm.patchValue({
             email: null,
             firstName: null,
             lastName: null,
@@ -261,11 +261,11 @@ export class LeadsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
      */
 
     async onSubmit() {
-        this._leadsV2Service.createItem(this.leadForm.value).then(
+        this._pipelinesV2Service.createItem(this.pipelineForm.value).then(
             async (res) => {
-                console.log('Lead created successfully', res);
-                await this._leadsV2Service.getAll();
-                await this._alertMessagesService.showMessage('Lead created successfully', 'success');
+                console.log('pipeline created successfully', res);
+                await this._pipelinesV2Service.getAll();
+                await this._alertMessagesService.showMessage('pipeline created successfully', 'success');
                 this.close();
             }
         )

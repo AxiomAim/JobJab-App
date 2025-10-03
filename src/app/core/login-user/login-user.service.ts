@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { map, Observable, of, BehaviorSubject, tap } from 'rxjs';
 import { FirebaseAuthV2Service } from '../auth-firebase/firebase-auth-v2.service';
 import { UsersDataService } from 'app/modules/axiomaim/administration/users/users-data.service';
-import { User } from 'app/modules/axiomaim/administration/users/user.model';
+import { User } from 'app/modules/axiomaim/administration/users/users.model';
 import { Router } from '@angular/router';
 import { Scheme, Theme } from '@axiomaim/services/config';
 // import { Organization } from 'app/modules/axiomaim/administration/organizations/organizations.model';

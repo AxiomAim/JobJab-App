@@ -36,7 +36,7 @@ import {
     switchMap,
     takeUntil,
 } from 'rxjs';
-import { User } from '../user.model';
+import { User } from '../users.model';
 import { MatDialog } from '@angular/material/dialog';
 import { UsersV2Service } from '../users-v2.service';
 import { UsersAddItemComponent } from '../add-item/add-item.component';

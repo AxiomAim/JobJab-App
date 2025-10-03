@@ -2,7 +2,7 @@ import { createInjectable } from "ngxtension/create-injectable";
 import { inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { UsersDataService } from "./users-data.service";
-import { User } from "./user.model";
+import { User } from "./users.model";
 
 export const UsersV2ApiService = createInjectable(() => {
   const _usersDataService = inject(UsersDataService);

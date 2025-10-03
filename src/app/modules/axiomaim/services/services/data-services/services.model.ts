@@ -4,6 +4,7 @@ import { BaseDto } from 'app/core/models/base-dto.model';
 export class ServiceModel implements BaseDto {
     constructor(
         id: string,
+        orgId: string,
         serviceOfferingId: string,
         serviceOfferingListId: string,
         type: string,
@@ -17,11 +18,12 @@ export class ServiceModel implements BaseDto {
         discount: number,
         cartCount: number,
         categoryId: number,
-        created_at?: string,
-        updated_at?: string,
-        deleted_at?: string,
+        createdAt?: string,
+        updatedAt?: string,
+        deletedAt?: string,
         ) {
             this.id = id;
+            this.orgId = orgId;
             this.serviceOfferingId = serviceOfferingId;
             this.serviceOfferingListId = serviceOfferingListId;
             this.type = type;
@@ -35,11 +37,12 @@ export class ServiceModel implements BaseDto {
             this.discount = discount;
             this.cartCount = cartCount;
             this.categoryId = categoryId;
-            this.created_at = created_at;
-            this.updated_at = updated_at;
-            this.deleted_at = deleted_at;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.deletedAt = deletedAt;
     }
     public id: string;
+    public orgId: string;
     public serviceOfferingId: string;
     public serviceOfferingListId: string;
     public type: string;
@@ -53,15 +56,16 @@ export class ServiceModel implements BaseDto {
     public discount: number;
     public cartCount: number;
     public categoryId: number;
-    public created_at?: string;
-    public updated_at?: string;
-    public deleted_at?: string;
+    public createdAt?: string;
+    public updatedAt?: string;
+    public deletedAt?: string;
 
     public static toDto(dto: Service): Service {
         let date: any = new Date().toISOString();
 
         return {
             id: dto.id ? dto.id : '',
+            orgId: dto.orgId ? dto.orgId : '',
             serviceOfferingId: dto.serviceOfferingId ? dto.serviceOfferingId : '',
             serviceOfferingListId: dto.serviceOfferingListId ? dto.serviceOfferingListId : '',
             type: dto.type ? dto.type : '',
@@ -75,9 +79,9 @@ export class ServiceModel implements BaseDto {
             discount: dto.discount ? dto.discount : 0,
             cartCount: dto.cartCount ? dto.cartCount : 0,
             categoryId: dto.categoryId ? dto.categoryId : 0,
-            created_at: dto.created_at ? dto.created_at : '',
-            updated_at: dto.updated_at ? dto.updated_at : '',
-            deleted_at: dto.deleted_at ? dto.deleted_at : '',
+            createdAt: dto.createdAt ? dto.createdAt : '',
+            updatedAt: dto.updatedAt ? dto.updatedAt : '',
+            deletedAt: dto.deletedAt ? dto.deletedAt : '',
         };
     }
 
@@ -85,6 +89,7 @@ export class ServiceModel implements BaseDto {
         let date: any = new Date().toISOString();
         return {
             id: uuidv4().toString(),
+            orgId: '',
             serviceOfferingId: '',
             serviceOfferingListId: '',
             type: '',
@@ -98,9 +103,9 @@ export class ServiceModel implements BaseDto {
             discount: 0,
             cartCount: 0,
             categoryId: 0,
-            created_at: date,
-            updated_at: date,
-            deleted_at: '',
+            createdAt: date,
+            updatedAt: date,
+            deletedAt: '',
 
         }
     }
@@ -108,6 +113,7 @@ export class ServiceModel implements BaseDto {
 
 export interface Service  extends BaseDto {
     id: string;
+    orgId: string;
     serviceOfferingId: string;
     serviceOfferingListId: string;
     type: string,
@@ -121,8 +127,8 @@ export interface Service  extends BaseDto {
     discount: number;
     cartCount: number;
     categoryId: number;
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;    
+    createdAt?: string;
+    updatedAt?: string;
+    deletedAt?: string;    
 }
 

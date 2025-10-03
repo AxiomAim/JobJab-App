@@ -19,8 +19,8 @@ import { TranslocoModule } from '@jsverse/transloco';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { ReplaySubject, Subject, takeUntil } from 'rxjs';
-import { User } from '../../administration/users/user.model';
-import { CRMService } from './crm.service';
+import { User } from '../../administration/users/users.model';
+import { CRMV2Service } from './crmV2.service';
 
 
 @Component({
@@ -44,6 +44,8 @@ import { CRMService } from './crm.service';
 })
 export class CRMComponent implements OnInit, OnDestroy {
     private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
+    private _crmV2Service = inject(CRMV2Service);
+
     chartGithubIssues: ApexOptions = {};
     chartTaskDistribution: ApexOptions = {};
     chartBudgetDistribution: ApexOptions = {};
@@ -59,7 +61,6 @@ export class CRMComponent implements OnInit, OnDestroy {
      * Constructor
      */
     constructor(
-        private _crmService: CRMService,
         private _router: Router
     ) {
         this._firebaseAuthV2Service.loadFromStorage();
@@ -76,15 +77,15 @@ export class CRMComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         // Get the data
-        this._crmService.data$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((data) => {
-                // Store the data
-                this.data = data;
+        // this._crmV2Service.data$
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((data) => {
+        //         // Store the data
+        //         this.data = data;
 
-                // Prepare the chart data
-                this._prepareChartData();
-            });
+        //         // Prepare the chart data
+        //         this._prepareChartData();
+        //     });
 
         // Attach SVG fill fixer to all ApexCharts
         window['Apex'] = {

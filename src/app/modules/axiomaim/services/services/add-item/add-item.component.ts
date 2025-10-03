@@ -26,10 +26,10 @@ import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-m
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
-import { ServicesV2Service } from '../date-services/services-v2.service';
-import { ServiceOfferingsV2Service } from '../date-services/service-offerings-v2.service';
-import { ServiceOffering, ServiceOfferingModel } from '../date-services/service-offerings.model';
-import { User } from 'app/modules/axiomaim/administration/users/user.model';
+import { ServicesV2Service } from '../data-services/services-v2.service';
+import { ServiceOfferingsV2Service } from '../data-services/service-offerings-v2.service';
+import { ServiceOffering, ServiceOfferingModel } from '../data-services/service-offerings.model';
+import { User } from 'app/modules/axiomaim/administration/users/users.model';
 
 @Component({
     selector: 'services-add-item',

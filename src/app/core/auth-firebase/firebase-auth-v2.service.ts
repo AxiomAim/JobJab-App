@@ -2,7 +2,18 @@ import { createInjectable } from 'ngxtension/create-injectable';
 import { EncryptStorage } from 'encrypt-storage';
 import { signal, computed, inject, effect } from '@angular/core';
 import { environment } from 'environments/environment';
-import { catchError, fromEventPattern, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { 
+  catchError, 
+  firstValueFrom, 
+  from, 
+  fromEventPattern, 
+  map, 
+  Observable, 
+  of, 
+  switchMap, 
+  tap, 
+  throwError 
+} from 'rxjs';
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
@@ -14,20 +25,19 @@ import {
   getAuth, 
   sendPasswordResetEmail,
   Auth,
-  signOut,
-  getRedirectResult
+  signOut as signOutFirebase,
+  getRedirectResult,
+  sendEmailVerification,
+  User as FirebaseUser
 } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import { UsersDataService } from 'app/modules/axiomaim/administration/users/users-data.service';
-import { User, UserModel } from 'app/modules/axiomaim/administration/users/user.model';
+import { User, UserModel } from 'app/modules/axiomaim/administration/users/users.model';
 import { signInWithPopup, signInWithRedirect } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { Organization } from 'app/modules/axiomaim/administration/organizations/organizations.model';
+import { Organization, OrganizationModel } from 'app/modules/axiomaim/administration/organizations/organizations.model';
 import { OrganizationsDataService } from 'app/modules/axiomaim/administration/organizations/organizations-data.service';
 import { AxiomaimConfigService, Scheme, Theme } from '@axiomaim/services/config';
-import { UsersV2Service } from 'app/modules/axiomaim/administration/users/users-v2.service';
-import { LocalV2Service } from '../services/local-v2.service';
-// import { OrganizationsV2Service } from 'app/modules/axiomaim/administration/organizations/organizationsV2.service';
 
 export const encryptStorage = new EncryptStorage(environment.LOCAL_STORAGE_KEY, {
   storageType: 'sessionStorage',
@@ -39,21 +49,15 @@ const ORGANIZATION = "organization";
 
 export const FirebaseAuthV2Service = createInjectable(() => {
   const _router = inject(Router);
-  // const _authService = inject(AuthService);
-
   const app = initializeApp(environment.firebaseConfig);
   const auth: Auth = getAuth(app);
   const _usersDataService = inject(UsersDataService);
-  const _usersV2Service = inject(UsersV2Service);
   const _organizationsDataService = inject(OrganizationsDataService);
   const _axiomaimConfigService = inject(AxiomaimConfigService);
 
-  // const _organizationsV2Service = inject(OrganizationsV2Service);
   const loginUser = signal<User | null>(null);
   const organization = signal<Organization | null>(null);
-  // const user = signal<User | null>(null);
   const loginUserId = signal<string | null>(null);
-  const provider = signal<any | null>(null);
   const authUser = signal<any | null>(null);
   const token = signal<any | null>(null);
   const googleProvider = new GoogleAuthProvider();
@@ -64,10 +68,7 @@ export const FirebaseAuthV2Service = createInjectable(() => {
   const githubProvider = new GithubAuthProvider();
 
   const actionCodeSettings = {
-    // URL you want to redirect back to. The domain (www.example.com) for this
-    // URL must be in the authorized domains list in the Firebase Console.
-    url: 'https://www.example.com/finishSignUp?cartId=1234',
-    // This must be true.
+    url: `${window.location.origin}/auth/email-verified`,
     handleCodeInApp: true,
     iOS: {
       bundleId: 'com.example.ios'
@@ -91,7 +92,6 @@ export const FirebaseAuthV2Service = createInjectable(() => {
     }
   };
 
-
   const setLoginUser = (data: any) => {
     loginUser.set(data)
     setScheme();
@@ -108,9 +108,8 @@ export const FirebaseAuthV2Service = createInjectable(() => {
       const jsonOrganization = encryptStorage.getItem(ORGANIZATION);
       organization.set(jsonOrganization)
     } catch(err) {
-
+      console.error('Error loading from storage:', err);
     }
-
   }
 
   const setToStorage = () => {
@@ -133,130 +132,95 @@ export const FirebaseAuthV2Service = createInjectable(() => {
     }
   }
 
-
   const check = (): Observable<boolean> => {
-    return new Observable((observer) => { // eslint-disable-line @typescript-eslint/no-unused-vars
-      auth.onAuthStateChanged(checkAuthUser => {
-        if(checkAuthUser) {
-          authUser.set(checkAuthUser);
-          if(loginUser() === null) { 
-            _usersDataService.getItem(checkAuthUser.uid).pipe(switchMap((thisUser: User) => {
-              loginUser.set(thisUser);
-              const domain = getDomainFromEmail(thisUser.email);
-              return _organizationsDataService.getItem(domain).pipe(map(thisOrganization => {
-                organization.set(thisOrganization);
-                setToStorage();
-                observer.next(true);
-                observer.complete();
-                return of(true);  
-              }));
-            })).subscribe();          
-          } else {
-            observer.next(true);
-            observer.complete();
-            return of(true);
-          }
-
-        } else {
-          signOut().subscribe( 
-            {
-              next: (result) => {
-                return of(false);
-              },
-              error: (error) => {
-                return of(false);
-              },
-            }
+    return of(auth.currentUser).pipe(
+      switchMap(user => {
+        if (user) {
+          authUser.set(user);
+          return of(loginUser()).pipe(
+            switchMap(currentUser => {
+              if (!currentUser) {
+                return _usersDataService.getItem(user.uid).pipe(
+                  switchMap(thisUser => {
+                    loginUser.set(thisUser);
+                    const domain = getDomainFromEmail(thisUser.email);
+                    return _organizationsDataService.getItem(domain).pipe(
+                      tap(thisOrganization => {
+                        if (thisOrganization) {
+                          organization.set(thisOrganization);
+                        }
+                      }),
+                      tap(() => setToStorage()),
+                      map(() => true)
+                    );
+                  })
+                );
+              } else {
+                const domain = getDomainFromEmail(currentUser.email);
+                return _organizationsDataService.getItem(domain).pipe(
+                  tap(thisOrganization => {
+                    if (thisOrganization) {
+                      organization.set(thisOrganization);
+                    }
+                  }),
+                  tap(() => setToStorage()),
+                  map(() => true)
+                );
+              }
+            })
           );
-          observer.next(false);
+        } else {
+          const needsClear = !!loginUser();
+          if (needsClear) {
+            loginUser.set(null);
+            organization.set(null);
+            authUser.set(null);
+            removeFromStorage();
+          }
           return of(false);
-
-      }
-      }, err => {
-         observer.error(err);
-      });
-    });
-  }  
-
-
-const initializeAuth = (id: string): Promise<void> => {
-  return new Promise<void>((resolve, reject) => {
-    // Your initialization logic here, potentially involving async operations.
-    // Example:
-    auth.onAuthStateChanged(user => {
-        // Do something with the user
-        console.log("Auth state changed", user);
-        resolve();
-    }, error => {
-      console.error("Auth state error", error);
-      reject(error);
-    });
-});
-}
-
-
+        }
+      }),
+      catchError(err => {
+        console.error('Error in check:', err);
+        return of(false);
+      })
+    );
+  }
 
   const getUserAccount = (id: string): Observable<User> => {
-      return new Observable((observer) => {
-        _usersDataService.getItem(id).subscribe(thisUSer => {
-        observer.next(thisUSer)
-      })
-    })
+    return _usersDataService.getItem(id);
   }
 
+  const updateStatus = (status: string): Observable<User> => {
+    if (!loginUser()) {
+      return throwError(() => new Error('No user logged in'));
+    }
+    const updated = { ...loginUser()!, status };
+    loginUser.set(updated);
+    setToStorage();
+    return of(updated);
+  }
 
-  const updateStatus = (status: string) => {
-    return new Observable((observer) => {
-      loginUser.set({ ...loginUser(), status});
+  const signIn = async (credentials): Promise<User> => {
+    await signInWithEmailAndPassword(auth, credentials.email, credentials.password).then(async (cred) => {
+      authUser.set(cred);
+      const thisUser: User = await firstValueFrom(_usersDataService.getItem(cred.user.uid));
+      const date = new Date().toISOString();
+      thisUser.login_at.push(date);
+      thisUser.status = 'online';
+      loginUser.set(thisUser);
+      setScheme();
+      setTheme();      
       setToStorage();
-    });
-  }
-
-  const signIn = async (credentials: { email: string; password: string }): Promise<any> => {
-    signInWithEmailAndPassword(auth, credentials.email, credentials.password).then((auth: any) => {
-      authUser.set(auth)
-      _usersV2Service.getItem(auth.user.uid).then(async (thisUser: User) => {
-        let date: any = new Date().toISOString();
-        thisUser.login_at.push(date);
-        thisUser.status = 'online';
-        loginUser.set(thisUser);
-        setScheme();
-        setTheme();      
-        setToStorage()
-        await _usersV2Service.updateItem(thisUser);     
-        return loginUser();   
-      })
+      await firstValueFrom(_usersDataService.updateItem(thisUser));     
+      return thisUser;   
     }).catch((error) => {
-      console.error('Error during signIn:', error);
+      console.error('Error in signIn:', error);
       throw error;
-    })
+    });
+    return loginUser() as User;
   };
 
-
-  const signIn1 = (credentials: { email: string; password: string }): Observable<User> => {
-    const domain = getDomainFromEmail(credentials.email);
-    return new Observable((observer) => {
-      signInWithEmailAndPassword(auth, credentials.email, credentials.password).then((auth: any) => {
-        authUser.set(auth)
-        _usersDataService.getItem(auth.user.uid).pipe(switchMap((thisUser) => {
-        const encodedData = btoa(credentials.password); // encode a string 
-        thisUser.emailKey = encodedData;
-        return _usersDataService.updateItem(thisUser).pipe(switchMap(updateUser => {
-          updateUser.status = 'online';
-          loginUser.set(updateUser);
-          setScheme();
-          setTheme();      
-          setToStorage()
-          return _organizationsDataService.getItem(domain).pipe(map(thisOrganization => {
-            organization.set(thisOrganization);
-            setToStorage();
-            observer.next(thisUser);
-          }));
-        }));
-        })).subscribe();
-      })
-    })
-  }
 
   const getDomainFromEmail = (email: string): string => {
     const parts = email.split('@');
@@ -265,179 +229,155 @@ const initializeAuth = (id: string): Promise<void> => {
     } else {
       return ''; // Or handle invalid email as needed
     }
-
   }
 
   const signUp = async (signup: any): Promise<any> => {
-    const newAuth = createUserWithEmailAndPassword(auth, signup.email, signup.password);
-    authUser.set(auth)
-    return newAuth;
+    console.log('Sign up data:', signup);
+    await createUserWithEmailAndPassword(auth, signup.email, signup.password).then(async (userCredential) => {
+      console.log('User credential from Firebase:', userCredential);
+      const org = OrganizationModel.emptyDto();
+      const user = UserModel.emptyDto();
+      user.firstName = signup.firstName;
+      user.lastName = signup.lastName;
+      user.displayName = signup.firstName + ' ' + signup.lastName;
+      user.email = signup.email;
+      user.emailSignature = signup.firstName + ' ' + signup.lastName + ' ' + signup.email;
+      user.agreements = signup.agreements;
+      user.id = userCredential.user.uid;
+      org.name = signup.company;
+      org.userId = user.id;
+      const createdOrg = await firstValueFrom(_organizationsDataService.createItem(org));
+      user.orgId = createdOrg.id;
+      const createdUser = await firstValueFrom(_usersDataService.createItem(user));
+      loginUser.set(createdUser);
+      setScheme();
+      setTheme();
+      setToStorage();
+      authUser.set(userCredential.user);
+      loginUser.set(user);
+      await sendEmailVerificationNew(userCredential.user);
+      return loginUser();
+    }).catch((error) => {
+      console.error('Error during signUp:', error);
+      throw error;
+    });
   };
   
-  const sendEmailVerification = async (auth: any): Promise<any> => {
-    const confirmEmail = sendEmailVerification(auth.currentUser);
-    return confirmEmail;
+  const sendEmailVerificationNew = async (user: FirebaseUser): Promise<any> => {
+    console.log('sendEmailVerification:', user);
+    return sendEmailVerification(user, actionCodeSettings);
   };
 
-  // const signUp = (signup: any): Observable<User> => {
-  //   return new Observable((observer) => {
-  //     createUserWithEmailAndPassword(auth, signup.email, signup.password).then((auth: any) => {
-  //       authUser.set(auth)
-  //       console.log('Firebase signup', auth);
-  //       const newUser = UserModel.emptyDto()
-  //       newUser.id = auth.user.uid;
-  //       newUser.domain = signup.domain;
-  //       newUser.firstName = signup.firstName;
-  //       newUser.lastName = signup.lastName;
-  //       newUser.company = signup.company;
-  //       newUser.agreements = signup.agreements;
-  //       newUser.displayName = signup.firstName + ' ' + signup.lastName;
-  //       newUser.emailSignature = signup.firstName + ' ' + signup.lastName + ' ' + signup.email;
-  //       _usersDataService.createItem(newUser).subscribe(thisUser => {
-  //         loginUser.set(newUser);
-  //         setToStorage()
-  //         observer.next(thisUser);
-  //       })
-  //     })
-  //   })
-  // }
-
-    const signOut = (): Observable<boolean> => {
-      return new Observable((observer) => {
-        auth.signOut().then(() => {
-          authUser.set(null)
-          loginUser.set(null)
-          setScheme();
-          setTheme();      
-          removeFromStorage();
-          observer.next(true)
-          return true;
-        }).catch((error) => {
-          observer.error(error);
-          return false;
-        });
-      })
+  const signOutService = (): Observable<boolean> => {
+    return from(signOutFirebase(auth)).pipe(
+      tap(() => {
+        authUser.set(null);
+        loginUser.set(null);
+        setScheme();
+        setTheme();      
+        removeFromStorage();
+      }),
+      map(() => true),
+      catchError(err => throwError(() => err))
+    );
   }
 
   const sendPasswordReset = (email: string): Observable<boolean> => {
-    return new Observable((observer) => {
-    sendPasswordResetEmail(auth, email).then(() => {
-      authUser.set(null)
-      observer.next(true);  
-    });
-  })
-}
+    return from(sendPasswordResetEmail(auth, email)).pipe(
+      tap(() => authUser.set(null)),
+      map(() => true),
+      catchError(err => throwError(() => err))
+    );
+  }
 
   const reauthenticateUser = async (passwordObject: any): Promise<boolean> => {
     try {
       const reauthUser = loginUser(); 
-      const decodedData: any = atob(reauthUser.emailKey);
+      if (!reauthUser || !reauthUser.emailKey) {
+        return false;
+      }
+      const decodedData = atob(reauthUser.emailKey);
       const password = passwordObject.password; 
       return password === decodedData;
     } catch (error: any) {
-      // ... error handling ...
+      console.error('Error in reauthenticateUser:', error);
+      return false;
     }
   };
 
-  const signInGoogleRedirect = async () => {
-    googleProvider.addScope('profile');
-    googleProvider.addScope('email');
-    await signInWithRedirect(auth, googleProvider);
+  const processOAuthResult = async (result: any): Promise<User> => {
+    authUser.set(result.user);
+    loginUserId.set(result.user.uid);
+    const users = await firstValueFrom(_usersDataService.getQuery('email', '==', result.user.email));
+    if (users.length > 0) {
+      const thisUser = users[0];
+      loginUser.set(thisUser);
+      setScheme();
+      setTheme();    
+      setToStorage();
+      return thisUser;
+    } else {
+      const newUser = UserModel.emptyDto();
+      newUser.id = result.user.uid;
+      newUser.firstName = result.user.displayName || '';
+      newUser.lastName = result.user.displayName || '';
+      newUser.displayName = result.user.displayName || '';
+      newUser.email = result.user.email;
+      newUser.emailSignature = (result.user.displayName || '') + ' ' + result.user.email;
+      const createdUser = await firstValueFrom(_usersDataService.createItem(newUser));
+      loginUser.set(createdUser);
+      setScheme();
+      setTheme();      
+      setToStorage();
+      return createdUser;
+    }
+  };
+
+  const signInGoogleRedirect = async (): Promise<User | void> => {
     const result = await getRedirectResult(auth);
     if (result) {
-      // This gives you a Google Access Token.
-      // const token = credential.accessToken;
-    return _usersDataService.getQuery('email', '==', result.user.email).subscribe((thisUser) => {
-      if (thisUser.length > 0) {
-        loginUser.set(thisUser[0]);
-        setScheme();
-        setTheme();    
-        setToStorage();
-        return loginUser();
-      } else {
-        const newUser = UserModel.emptyDto()
-        newUser.id = result.user.uid;
-        newUser.firstName = result.user.displayName;
-        newUser.lastName = result.user.displayName;
-        newUser.displayName = result.user.displayName;
-        newUser.emailSignature = result.user.displayName + ' ' + result.user.email;
-        _usersDataService.createItem(newUser).subscribe(thisUser => {          
-          loginUser.set(thisUser);
-          setScheme();
-          setTheme();      
-          setToStorage();
-          return loginUser();
-        })
-      }
-    })
-  }
-  }
+      return processOAuthResult(result);
+    } else {
+      googleProvider.addScope('profile');
+      googleProvider.addScope('email');
+      await signInWithRedirect(auth, googleProvider);
+    }
+  };
 
-  const signInGooglePopup = async () => {
+  const signInGooglePopup = async (): Promise<User> => {
     googleProvider.addScope('profile');
     googleProvider.addScope('email');
     const result = await signInWithPopup(auth, googleProvider);
-    authUser.set(result.user)
-    loginUserId.set(result.user.uid)
     const credential = GoogleAuthProvider.credentialFromResult(result);
-    token.set(credential.accessToken)
-    return _usersDataService.getQuery('email', '==', result.user.email).subscribe((thisUser) => {
-      if (thisUser.length > 0) {
-        loginUser.set(thisUser[0]);
-        setScheme();
-        setTheme();    
-        setToStorage();
-        return loginUser();
-      } else {
-        const newUser = UserModel.emptyDto()
-        newUser.id = result.user.uid;
-        newUser.firstName = result.user.displayName;
-        newUser.lastName = result.user.displayName;
-        newUser.displayName = result.user.displayName;
-        newUser.emailSignature = result.user.displayName + ' ' + result.user.email;
-        _usersDataService.createItem(newUser).subscribe(thisUser => {
-          loginUser.set(thisUser);
-          setScheme();
-          setTheme();      
-          setToStorage();
-          return loginUser();
-        })
-      }
-    })
-  }
+    token.set(credential.accessToken);
+    return processOAuthResult(result);
+  };
   
-  const checkDomain = (domain: string): Observable<Organization> => {
-    return _organizationsDataService.getItem(domain).pipe(tap(
-      {
-        next: (org) => {
-          if(org) {
-            organization.set(org);
-            setToStorage();
-            return org;
-          } 
-        },
-        error: (error) => {
-          return error;
+  const checkDomain = (domain: string): Observable<Organization | null> => {
+    return _organizationsDataService.getItem(domain).pipe(
+      tap(org => {
+        if (org) {
+          organization.set(org);
+          setToStorage();
         }
-      }));
+      })
+    );
   }
 
   const setScheme = (): void => {
-    const scheme: Scheme = loginUser().scheme;
-    if(scheme) {
-      _axiomaimConfigService.config = { scheme };
+    const scheme: Scheme = loginUser()?.scheme;
+    if (scheme) {
+      _axiomaimConfigService.config = { ..._axiomaimConfigService.config, scheme };
     }
-    
   }
 
   const setTheme = (): void => {
-    const theme: Theme = loginUser().theme;
-    if(theme) {
-      _axiomaimConfigService.config = { theme };  
+    const theme: Theme = loginUser()?.theme;
+    if (theme) {
+      _axiomaimConfigService.config = { ..._axiomaimConfigService.config, theme };  
     }
   }
 
-  
   const setLayout = (layout: string): void => {
     // Clear the 'layout' query param to allow layout changes
     _router
@@ -449,13 +389,10 @@ const initializeAuth = (id: string): Promise<void> => {
         })
         .then(() => {
             // Set the config
-            _axiomaimConfigService.config = { layout };
+            _axiomaimConfigService.config = { ..._axiomaimConfigService.config, layout };
         });
   }
 
-
-  
-    
   return {
     loginUser: computed(() => loginUser()),
     organization: computed(() => organization()),
@@ -468,7 +405,7 @@ const initializeAuth = (id: string): Promise<void> => {
     sendPasswordReset,
     signIn,
     signUp,
-    signOut,
+    signOut: signOutService,
     setLoginUser,
     check,
     signInGoogleRedirect,
@@ -479,13 +416,6 @@ const initializeAuth = (id: string): Promise<void> => {
     setScheme,
     setTheme,
     setLayout,
-    initializeAuth,
-    sendEmailVerification
+    sendEmailVerification: sendEmailVerificationNew
   };
 });
-
-
-function next(value: boolean | Organization): void {
-  throw new Error('Function not implemented.');
-}
-

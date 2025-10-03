@@ -103,51 +103,57 @@ export class AuthSignInComponent implements OnInit {
      * Sign in
      */
     async signIn() {
-        const loginUser = await this._firebaseAuthV2Service.signIn(this.signInForm.value);
-        console.log('loginUser', loginUser);
-        // Return if the form is invalid
-        if (this.signInForm.invalid) {
-            return;
-        }
+        console.log('signInForm', this.signInForm.value);
+      const credentials = this.signInForm.value;
+        console.log('credentials', credentials);
+        await this._firebaseAuthV2Service.signIn(credentials).then((loginUser: any) => {
+            console.log('loginUser', loginUser);
+          // const loginUser = this._firebaseAuthV2Service.loginUser();
+          // console.log('loginUser', loginUser);
+          // Return if the form is invalid
+          if (this.signInForm.invalid) {
+              return;
+          }
 
-        // Disable the form
-        this.signInForm.disable();
+          // Disable the form
+          this.signInForm.disable();
 
-        // Hide the alert
-        this.showAlert = false;
+          // Hide the alert
+          this.showAlert = false;
 
-        // Sign in
-        this._authService.signIn(this.signInForm.value).subscribe(
-            () => {
-                // Set the redirect url.
-                // The '/signed-in-redirect' is a dummy url to catch the request and redirect the user
-                // to the correct page after a successful sign in. This way, that url can be set via
-                // routing file and we don't have to touch here.
-                const redirectURL =
-                    this._activatedRoute.snapshot.queryParamMap.get(
-                        'redirectURL'
-                    ) || '/signed-in-redirect';
+          // Sign in
+          this._authService.signIn(this.signInForm.value).subscribe(
+              () => {
+                  // Set the redirect url.
+                  // The '/signed-in-redirect' is a dummy url to catch the request and redirect the user
+                  // to the correct page after a successful sign in. This way, that url can be set via
+                  // routing file and we don't have to touch here.
+                  const redirectURL =
+                      this._activatedRoute.snapshot.queryParamMap.get(
+                          'redirectURL'
+                      ) || '/signed-in-redirect';
 
-                // Navigate to the redirect url
-                this._router.navigateByUrl(redirectURL);
-            },
-            (response) => {
-                // Re-enable the form
-                this.signInForm.enable();
+                  // Navigate to the redirect url
+                  this._router.navigateByUrl(redirectURL);
+              },
+              (response) => {
+                  // Re-enable the form
+                  this.signInForm.enable();
 
-                // Reset the form
-                this.signInNgForm.resetForm();
+                  // Reset the form
+                  this.signInNgForm.resetForm();
 
-                // Set the alert
-                this.alert = {
-                    type: 'error',
-                    message: 'Wrong email or password',
-                };
+                  // Set the alert
+                  this.alert = {
+                      type: 'error',
+                      message: 'Wrong email or password',
+                  };
 
-                // Show the alert
-                this.showAlert = true;
-            }
-        );
+                  // Show the alert
+                  this.showAlert = true;
+              }
+          );
+        });
     }
 
       signInWithGoogle() {

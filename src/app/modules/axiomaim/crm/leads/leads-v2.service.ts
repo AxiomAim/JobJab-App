@@ -3,15 +3,14 @@ import { signal, computed, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { LeadsV2ApiService } from "./leads-v2-api.service";
 import { Lead } from "./leads.model";
-
-const ALL_LEADS = "allLeads";
-const LEADS = "leads";
-const LEAD = "lead";
-
+import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
+import { User } from "../../administration/users/users.model";
 
 export const LeadsV2Service = createInjectable(() => {
   const _router = inject(Router);
+  const _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
   const _leadsV2ApiService = inject(LeadsV2ApiService);
+  const loginUser = signal<User | null>(_firebaseAuthV2Service.loginUser());
   const allLeads = signal<Lead[] | null>(null);
   const leads = signal<Lead[] | null>(null);
   const lead = signal<Lead | null>(null);
@@ -30,6 +29,8 @@ export const LeadsV2Service = createInjectable(() => {
   };
 
   const createItem = async (data: Lead): Promise<Lead> => {
+    data.orgId = loginUser().orgId;
+    data.userId = loginUser().id;
     const response = await _leadsV2ApiService.createItem(data);
     lead.set(response);
     return response;

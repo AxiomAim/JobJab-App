@@ -2,7 +2,7 @@ import { createInjectable } from "ngxtension/create-injectable";
 import { signal, computed, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { UsersV2ApiService } from "./users-v2-api.service";
-import { User } from "./user.model";
+import { User } from "./users.model";
 
 const ALL_USERS = "allUsers";
 const USERS = "users";

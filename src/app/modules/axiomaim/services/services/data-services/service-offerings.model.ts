@@ -6,6 +6,7 @@ import { Service } from './services.model';
 export class ServiceOfferingModel implements BaseDto {
     constructor(
             id: string,
+            orgId: string,
             title: string,
             description: string | null,
             icon: string | null,
@@ -13,6 +14,7 @@ export class ServiceOfferingModel implements BaseDto {
             lists: ServiceOfferingList[],
         ) {
             this.id = id;
+            this.orgId = orgId;
             this.title = title;
             this.description = description;
             this.icon = icon;
@@ -20,6 +22,7 @@ export class ServiceOfferingModel implements BaseDto {
             this.lists = lists;
     }
     public id: string;
+    public orgId: string;
     public title: string;
     public description: string | null;
     public icon: string | null;
@@ -31,6 +34,7 @@ export class ServiceOfferingModel implements BaseDto {
 
         return {
             id: dto.id ? dto.id : '',
+            orgId: dto.orgId ? dto.orgId : '',
             title: dto.title ? dto.title : '',
             description: dto.description ? dto.description : null,
             icon: dto.icon ? dto.icon : 'mat_outline:miscellaneous_services',
@@ -43,6 +47,7 @@ export class ServiceOfferingModel implements BaseDto {
         let date: any = new Date().toISOString();
         return {
             id: uuidv4().toString(),
+            orgId: '',
             title: '',
             description: null,
             icon: 'mat_outline:miscellaneous_services',
@@ -54,6 +59,7 @@ export class ServiceOfferingModel implements BaseDto {
 
 export interface ServiceOffering  extends BaseDto {
     id: string;
+    orgId: string;
     title: string;
     description: string | null;
     icon: string | null;

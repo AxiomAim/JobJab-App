@@ -12,13 +12,13 @@ import { ScrumboardCardComponent } from 'app/modules/axiomaim/services/services/
 import { Board } from 'app/modules/axiomaim/services/services/services.models';
 import { ScrumboardService } from 'app/modules/axiomaim/services/services/services.service';
 import { Observable, catchError, of, throwError, filter, combineLatest, map } from 'rxjs';
-import { ServiceOfferingsV2Service } from './date-services/service-offerings-v2.service';
-import { ServiceOfferingsListV2ApiService } from './date-services/service-offerings-list-v2-api.service';
+import { ServiceOfferingsV2Service } from './data-services/service-offerings-v2.service';
+import { ServiceOfferingsListV2ApiService } from './data-services/service-offerings-list-v2-api.service';
 import { query } from 'firebase/firestore';
-import { ServiceOfferingListV2Service } from './date-services/service-offerings-list-v2.service';
-import { ServicesV2Service } from './date-services/services-v2.service';
-import { ServiceOffering } from './date-services/service-offerings.model';
-import { ServiceOfferingList } from './date-services/service-offerings-list.model';
+import { ServiceOfferingListV2Service } from './data-services/service-offerings-list-v2.service';
+import { ServicesV2Service } from './data-services/services-v2.service';
+import { ServiceOffering } from './data-services/service-offerings.model';
+import { ServiceOfferingList } from './data-services/service-offerings-list.model';
 
 /**
  * Board resolver

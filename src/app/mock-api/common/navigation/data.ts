@@ -133,6 +133,29 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         ],
     },
     {
+        id: 'crm',
+        title: 'CRM',
+        subtitle: 'CRM Tools',
+        type: 'group',
+        icon: 'heroicons_outline:home',
+        children: [
+            {
+                id: 'administration.pipelines',
+                title: 'Pipelines',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/crm/pipelines',
+            },
+            {
+                id: 'administration.leads',
+                title: 'Leads',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/crm/leads',
+            },
+        ],
+    },
+    {
         id: 'services',
         title: 'Services',
         subtitle: 'Service Tools',

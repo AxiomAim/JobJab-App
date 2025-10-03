@@ -1,7 +1,6 @@
 import { inject, Inject, Injectable } from '@angular/core';
 import { catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { BaseDataService } from 'app/core/services/data-services/base-data.service';
-import { FirestoreQuery, FirestoreService } from 'app/core/auth-firebase/firestore.service';
 // import { getDocs, limit, orderBy, query, startAfter, WhereFilterOp } from 'firebase/firestore';
 import { 
   getDocs,
@@ -14,6 +13,7 @@ import {
   WhereFilterOp
 } from '@angular/fire/firestore';
 import { Service } from './services.model';
+import { FirestoreQuery, FirestoreV2Service } from 'app/core/auth-firebase/firestore-v2.service';
 
 @Injectable(
     {
@@ -21,7 +21,7 @@ import { Service } from './services.model';
     }
 )
 export class ServicesDataService extends BaseDataService<Service> {
-    _firestore = inject(FirestoreService)
+    _firestore = inject(FirestoreV2Service)
 
     constructor(
       public firestore: Firestore

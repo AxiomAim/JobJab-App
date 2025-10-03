@@ -7,7 +7,7 @@ import { FirestoreQuery } from "app/core/auth-firebase/firestore.service";
 import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
 import { cloneDeep } from "lodash";
 import { Organization } from "../../administration/organizations/organizations.model";
-import { User } from "../../administration/users/user.model";
+import { User } from "../../administration/users/users.model";
 import { Project } from "./project.model";
 import { ProjectsDataService } from "./projects-data.service";
 import { ProjectBoard } from "./project-board.model";

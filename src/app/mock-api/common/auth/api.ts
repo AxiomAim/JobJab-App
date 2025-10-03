@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { AxiomaimMockApiService } from '@axiomaim/lib/mock-api';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
-import { User } from 'app/modules/axiomaim/administration/users/user.model';
+import { User } from 'app/modules/axiomaim/administration/users/users.model';
 // import { user as userData } from 'app/mock-api/common/user/data';
 import Base64 from 'crypto-js/enc-base64';
 import Utf8 from 'crypto-js/enc-utf8';
@@ -59,10 +59,10 @@ export class AuthMockApi {
                 console.log('request.body', request.body)
 
                 // Sign in successful
-                if (
-                    request.body.email === 'tig@tapwash.us' &&
-                    request.body.password === 'Havetim!25742'
-                ) {
+                // if (
+                //     request.body.email === 'tig@tapwash.us' &&
+                //     request.body.password === 'Havetim!25742'
+                // ) {
                     return [
                         200,
                         {
@@ -71,7 +71,7 @@ export class AuthMockApi {
                             tokenType: 'bearer',
                         },
                     ];
-                }
+                // }
 
                 // Invalid credentials
                 return [404, false];

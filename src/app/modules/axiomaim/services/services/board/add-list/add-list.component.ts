@@ -20,7 +20,7 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ServiceOfferingsV2Service } from '../../date-services/service-offerings-v2.service';
+import { ServiceOfferingsV2Service } from '../../data-services/service-offerings-v2.service';
 
 @Component({
     selector: 'service-offering-board-add-list',

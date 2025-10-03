@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BaseDto } from 'app/core/models/base-dto.model';
-import { User } from '../../administration/users/user.model';
+import { User } from '../../administration/users/users.model';
 
 export class ProjectCardModel {
     constructor(
@@ -68,9 +68,9 @@ export class ProjectCardModel {
         name?: string,
         created_user?: string,
         created_userId?: string,
-        created_at?: string,
-        updated_at?: string,
-        deleted_at?: string,
+        createdAt?: string,
+        updatedAt?: string,
+        deletedAt?: string,
         open_at?: string,
         assign_userId?: string,
         assign_userName?: string,
@@ -150,9 +150,9 @@ export class ProjectCardModel {
         this.name = name;
         this.created_user = created_user;
         this.created_userId = created_userId;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
-        this.deleted_at = deleted_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
         this.open_at = open_at;
         this.assign_userId = assign_userId;
         this.assign_userName = assign_userName;
@@ -234,9 +234,9 @@ export class ProjectCardModel {
     public name: string;
     public created_user: string;
     public created_userId: string;
-    public created_at: string;
-    public updated_at: string;
-    public deleted_at: string;
+    public createdAt: string;
+    public updatedAt: string;
+    public deletedAt: string;
     public open_at: string;
     public assign_userId: string;
     public assign_userName: string;
@@ -320,9 +320,9 @@ export class ProjectCardModel {
             name: '',
             created_user: '',
             created_userId: '',
-            created_at: '',
-            updated_at: '',
-            deleted_at: '',
+            createdAt: '',
+            updatedAt: '',
+            deletedAt: '',
             open_at: '',
             assign_userId: '',
             assign_userName: '',
@@ -435,9 +435,9 @@ export class ProjectCardModel {
                 name: dto.name ? dto.name : '',
                 created_user: dto.created_user ? dto.created_user : '',
                 created_userId: dto.created_userId ? dto.created_userId : '',
-                created_at: dto.created_at ? dto.created_at : '',
-                updated_at: dto.updated_at ? dto.updated_at : '',
-                deleted_at: dto.deleted_at ? dto.deleted_at : '',
+                createdAt: dto.createdAt ? dto.createdAt : '',
+                updatedAt: dto.updatedAt ? dto.updatedAt : '',
+                deletedAt: dto.deletedAt ? dto.deletedAt : '',
                 open_at: dto.open_at ? dto.open_at : '',
                 assign_userId: dto.assign_userId ? dto.assign_userId : '',
                 assign_userName: dto.assign_userName ? dto.assign_userName : '',
@@ -521,9 +521,9 @@ export class ProjectCardModel {
                     name: dto.name ? dto.name : '',
                     created_user: dto.created_user ? dto.created_user : '',
                     created_userId: dto.created_userId ? dto.created_userId : '',
-                    created_at: dto.created_at ? dto.created_at : '',
-                    updated_at: dto.updated_at ? dto.updated_at : '',
-                    deleted_at: dto.deleted_at ? dto.deleted_at : '',
+                    createdAt: dto.createdAt ? dto.createdAt : '',
+                    updatedAt: dto.updatedAt ? dto.updatedAt : '',
+                    deletedAt: dto.deletedAt ? dto.deletedAt : '',
                     open_at: dto.open_at ? dto.open_at : '',
                     assign_userId: dto.assign_userId ? dto.assign_userId : '',
                     assign_userName: dto.assign_userName ? dto.assign_userName : '',
@@ -609,9 +609,9 @@ export interface ProjectCard extends BaseDto {
     name?: string;
     created_user?: string;
     created_userId?: string;
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    deletedAt?: string;
     open_at?: string;
     assign_userId?: string;
     assign_userName?: string;
@@ -703,9 +703,9 @@ export interface supportTickets {
     description?: string,
     created_user?: string,
     created_userId?: string,
-    created_at?: string,
-    updated_at?: string,
-    deleted_at?: string,
+    createdAt?: string,
+    updatedAt?: string,
+    deletedAt?: string,
     open_at?: string,
     assign_userId?: string,
     assign_userName?: string,
@@ -736,9 +736,9 @@ export interface EpicDto {
     createId: string,
     ownerId: string,
     color: string,
-    created_at?: string,
-    updated_at?: string,
-    deleted_at?: string,
+    createdAt?: string,
+    updatedAt?: string,
+    deletedAt?: string,
 }
 
 export interface SupportTicketPostDto extends BaseDto {
@@ -751,12 +751,12 @@ export interface SupportTicketPostDto extends BaseDto {
     userId: string, 
     userEmail: string, 
     userName: string, 
-    created_at: string,
+    createdAt: string,
     image?: string,
     images?: string[],
     imageUrl?: string, 
     sent_at?: string,
-    deleted_at?: string,
+    deletedAt?: string,
     closing_post?: boolean,
 }
 

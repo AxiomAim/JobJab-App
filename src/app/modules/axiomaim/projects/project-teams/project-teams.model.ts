@@ -5,40 +5,44 @@ import { ProjectTeamMember } from '../project-teams-members/project-teams-member
 export class ProjectTeamModel implements BaseDto {
     constructor(
         id: string,
+        orgId: string,
         name: string,
         description: string,
         members: ProjectTeamMember[],
-        created_at?: string,
-        updated_at?: string,
-        deleted_at?: string,    
+        createdAt?: string,
+        updatedAt?: string,
+        deletedAt?: string,    
         ) {
             this.id = id;
+            this.orgId = orgId;
             this.name = name;
             this.description = description;
             this.members = members;
-            this.created_at = created_at;
-            this.updated_at = updated_at;
-            this.deleted_at = deleted_at;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.deletedAt = deletedAt;
     }
     public id: string;
+    public orgId: string;
     public name: string;
     public description: string;
     public members: ProjectTeamMember[];
-    public created_at?: string;
-    public updated_at?: string;
-    public deleted_at?: string;
+    public createdAt?: string;
+    public updatedAt?: string;
+    public deletedAt?: string;
 
     public static toDto(dto: ProjectTeam): ProjectTeam {
         let date: any = new Date().toISOString();
 
         return {
             id: dto.id ? dto.id : '',
+            orgId: dto.orgId ? dto.orgId : '',
             name: dto.name ? dto.name : '',
             description: dto.description ? dto.description : '',
             members: dto.members ? dto.members : [],
-            created_at: dto.created_at ? dto.created_at : date,
-            updated_at: dto.updated_at ? dto.updated_at : null,
-            deleted_at: dto.deleted_at ? dto.deleted_at : null,
+            createdAt: dto.createdAt ? dto.createdAt : date,
+            updatedAt: dto.updatedAt ? dto.updatedAt : null,
+            deletedAt: dto.deletedAt ? dto.deletedAt : null,
         };
     }
 
@@ -46,12 +50,13 @@ export class ProjectTeamModel implements BaseDto {
         let date: any = new Date().toISOString();
         return {
             id: uuidv4().toString(),
+            orgId: '',
             name: '',
             description: '',
             members: [],
-            created_at: date,
-            updated_at: null,
-            deleted_at: null,
+            createdAt: date,
+            updatedAt: null,
+            deletedAt: null,
 
         }
     }
@@ -59,11 +64,12 @@ export class ProjectTeamModel implements BaseDto {
 
 export interface ProjectTeam  extends BaseDto {
     id: string;
+    orgId: string;
     name: string;
     description: string;
     members: ProjectTeamMember[];
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;    
+    createdAt?: string;
+    updatedAt?: string;
+    deletedAt?: string;    
 }
 

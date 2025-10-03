@@ -27,7 +27,7 @@ import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.s
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
 import { ProjectTeamsV2Service } from '../project-teams-v2.service';
-import { User } from 'app/modules/axiomaim/administration/users/user.model';
+import { User } from 'app/modules/axiomaim/administration/users/users.model';
 
 @Component({
     selector: 'project-teams-add-item',

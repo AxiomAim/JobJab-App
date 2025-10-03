@@ -4,6 +4,7 @@ import { BaseDto } from 'app/core/models/base-dto.model';
 export class QuoteModel implements BaseDto {
     constructor(
         id: string,
+        orgId: string,
         projectId: string,
         quote: number,
         name: string,
@@ -36,11 +37,12 @@ export class QuoteModel implements BaseDto {
         binQuarterlyQuote: number,
         binMonthly: boolean,
         binMonthlyQuote: number,
-        created_at?: string,
-        updated_at?: string,
-        deleted_at?: string,
+        createdAt?: string,
+        updatedAt?: string,
+        deletedAt?: string,
         ) {
             this.id = id;
+            this.orgId = orgId;
             this.projectId = projectId;
             this.quote = quote;
             this.name = name;
@@ -73,11 +75,12 @@ export class QuoteModel implements BaseDto {
             this.binMonthly = binMonthly;
             this.binMonthlyQuote = binMonthlyQuote;
             this.categoryId = categoryId;
-            this.created_at = created_at;
-            this.updated_at = updated_at;
-            this.deleted_at = deleted_at;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.deletedAt = deletedAt;
     }
     public id: string;
+    public orgId: string;
     public projectId: string;
     public quote: number;
     public name: string;
@@ -110,15 +113,16 @@ export class QuoteModel implements BaseDto {
     public binQuarterlyQuote: number;
     public binMonthly: boolean;
     public binMonthlyQuote: number;
-    public created_at?: string;
-    public updated_at?: string;
-    public deleted_at?: string;
+    public createdAt?: string;
+    public updatedAt?: string;
+    public deletedAt?: string;
 
     public static toDto(dto: Quote): Quote {
         let date: any = new Date().toISOString();
 
         return {
             id: dto.id ? dto.id : '',
+            orgId: dto.orgId ? dto.orgId : '',
             projectId: dto.projectId ? dto.projectId : '',
             quote: dto.quote ? dto.quote : 0,
             name: dto.name ? dto.name : '',
@@ -151,9 +155,9 @@ export class QuoteModel implements BaseDto {
             binMonthly: dto.binMonthly ? dto.binMonthly : false,
             binMonthlyQuote: dto.binMonthlyQuote ? dto.binMonthlyQuote : 0,
             categoryId: dto.categoryId ? dto.categoryId : 0,
-            created_at: dto.created_at ? dto.created_at : date,
-            updated_at: dto.updated_at ? dto.updated_at : date,
-            deleted_at: dto.deleted_at ? dto.deleted_at : '',
+            createdAt: dto.createdAt ? dto.createdAt : date,
+            updatedAt: dto.updatedAt ? dto.updatedAt : date,
+            deletedAt: dto.deletedAt ? dto.deletedAt : '',
         };
     }
 
@@ -161,6 +165,7 @@ export class QuoteModel implements BaseDto {
         let date: any = new Date().toISOString();
         return {
             id: uuidv4().toString(),
+            orgId: '',
             projectId: '',
             quote: 0,
             name: '',
@@ -193,9 +198,9 @@ export class QuoteModel implements BaseDto {
             binQuarterlyQuote: 0,
             binMonthly: false,
             binMonthlyQuote: 0,
-            created_at: date,
-            updated_at: date,
-            deleted_at: '',
+            createdAt: date,
+            updatedAt: date,
+            deletedAt: '',
 
         }
     }
@@ -203,6 +208,7 @@ export class QuoteModel implements BaseDto {
 
 export interface Quote  extends BaseDto {
     id: string;
+    orgId: string;
     projectId: string;
     quote: number;
     name: string;
@@ -235,8 +241,8 @@ export interface Quote  extends BaseDto {
     binQuarterlyQuote: number;
     binMonthly: boolean;
     binMonthlyQuote: number;
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;    
+    createdAt?: string;
+    updatedAt?: string;
+    deletedAt?: string;    
 }
 

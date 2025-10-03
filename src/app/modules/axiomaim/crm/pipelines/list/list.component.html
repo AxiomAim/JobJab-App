@@ -1,0 +1,133 @@
+<div class="absolute inset-0 flex min-w-0 flex-col overflow-hidden">
+    <mat-drawer-container class="bg-card h-full flex-auto dark:bg-transparent" (backdropClick)="onBackdropClicked()">
+        <!-- Drawer -->
+        <mat-drawer class="w-full dark:bg-gray-900 md:w-3/4" [mode]="drawerMode" [opened]="false" [position]="'end'"
+            [disableClose]="true" #matDrawer>
+            <router-outlet></router-outlet>
+        </mat-drawer>
+
+        <mat-drawer-content class="flex flex-col">
+            <!-- Main -->
+            <div class="flex-auto">
+                <!-- Header -->
+                <div class="flex flex-auto flex-col justify-between border-b px-6 py-8 sm:flex-row md:flex-col md:px-8">
+                    <!-- Title -->
+                    <div>
+                        <div class="text-4xl font-extrabold pipelineing-none tracking-tight">
+                            Pipelines
+                        </div>
+                        <div class="text-secondary ml-0.5 font-medium">
+                            @if (pipelineCount > 0) {
+                            {{ pipelineCount }}
+                            }
+                            {{
+                            pipelineCount
+                            | i18nPlural
+                            : {
+                            '=0': 'No pipelines',
+                            '=1': 'pipeline',
+                            other: 'pipelines',
+                            }
+                            }}
+                        </div>
+                    </div>
+
+                    <!-- Main actions -->
+                    <div class="mt-4 flex items-center sm:mt-0 md:mt-4">
+                        <!-- Search -->
+                        <div class="flex-auto">
+                            <mat-form-field class="axiomaim-mat-dense axiomaim-mat-rounded w-full min-w-50"
+                                subscriptSizing="dynamic">
+                                <mat-icon class="icon-size-5" matPrefix [svgIcon]="
+                                        'heroicons_solid:magnifying-glass'
+                                    "></mat-icon>
+                                <input matInput [formControl]="searchInputControl" [autocomplete]="'off'"
+                                    [placeholder]="'Search pipelines'" />
+                            </mat-form-field>
+                        </div>
+                        <!-- Add pipeline button -->
+                        <pipelines-add-item></pipelines-add-item>
+                        <!-- <button class="ml-4" mat-button [color]="'primary'" (click)="openComposeDialog()">
+                            <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                            <span class="ml-2 mr-1">Add</span>
+                        </button> -->
+
+                        <!-- <button class="ml-4" mat-button [color]="'primary'" (click)="refactor()">
+                            <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                            <span class="ml-2 mr-1">Refactor</span>
+                        </button> -->
+
+                    </div>
+                </div>
+
+                <!-- Users list -->
+                <div class="relative">
+                    @if (pipelines$ | async; as pipelines) {
+                    @if (pipelines.length) {
+                    @for (
+                    pipeline of pipelines;
+                    track trackByFn(i, pipeline);
+                    let i = $index
+                    ) {
+                    <!-- Group -->
+                    <!-- @if (
+                    i === 0 ||
+                    pipeline.firstName.charAt(0) !==
+                    pipelines[i - 1].firstName.charAt(0)
+                    ) {
+                    <div
+                        class="text-secondary sticky top-0 z-10 -mt-px border-b border-t bg-gray-50 px-6 py-1 font-medium uppercase dark:bg-gray-900 md:px-8">
+                        {{ pipeline.firstName.charAt(0) }}
+                    </div>
+                    } -->
+                    <!-- User -->
+                    <a class="z-20 flex cursor-pointer items-center border-b px-6 py-4 md:px-8" [ngClass]="{
+                                        'dark:hover:bg-hover hover:bg-gray-100':
+                                            !selectedUser ||
+                                            selectedUser.id !== pipeline.id,
+                                        'bg-primary-50 dark:bg-hover':
+                                            selectedUser &&
+                                            selectedUser.id === pipeline.id,
+                                    }" [routerLink]="['./', pipeline.id]">
+                        <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
+                            @if (pipeline.avatar) {
+                            <img class="h-full w-full object-cover" [src]="pipeline.avatar" alt="User avatar" />
+                            }
+                            @if (!pipeline.avatar) {
+                            <div class="flex h-full w-full items-center justify-center rounded-full  text-lg uppercase text-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                                [ngClass]="pipeline.activeUser ? 'bg-green-200' : 'bg-gray-200'">
+                                {{ pipeline.firstName?.charAt(0) }}{{ pipeline.lastName?.charAt(0) }}
+                            </div>
+                            }
+                        </div>
+                        <div class="flex-col flex-wrap ml-4 min-w-0">
+                            <div class="truncate font-medium pipelineing-5">
+                                {{ pipeline.firstName }} {{ pipeline.lastName }}
+                            </div>
+                            <div class="text-secondary truncate pipelineing-5">
+                                {{ pipeline.email }}
+                            </div>
+                        </div>
+                        <div class="flex-col flex-wrap ml-4 min-w-0">
+                            <div class="truncate font-medium pipelineing-5">
+                                {{ pipeline.phone | phone }}
+                            </div>
+                            <div class="text-secondary truncate pipelineing-5">
+                                {{ pipeline.address }}
+                            </div>
+                        </div>
+                    </a>
+                    }
+                    } @else {
+                    <div class="border-t p-8 text-center text-4xl font-semibold tracking-tight sm:p-16">
+                        There are no pipelines!
+                    </div>
+                    }
+                    }
+
+                    <!-- No pipelines -->
+                </div>
+            </div>
+        </mat-drawer-content>
+    </mat-drawer-container>
+</div>

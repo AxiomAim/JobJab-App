@@ -16,8 +16,8 @@ import { ScrumboardService } from 'app/modules/axiomaim/apps/scrumboard/scrumboa
 import { DateTime } from 'luxon';
 import { Subject, takeUntil } from 'rxjs';
 import { ServicesAddItemComponent } from '../add-item/add-item.component';
-import { ServiceOfferingsV2Service } from '../date-services/service-offerings-v2.service';
-import { ServiceOffering } from '../date-services/service-offerings.model';
+import { ServiceOfferingsV2Service } from '../data-services/service-offerings-v2.service';
+import { ServiceOffering } from '../data-services/service-offerings.model';
 
 @Component({
     selector: 'scrumboard-boards',

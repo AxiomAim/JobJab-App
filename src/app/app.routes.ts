@@ -98,8 +98,13 @@ export const appRoutes: Route[] = [
                 {path: 'jobs', loadChildren: () => import('app/modules/axiomaim/administration/jobs/jobs.routes')},
                 {path: 'invoices', loadChildren: () => import('app/modules/axiomaim/administration/invoices/invoices.routes')},
                 {path: 'technicians', loadChildren: () => import('app/modules/axiomaim/administration/technicians/technicians.routes')},
-                {path: 'leads', loadChildren: () => import('app/modules/axiomaim/administration/leads/leads.routes')},
                 // {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
+            ]},
+
+            // CRM
+            {path: 'crm', children: [
+                {path: 'leads', loadChildren: () => import('app/modules/axiomaim/crm/leads/leads.routes')},
+                {path: 'pipelines', loadChildren: () => import('app/modules/axiomaim/crm/pipelines/pipelines.routes')},
             ]},
 
             // Projects

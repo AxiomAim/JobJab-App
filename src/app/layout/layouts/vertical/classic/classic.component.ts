@@ -20,7 +20,7 @@ import { ShortcutsComponent } from 'app/layout/common/shortcuts/shortcuts.compon
 import { LoginUserMenuComponent } from 'app/layout/common/login-user-menu/login-user-menu.component';
 import { Subject, takeUntil } from 'rxjs';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
-import { User } from 'app/modules/axiomaim/administration/users/user.model';
+import { User } from 'app/modules/axiomaim/administration/users/users.model';
 
 @Component({
     selector: 'classic-layout',

@@ -11,9 +11,9 @@ export class UserRoleModel implements BaseDto {
         code: string,
         description: string,
         active?: boolean,
-        created_at?: string,
-        updated_at?: string,
-        deleted_at?: string,
+        createdAt?: string,
+        updatedAt?: string,
+        deletedAt?: string,
             ) {
             this.id = id;
             this.orgId = orgId;
@@ -22,9 +22,9 @@ export class UserRoleModel implements BaseDto {
             this.code = code;
             this.description = description;
             this.active = active;
-            this.created_at = created_at;
-            this.updated_at = updated_at;
-            this.deleted_at = deleted_at;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.deletedAt = deletedAt;
     }
     public id: string;
     public orgId: string;
@@ -33,9 +33,9 @@ export class UserRoleModel implements BaseDto {
     public code: string;
     public description: string;
     public active?: boolean;
-    public created_at?: string;
-    public updated_at?: string;
-    public deleted_at?: string;
+    public createdAt?: string;
+    public updatedAt?: string;
+    public deletedAt?: string;
 
     public static toDto(dto: UserRole): UserRole {
         let date: any = new Date().toISOString();
@@ -48,9 +48,9 @@ export class UserRoleModel implements BaseDto {
             code: dto.code ? dto.code : '',
             description: dto.description ? dto.description : '',
             active: dto.active ? dto.active : false,
-            created_at: dto.created_at ? dto.created_at : date,
-            updated_at: dto.updated_at ? dto.updated_at : date,
-            deleted_at: dto.deleted_at ? dto.deleted_at : '',
+            createdAt: dto.createdAt ? dto.createdAt : date,
+            updatedAt: dto.updatedAt ? dto.updatedAt : date,
+            deletedAt: dto.deletedAt ? dto.deletedAt : '',
         };
     }
 
@@ -64,9 +64,9 @@ export class UserRoleModel implements BaseDto {
             code: '',
             description: '',
             active: false,
-            created_at: date,
-            updated_at: date,
-            deleted_at: '',
+            createdAt: date,
+            updatedAt: date,
+            deletedAt: '',
 
         }
     }
@@ -81,9 +81,9 @@ export interface UserRole  extends BaseDto {
     code: string;    
     description: string;
     active?: boolean;
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    deletedAt?: string;
 }
 
 const UserRoleSchema = v.object({
@@ -94,8 +94,8 @@ const UserRoleSchema = v.object({
     code: v.pipe(v.string()),    
     description: v.pipe(v.string()),
     active: v.pipe(v.boolean()),
-    created_at: v.pipe(v.string()),
-    updated_at: v.pipe(v.string()),
-    deleted_at: v.pipe(v.string()),
+    createdAt: v.pipe(v.string()),
+    updatedAt: v.pipe(v.string()),
+    deletedAt: v.pipe(v.string()),
 });
 

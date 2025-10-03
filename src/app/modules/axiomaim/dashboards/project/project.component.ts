@@ -20,7 +20,7 @@ import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.s
 import { ProjectService } from 'app/modules/axiomaim/dashboards/project/project.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { ReplaySubject, Subject, takeUntil } from 'rxjs';
-import { User } from '../../administration/users/user.model';
+import { User } from '../../administration/users/users.model';
 import { ProjectScheduleComponent } from './project-schedule/project-schedule.component';
 
 @Component({

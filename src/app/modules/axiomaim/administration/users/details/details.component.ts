@@ -39,7 +39,7 @@ import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
 import { Tag } from 'app/core/models/tag.model';
 import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
-import { Country, User } from '../user.model';
+import { Country, User } from '../users.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { UserRole } from '../../user-roles/user-roles.model';
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';

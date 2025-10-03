@@ -16,7 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { LoginUserService } from 'app/core/login-user/login-user.service';
-import { User } from 'app/modules/axiomaim/administration/users/user.model';
+import { User } from 'app/modules/axiomaim/administration/users/users.model';
 // import { User } from 'app/core/user/user.types';
 import { Subject, takeUntil } from 'rxjs';
 
