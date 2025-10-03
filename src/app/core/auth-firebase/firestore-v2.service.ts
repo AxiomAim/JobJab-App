@@ -34,24 +34,31 @@ export const FirestoreV2Service = createInjectable(() => {
     const _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
 
     const getAll = <T extends BaseDatabaseModel>(collectionPath: string): Observable<T[]> => {
-        const user = _firebaseAuthV2Service.loginUser();
-        if (!user || !user.orgId) {
-            console.warn('No user or orgId available, returning empty array');
-            return of([]);
-        }
         const colRef = collection(_firestore, collectionPath);
-        const q = query(colRef, where('orgId', '==', user.orgId));
-        const converter = {
-            toFirestore: (data: T) => data,
-            fromFirestore: (snap: any) => ({ id: snap.id, ...snap.data() } as T)
-        };
-        const qWithConverter = q.withConverter(converter);
-        return collectionData<T>(qWithConverter).pipe(
+        return collectionData<any>(colRef, { idField: 'id' }).pipe(
             catchError(error => {
-                console.error('Error fetching data:', error);
-                return of([]);
+                console.error(`Error fetching collection ${collectionPath}:`, error);
+                throw error;
             })
         );
+        // const user = _firebaseAuthV2Service.loginUser();
+        // if (!user || !user.orgId) {
+        //     console.warn('No user or orgId available, returning empty array');
+        //     return of([]);
+        // }
+        // const colRef = collection(_firestore, collectionPath);
+        // const q = query(colRef, where('orgId', '==', user.orgId));
+        // const converter = {
+        //     toFirestore: (data: T) => data,
+        //     fromFirestore: (snap: any) => ({ id: snap.id, ...snap.data() } as T)
+        // };
+        // const qWithConverter = q.withConverter(converter);
+        // return collectionData<T>(qWithConverter).pipe(
+        //     catchError(error => {
+        //         console.error('Error fetching data:', error);
+        //         return of([]);
+        //     })
+        // );
     };
 
     const getItem = <T extends BaseDatabaseModel>(collectionPath: string, id: string): Observable<T> => {
