@@ -30,8 +30,8 @@ export class NotificationsDataService extends BaseDataService<Notification> {
         super('notifications');
     }
     
-    public getAll(): Observable<Notification[]> {
-        return  this._firestore.getAll(this.baseCollection);
+    public getAll(orgId: string): Observable<Notification[]> {
+        return  this._firestore.getAll(orgId, this.baseCollection);
     }
     public getItem(id: string): Observable<Notification> {
         return this._firestore.getItem(this.baseCollection, id);

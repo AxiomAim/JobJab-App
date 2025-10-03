@@ -30,8 +30,8 @@ export class ProjectTeamsDataService extends BaseDataService<ProjectTeam> {
         super('project-teams');
     }
     
-    public getAll(): Observable<ProjectTeam[]> {
-        return  this._firestore.getAll(this.baseCollection);
+    public getAll(orgId: string): Observable<ProjectTeam[]> {
+        return  this._firestore.getAll(orgId, this.baseCollection);
     }
     public getItem(id: string): Observable<ProjectTeam> {
         return this._firestore.getItem(this.baseCollection, id);

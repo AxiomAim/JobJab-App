@@ -3,15 +3,18 @@ import { inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { PipelinesDataService } from "./pipelines-data.service";
 import { Pipeline } from "./pipelines.model";
+import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
 
 export const PipelinesV2ApiService = createInjectable(() => {
   const _pipelinesDataService = inject(PipelinesDataService);
-  
+  const loginUser = inject(FirebaseAuthV2Service).loginUser();
+
   const getAll = async ():Promise<Pipeline[]> => {
-    const response$ = _pipelinesDataService.getAll();
+    const response$ = _pipelinesDataService.getAll(loginUser.orgId);
     const response: any = await firstValueFrom(response$)
     return response;
   };
+
 
   const getItem = async (id):Promise<Pipeline> => {
     const response$ = _pipelinesDataService.getItem(id);

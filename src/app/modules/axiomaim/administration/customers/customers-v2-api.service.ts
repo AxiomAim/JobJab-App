@@ -3,12 +3,14 @@ import { inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { CustomersDataService } from "./customers-data.service";
 import { Customer } from "./customers.model";
+import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
 
 export const CustomersV2ApiService = createInjectable(() => {
   const _customersDataService = inject(CustomersDataService);
+  const loginUser = inject(FirebaseAuthV2Service).loginUser();
   
   const getAll = async ():Promise<Customer[]> => {
-    const response$ = _customersDataService.getAll();
+    const response$ = _customersDataService.getAll(loginUser.orgId);
     const response: any = await firstValueFrom(response$)
     return response;
   };

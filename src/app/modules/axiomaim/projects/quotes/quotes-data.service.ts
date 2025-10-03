@@ -30,8 +30,8 @@ export class QuotesDataService extends BaseDataService<Quote> {
         super('quotes');
     }
     
-    public getAll(): Observable<Quote[]> {
-        return  this._firestore.getAll(this.baseCollection);
+    public getAll(orgId: string): Observable<Quote[]> {
+        return  this._firestore.getAll(orgId, this.baseCollection);
     }
     public getItem(id: string): Observable<Quote> {
         return this._firestore.getItem(this.baseCollection, id);

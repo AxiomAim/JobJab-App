@@ -30,8 +30,8 @@ export class PipelinesDataService extends BaseDataService<Pipeline> {
         super('pipelines');
     }
     
-    public getAll(): Observable<Pipeline[]> {
-        return  this._firestore.getAll(this.baseCollection);
+    public getAll(orgId: string): Observable<Pipeline[]> {
+        return  this._firestore.getAll(orgId, this.baseCollection);
     }
     public getItem(id: string): Observable<Pipeline> {
         return this._firestore.getItem(this.baseCollection, id);

@@ -14,6 +14,8 @@ import {
 } from '@angular/fire/firestore';
 import { User } from './users.model';
 import { FirestoreQuery, FirestoreV2Service } from 'app/core/auth-firebase/firestore-v2.service';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
+import { Organization } from '../organizations/organizations.model';
 
 @Injectable(
     {
@@ -30,9 +32,10 @@ export class UsersDataService extends BaseDataService<User> {
         super('users');
     }
     
-    public getAll(): Observable<User[]> {
-        return  this._firestore.getAll(this.baseCollection);
+    public getAll(orgId: string): Observable<User[]> {
+        return  this._firestore.getAll(orgId, this.baseCollection);
     }
+    
     public getItem(id: string): Observable<User> {
         return this._firestore.getItem(this.baseCollection, id);
     }

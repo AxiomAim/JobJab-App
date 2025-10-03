@@ -20,7 +20,7 @@ import {
 } from '@angular/fire/firestore';
 import { BaseDatabaseModel } from '../models/base-dto.model';
 import { catchError, forkJoin, from, map, Observable, of, switchMap, throwError } from 'rxjs';
-import { FirebaseAuthV2Service } from "./firebase-auth-v2.service";
+import { User } from "app/modules/axiomaim/administration/users/users.model";
 
 export interface FirestoreQuery {
     field: string;
@@ -31,34 +31,29 @@ export interface FirestoreQuery {
 export const FirestoreV2Service = createInjectable(() => {
     const _router = inject(Router);
     const _firestore = inject(Firestore);
-    const _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
+    const loginUser = signal<User | null>(null);
 
-    const getAll = <T extends BaseDatabaseModel>(collectionPath: string): Observable<T[]> => {
-        const colRef = collection(_firestore, collectionPath);
-        return collectionData<any>(colRef, { idField: 'id' }).pipe(
-            catchError(error => {
-                console.error(`Error fetching collection ${collectionPath}:`, error);
-                throw error;
-            })
-        );
-        // const user = _firebaseAuthV2Service.loginUser();
-        // if (!user || !user.orgId) {
-        //     console.warn('No user or orgId available, returning empty array');
-        //     return of([]);
-        // }
+    const getAll = <T extends BaseDatabaseModel>(orgId: string, collectionPath: string): Observable<T[]> => {
         // const colRef = collection(_firestore, collectionPath);
-        // const q = query(colRef, where('orgId', '==', user.orgId));
-        // const converter = {
-        //     toFirestore: (data: T) => data,
-        //     fromFirestore: (snap: any) => ({ id: snap.id, ...snap.data() } as T)
-        // };
-        // const qWithConverter = q.withConverter(converter);
-        // return collectionData<T>(qWithConverter).pipe(
+        // return collectionData<any>(colRef, { idField: 'id' }).pipe(
         //     catchError(error => {
-        //         console.error('Error fetching data:', error);
-        //         return of([]);
+        //         console.error(`Error fetching collection ${collectionPath}:`, error);
+        //         throw error;
         //     })
         // );
+        const colRef = collection(_firestore, collectionPath);
+        const q = query(colRef, where('orgId', '==', orgId));
+        const converter = {
+            toFirestore: (data: T) => data,
+            fromFirestore: (snap: any) => ({ id: snap.id, ...snap.data() } as T)
+        };
+        const qWithConverter = q.withConverter(converter);
+        return collectionData<T>(qWithConverter).pipe(
+            catchError(error => {
+                console.error('Error fetching data:', error);
+                return of([]);
+            })
+        );
     };
 
     const getItem = <T extends BaseDatabaseModel>(collectionPath: string, id: string): Observable<T> => {
@@ -261,6 +256,7 @@ export const FirestoreV2Service = createInjectable(() => {
 
 
 return {
+    loginUser: computed(() => loginUser()),
     getAll,
     getItem,
     getQueryWhereclause,

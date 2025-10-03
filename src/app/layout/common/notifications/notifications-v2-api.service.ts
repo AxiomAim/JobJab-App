@@ -3,12 +3,14 @@ import { inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { NotificationsDataService } from "./notifications-data.service";
 import { Notification } from "./notifications.model";
+import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
 
 export const NotificationsV2ApiService = createInjectable(() => {
   const _notificationsDataService = inject(NotificationsDataService);
-  
+  const loginUser = inject(FirebaseAuthV2Service).loginUser();
+
   const getAll = async ():Promise<Notification[]> => {
-    const response$ = _notificationsDataService.getAll();
+    const response$ = _notificationsDataService.getAll(loginUser.orgId);
     const response: any = await firstValueFrom(response$)
     return response;
   };

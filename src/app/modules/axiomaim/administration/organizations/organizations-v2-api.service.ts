@@ -3,15 +3,18 @@ import { inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { OrganizationsDataService } from "./organizations-data.service";
 import { Organization } from "./organizations.model";
+import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
 
 export const OrganizationsV2ApiService = createInjectable(() => {
   const _organizationsDataService = inject(OrganizationsDataService);
+  const loginUser = inject(FirebaseAuthV2Service).loginUser();
   
   const getAll = async ():Promise<Organization[]> => {
-    const response$ = _organizationsDataService.getAll();
+    const response$ = _organizationsDataService.getAll(loginUser.orgId);
     const response: any = await firstValueFrom(response$)
     return response;
   };
+
 
   const getItem = async (id):Promise<Organization> => {
     const response$ = _organizationsDataService.getItem(id);

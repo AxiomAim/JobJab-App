@@ -30,8 +30,8 @@ export class UserRolesDataService extends BaseDataService<UserRole> {
         super('user-roles');
     }
     
-    public getAll(): Observable<UserRole[]> {
-        return  this._firestore.getAll(this.baseCollection);
+    public getAll(orgId: string): Observable<UserRole[]> {
+        return  this._firestore.getAll(orgId, this.baseCollection);
     }
     public getItem(id: string): Observable<UserRole> {
         return this._firestore.getItem(this.baseCollection, id);

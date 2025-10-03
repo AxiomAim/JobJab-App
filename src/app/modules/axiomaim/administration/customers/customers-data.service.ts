@@ -30,8 +30,8 @@ export class CustomersDataService extends BaseDataService<Customer> {
         super('customers');
     }
     
-    public getAll(): Observable<Customer[]> {
-        return  this._firestore.getAll(this.baseCollection);
+    public getAll(orgId: string): Observable<Customer[]> {
+        return  this._firestore.getAll(orgId, this.baseCollection);
     }
     public getItem(id: string): Observable<Customer> {
         return this._firestore.getItem(this.baseCollection, id);

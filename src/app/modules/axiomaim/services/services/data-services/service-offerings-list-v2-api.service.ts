@@ -6,12 +6,14 @@ import { ServiceOfferingList } from "./service-offerings-list.model";
 import { 
   WhereFilterOp
 } from '@angular/fire/firestore';
+import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
 
 export const ServiceOfferingsListV2ApiService = createInjectable(() => {
   const _serviceOfferingsListDataService = inject(ServiceOfferingsListDataService);
-  
+  const loginUser = inject(FirebaseAuthV2Service).loginUser();
+
   const getAll = async ():Promise<ServiceOfferingList[]> => {
-    const response$ = _serviceOfferingsListDataService.getAll();
+    const response$ = _serviceOfferingsListDataService.getAll(loginUser.orgId);
     const response: any = await firstValueFrom(response$)
     return response;
   };

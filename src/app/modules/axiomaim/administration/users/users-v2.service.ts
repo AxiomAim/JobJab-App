@@ -4,12 +4,6 @@ import { Router } from "@angular/router";
 import { UsersV2ApiService } from "./users-v2-api.service";
 import { User } from "./users.model";
 
-const ALL_USERS = "allUsers";
-const USERS = "users";
-const USER = "user";
-const LOGIN_USER = "loginUser";
-
-
 export const UsersV2Service = createInjectable(() => {
   const _router = inject(Router);
   const _usersV2ApiService = inject(UsersV2ApiService);

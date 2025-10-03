@@ -30,9 +30,10 @@ export class JobsDataService extends BaseDataService<Job> {
         super('jobs');
     }
     
-    public getAll(): Observable<Job[]> {
-        return  this._firestore.getAll(this.baseCollection);
+    public getAll(orgId: string): Observable<Job[]> {
+        return  this._firestore.getAll(orgId, this.baseCollection);
     }
+    
     public getItem(id: string): Observable<Job> {
         return this._firestore.getItem(this.baseCollection, id);
     }
