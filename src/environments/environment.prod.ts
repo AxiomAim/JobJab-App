@@ -3,13 +3,13 @@ export const environment = {
   useEmultaors: false,
   url: '',
   firebaseConfig: {
-    apiKey: "AIzaSyDBl6uBR-HISRRMHLfyxeI-qmFuL6R6NTw",
-    authDomain: "tap-wash.firebaseapp.com",
-    projectId: "tap-wash",
-    storageBucket: "tap-wash.firebasestorage.app",
-    messagingSenderId: "309231918872",
-    appId: "1:309231918872:web:d143636fba084ea654c86d",
-    measurementId: "G-EPHR33ST9C"
+    apiKey: "AIzaSyAwefNH09xGlIqzY8j6xuBprX7m1VBil5k",
+    authDomain: "jobjab-app.firebaseapp.com",
+    projectId: "jobjab-app",
+    storageBucket: "jobjab-app.firebasestorage.app",
+    messagingSenderId: "1094720738965",
+    appId: "1:1094720738965:web:16f59a53cd4230c2112d9c",
+    measurementId: "G-MZLRHRK26R"
   },
   LOCAL_STORAGE_KEY: 'TAP01-1900-0000-0000-encrypt00000',
 
