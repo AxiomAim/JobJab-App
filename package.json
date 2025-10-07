@@ -1,9 +1,9 @@
 {
-  "name": "tapwash-site",
+  "name": "jobjab-app",
   "version": "1.0.0",
-  "description": "TAPWash - Site",
+  "description": "JobJab-App",
   "author": "https://axiomaim.com",
-  "license": "https://tapwash.site/licenses/standard",
+  "license": "https://jobjab.app/licenses/standard",
   "private": true,
   "scripts": {
     "ng": "ng",

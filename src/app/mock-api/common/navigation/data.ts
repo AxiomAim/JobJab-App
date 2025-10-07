@@ -47,6 +47,155 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         ],
     },
     {
+        id: 'forms',
+        title: 'Forms',
+        subtitle: 'Instant Forms',
+        type: 'group',
+        icon: 'heroicons_outline:rectangle-stack',
+        children: [
+            {
+                id: 'forms.quote',
+                title: 'Quote',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/forms/quote',
+            },
+            // {
+            //     id: 'forms.quote-normal',
+            //     title: 'Quote Normal',
+            //     type: 'basic',
+            //     icon: 'heroicons_outline:clipboard-document-check',
+            //     link: '/forms/quote-normal',
+            // },
+            // {
+            //     id: 'forms.quote-scroll',
+            //     title: 'Quote Scroll',
+            //     type: 'basic',
+            //     icon: 'heroicons_outline:clipboard-document-check',
+            //     link: '/forms/quote-scroll',
+            // },
+            // {
+            //     id: 'forms.quote-content',
+            //     title: 'Quote Content',
+            //     type: 'basic',
+            //     icon: 'heroicons_outline:clipboard-document-check',
+            //     link: '/forms/quote-content',
+            // },
+            {
+                id: 'forms.instant-forms',
+                title: 'Instant Forms',
+                type: 'collapsable',
+                icon: 'heroicons_outline:rectangle-group',
+                children: [
+                    {
+                        id: 'forms.instant-forms.overview',
+                        title: 'Overview',
+                        type: 'basic',
+                        link: '/forms/instant-forms/overview',
+                    },
+                    {
+                        id: 'forms.instant-forms.empty',
+                        title: 'Empty',
+                        type: 'basic',
+                        link: '/forms/instant-forms/empty',
+                    },
+                    {
+                        id: 'forms.instant-forms.carded',
+                        title: 'Carded',
+                        type: 'collapsable',
+                        children: [
+                            {
+                                id: 'forms.instant-forms.carded.fullwidth',
+                                title: 'Fullwidth',
+                                type: 'basic',
+                                link: '/forms/instant-forms/carded/fullwidth',
+                            },
+                            {
+                                id: 'forms.instant-forms.carded.left-sidebar-1',
+                                title: 'Left Sidebar #1',
+                                type: 'basic',
+                                link: '/forms/instant-forms/carded/left-sidebar-1',
+                            },
+                            {
+                                id: 'forms.instant-forms.carded.left-sidebar-2',
+                                title: 'Left Sidebar #2',
+                                type: 'basic',
+                                link: '/forms/instant-forms/carded/left-sidebar-2',
+                            },
+                            {
+                                id: 'forms.instant-forms.carded.right-sidebar-1',
+                                title: 'Right Sidebar #1',
+                                type: 'basic',
+                                link: '/forms/instant-forms/carded/right-sidebar-1',
+                            },
+                            {
+                                id: 'forms.instant-forms.carded.right-sidebar-2',
+                                title: 'Right Sidebar #2',
+                                type: 'basic',
+                                link: '/forms/instant-forms/carded/right-sidebar-2',
+                            },
+                        ],
+                    },
+                    {
+                        id: 'forms.instant-forms.simple',
+                        title: 'Simple',
+                        type: 'collapsable',
+                        children: [
+                            {
+                                id: 'forms.instant-forms.simple.fullwidth-1',
+                                title: 'Fullwidth #1',
+                                type: 'basic',
+                                link: '/forms/instant-forms/simple/fullwidth-1',
+                            },
+                            {
+                                id: 'forms.instant-forms.simple.fullwidth-2',
+                                title: 'Fullwidth #2',
+                                type: 'basic',
+                                link: '/forms/instant-forms/simple/fullwidth-2',
+                            },
+                            {
+                                id: 'forms.instant-forms.simple.left-sidebar-1',
+                                title: 'Left Sidebar #1',
+                                type: 'basic',
+                                link: '/forms/instant-forms/simple/left-sidebar-1',
+                            },
+                            {
+                                id: 'forms.instant-forms.simple.left-sidebar-2',
+                                title: 'Left Sidebar #2',
+                                type: 'basic',
+                                link: '/forms/instant-forms/simple/left-sidebar-2',
+                            },
+                            {
+                                id: 'forms.instant-forms.simple.left-sidebar-3',
+                                title: 'Left Sidebar #3',
+                                type: 'basic',
+                                link: '/forms/instant-forms/simple/left-sidebar-3',
+                            },
+                            {
+                                id: 'forms.instant-forms.simple.right-sidebar-1',
+                                title: 'Right Sidebar #1',
+                                type: 'basic',
+                                link: '/forms/instant-forms/simple/right-sidebar-1',
+                            },
+                            {
+                                id: 'forms.instant-forms.simple.right-sidebar-2',
+                                title: 'Right Sidebar #2',
+                                type: 'basic',
+                                link: '/forms/instant-forms/simple/right-sidebar-2',
+                            },
+                            {
+                                id: 'forms.instant-forms.simple.right-sidebar-3',
+                                title: 'Right Sidebar #3',
+                                type: 'basic',
+                                link: '/forms/instant-forms/simple/right-sidebar-3',
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    },
+    {
         id: 'administration',
         title: 'Administration',
         subtitle: 'Administration Tools',
@@ -89,13 +238,6 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 link: '/administration/services',
             },
             {
-                id: 'administration.customers',
-                title: 'Customers',
-                type: 'basic',
-                icon: 'heroicons_outline:clipboard-document-check',
-                link: '/administration/customers',
-            },
-            {
                 id: 'administration.jobs',
                 title: 'Jobs',
                 type: 'basic',
@@ -115,13 +257,6 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 type: 'basic',
                 icon: 'heroicons_outline:clipboard-document-check',
                 link: '/administration/technicians',
-            },
-            {
-                id: 'administration.leads',
-                title: 'Leads',
-                type: 'basic',
-                icon: 'heroicons_outline:clipboard-document-check',
-                link: '/administration/leads',
             },
             {
                 id: 'administration.organizations',
@@ -147,11 +282,11 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 link: '/crm/pipelines',
             },
             {
-                id: 'administration.leads',
-                title: 'Leads',
+                id: 'administration.contacts',
+                title: 'Contacts',
                 type: 'basic',
                 icon: 'heroicons_outline:clipboard-document-check',
-                link: '/crm/leads',
+                link: '/crm/contacts',
             },
         ],
     },
@@ -1016,7 +1151,6 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                     },
                     {
                         id: 'user-interface.page-layouts.carded',
-
                         title: 'Carded',
                         type: 'collapsable',
                         children: [

@@ -22,6 +22,7 @@ export const UserRolesV2ApiService = createInjectable(() => {
   };
 
   const createItem = async (data: UserRole):Promise<UserRole> => {
+    data.orgId = loginUser.orgId;
     const response$ = _usersDataService.createItem(data);
     const response: any = await firstValueFrom(response$)
     return response.data;

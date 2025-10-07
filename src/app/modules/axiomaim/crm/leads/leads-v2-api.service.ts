@@ -22,6 +22,7 @@ export const LeadsV2ApiService = createInjectable(() => {
   };
 
   const createItem = async (data: Lead):Promise<Lead> => {
+    data.orgId = loginUser.orgId;
     const response$ = _leadsDataService.createItem(data);
     const response: any = await firstValueFrom(response$)
     return response.data;

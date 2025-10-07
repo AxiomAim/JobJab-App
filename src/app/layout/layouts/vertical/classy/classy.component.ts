@@ -22,6 +22,12 @@ import { LoginUserMenuComponent } from 'app/layout/common/login-user-menu/login-
 import { Subject, takeUntil } from 'rxjs';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
+import { LeadsMenuComponent } from 'app/layout/common/leads-menu/leads-menu.component';
+import { CustomersMenuComponent } from 'app/layout/common/customers-menu/customers-menu.component';
+import { QuotesDetailsComponent } from 'app/modules/axiomaim/projects/quotes/details/details.component';
+import { QuotesMenuComponent } from 'app/layout/common/quotes-menu/quotes-menu.component';
+import { OrganizationComponent } from 'app/layout/common/organization/organization.component';
+import { AddItemComponent } from 'app/layout/common/add-item/add-item.component';
 
 @Component({
     selector: 'classy-layout',
@@ -41,6 +47,11 @@ import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.s
         MessagesComponent,
         RouterOutlet,
         QuickChatComponent,
+        LeadsMenuComponent,
+        CustomersMenuComponent,
+        QuotesMenuComponent,
+        OrganizationComponent,
+        AddItemComponent
     ],
 })
 export class ClassyLayoutComponent implements OnInit, OnDestroy {

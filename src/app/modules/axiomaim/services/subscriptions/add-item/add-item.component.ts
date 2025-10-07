@@ -73,7 +73,6 @@ import { BillingCycle } from '../billing-cycle.types';
         MatChipsModule,
         MatSidenavModule,
         GridAllModule,
-        AddressLookupComponent,
         AsyncPipe
 
     ]

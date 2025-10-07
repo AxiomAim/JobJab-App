@@ -205,7 +205,9 @@ export const FirebaseAuthV2Service = createInjectable(() => {
     await signInWithEmailAndPassword(auth, credentials.email, credentials.password).then(async (cred) => {
       authUser.set(cred);
       const thisUser: User = await firstValueFrom(_usersDataService.getItem(cred.user.uid));
+      const thisOrganization: any = await firstValueFrom(_organizationsDataService.getItem(thisUser.orgId));
       const date = new Date().toISOString();
+      thisUser.organization = thisOrganization;
       thisUser.login_at.push(date);
       thisUser.status = 'online';
       loginUser.set(thisUser);

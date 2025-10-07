@@ -1,4 +1,4 @@
-export interface AxiomaimConfirmationConfig {
+export interface AxiomaimTouchConfig {
     title?: string;
     message?: string;
     icon?: {

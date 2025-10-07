@@ -1,0 +1,16 @@
+<!-- Button -->
+<button mat-icon-button [matMenuTriggerFor]="leadsMenu">
+    <mat-icon [svgIcon]="'mat_outline:request_quote'"></mat-icon>
+</button>
+
+<!-- Leads menu -->
+<mat-menu [xPosition]="'before'" #leadsMenu="matMenu">
+    <button mat-menu-item [routerLink]="['/forms/quote']">
+        <mat-icon [svgIcon]="'mat_outline:post_add'"></mat-icon>
+        <span class="ml-3">Add Quote</span>
+    </button>
+    <button mat-menu-item [routerLink]="['/projects/quotes']">
+        <mat-icon [svgIcon]="'mat_outline:airplane_ticket'"></mat-icon>
+        <span class="ml-3">Open Quotes</span>
+    </button>
+</mat-menu>

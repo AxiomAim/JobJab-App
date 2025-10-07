@@ -3,9 +3,11 @@ import { inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { ProductsDataService } from "./project-teams-members.service";
 import { ProjectTeamMember } from "./project-teams-members.model";
+import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
 
 export const ProjectTeamsMembersV2ApiService = createInjectable(() => {
   const _productsDataService = inject(ProductsDataService);
+  const loginUser = inject(FirebaseAuthV2Service).loginUser();
   
   const getAll = async ():Promise<ProjectTeamMember[]> => {
     const response$ = _productsDataService.getAll();
@@ -20,6 +22,7 @@ export const ProjectTeamsMembersV2ApiService = createInjectable(() => {
   };
 
   const createItem = async (data: ProjectTeamMember):Promise<ProjectTeamMember> => {
+    data.orgId = loginUser.orgId;
     const response$ = _productsDataService.createItem(data);
     const response: any = await firstValueFrom(response$)
     return response.data;

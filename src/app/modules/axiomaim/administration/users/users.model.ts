@@ -3,12 +3,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { UserRole } from '../user-roles/user-roles.model';
 import { BaseDto } from 'app/core/models/base-dto.model';
 import * as v from 'valibot';
+import { Organization } from '../organizations/organizations.model';
 
 
 export class UserModel implements BaseDto {
     constructor(
         id: string,
         orgId: string,
+        organization: Organization,
         domain: string,
         firstTime: boolean,
         staff: boolean, 
@@ -46,6 +48,7 @@ export class UserModel implements BaseDto {
         ) {
             this.id = id;
             this.orgId = orgId;
+            this.organization = organization;
             this.domain = domain;
             this.firstTime = firstTime;
             this.staff = staff;
@@ -83,6 +86,7 @@ export class UserModel implements BaseDto {
     }
     public id: string;
     public orgId: string;
+    public organization: Organization;
     public domain: string;
     public firstTime: boolean;
     public staffId: number;
@@ -141,6 +145,7 @@ export class UserModel implements BaseDto {
         return {
             id: dto.id ? dto.id : '',
             orgId: dto.orgId ? dto.orgId : '',
+            organization: dto.organization ? dto.organization : null,
             domain: dto.domain ? dto.domain : '',
             firstTime: dto.firstTime ? dto.firstTime : true,
             staff: dto.staff ? dto.staff : false,
@@ -185,6 +190,7 @@ export class UserModel implements BaseDto {
         return {
             id: uuidv4().toString(),
             orgId: '',
+            organization: null,
             domain: '',
             firstTime: true,
             staff: false,
@@ -228,7 +234,8 @@ export class UserModel implements BaseDto {
 
 export interface User  extends BaseDto {
     id: string;
-    orgId: string,
+    orgId: string;
+    organization: Organization; 
     domain: string;
     firstTime: boolean;
     staff: boolean;
@@ -286,69 +293,4 @@ export interface Country {
     code: string;
     flagImagePos: string;
 }
-
-const PhoneNumberSchema = v.object({
-    phoneNumber: v.pipe(v.string()),
-    label: v.pipe(v.string()),
-    country: v.pipe(v.string()),
-});
-
-const UserSchema = v.object({
-        orgId: v.pipe(v.string()),
-        domain: v.pipe(v.string()),
-        firstTime: v.pipe(v.boolean()),
-        staffId: v.pipe(v.number()),
-        staff: v.pipe(v.boolean()),
-        projectId: v.pipe(v.string()),
-        activeUser: v.pipe(v.boolean()),
-        email: v.pipe(v.string(), v.email()),
-        emailKey: v.pipe(v.string()),
-        personalEmail: v.pipe(v.string()),
-        userName: v.pipe(v.string()),
-        displayName: v.pipe(v.string()),
-        title: v.pipe(v.string()),
-        signatureName: v.pipe(v.string()),
-        signatureRole: v.pipe(v.string()),
-        signaturePassword: v.pipe(v.string()),
-        signatureUrl: v.pipe(v.string()),
-        signaturePath: v.pipe(v.string()),
-        signatureFile: v.pipe(v.string()),
-        signatureType: v.pipe(v.string()),
-        firstName: v.pipe(v.string()),
-        lastName: v.pipe(v.string()),
-        company: v.pipe(v.string()),
-        agreements: v.pipe(v.boolean()),
-        address: v.pipe(v.string()),
-        emailSignature: v.pipe(v.string()),
-        avatar: v.pipe(v.string()),
-        avatarUrl: v.pipe(v.string()),
-        avatarPath: v.pipe(v.string()),
-        avatarFile: v.pipe(v.string()),
-        avatarType: v.pipe(v.string()),
-        background: v.pipe(v.string()),
-        linkedIn: v.pipe(v.string()),
-        phoneNumbers: v.pipe(PhoneNumberSchema),
-        mobileCountry: v.pipe(v.string()),
-        mobileNo: v.pipe(v.string()),
-        officeNo: v.pipe(v.string()),
-        token: v.pipe(v.string()),
-        web_token: v.pipe(v.string()),
-        tokenDate: v.pipe(v.string()),
-        status: v.pipe(v.string()),
-        platform: v.pipe(v.string()),
-        selected: v.pipe(v.boolean()),
-        login_at: v.pipe(v.string()),
-        login_info: v.pipe(v.any()),
-        createdAt: v.pipe(v.string()),
-        updatedAt: v.pipe(v.string()),
-        deletedAt: v.pipe(v.string()),    
-});
-
-const CountrySchema = v.object({
-    id: v.pipe(v.string()),
-    iso: v.pipe(v.string()),
-    name: v.pipe(v.string()),
-    code: v.pipe(v.string()),
-    flagImagePos: v.pipe(v.string()),
-});
 

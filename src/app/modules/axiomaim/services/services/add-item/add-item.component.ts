@@ -73,7 +73,6 @@ import { User } from 'app/modules/axiomaim/administration/users/users.model';
         MatChipsModule,
         MatSidenavModule,
         GridAllModule,
-        AddressLookupComponent
 
     ]
 })

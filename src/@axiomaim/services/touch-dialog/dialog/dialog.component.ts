@@ -3,7 +3,6 @@ import { Component, ViewEncapsulation, inject, ChangeDetectionStrategy, signal }
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { AxiomaimConfirmationConfig as AxiomaimTouchConfig } from '@axiomaim/services/confirmation/confirmation.types';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatSelectModule} from '@angular/material/select';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
@@ -20,6 +19,7 @@ import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import {default as _rollupMoment} from 'moment';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { AxiomaimTouchConfig } from '../touch-dialog.types';
 
 const moment = _rollupMoment || _moment;
 
@@ -43,11 +43,11 @@ export interface Action {
 }
 
 @Component({
-    selector: 'axiomaim-confirmation-dialog',
+    selector: 'axiomaim-touch-dialog',
     templateUrl: './dialog.component.html',
     styles: [
         `
-            .axiomaim-confirmation-dialog-panel {
+            .axiomaim-touch-dialog-panel {
                 @screen md {
                     @apply w-128;
                 }

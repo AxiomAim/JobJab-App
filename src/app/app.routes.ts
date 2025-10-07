@@ -88,13 +88,24 @@ export const appRoutes: Route[] = [
                 {path: 'crypto', loadChildren: () => import('app/modules/axiomaim/dashboards/crypto/crypto.routes')},
             ]},
 
+            // Forms
+            {path: 'forms', children: [
+                // Quote Form
+                {path: 'quote', loadChildren: () => import('app/modules/axiomaim/forms/quote/quote.routes')},
+                {path: 'quote-normal', loadChildren: () => import('app/modules/axiomaim/forms/quote-normal/quote-normal.routes')},
+                {path: 'quote-scroll', loadChildren: () => import('app/modules/axiomaim/forms/quote-scroll/quote-scroll.routes')},
+                {path: 'quote-content', loadChildren: () => import('app/modules/axiomaim/forms/quote-content/quote-content.routes')},
+                // Instant Forms
+                {path: 'instant-forms', loadChildren: () => import('app/modules/axiomaim/forms/instant-forms/instant-forms.routes')},
+            ]},
+
+
             // Administration
             {path: 'administration', children: [
                 {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
                 {path: 'user-roles', loadChildren: () => import('app/modules/axiomaim/administration/user-roles/user-roles.routes')},
                 {path: 'users', loadChildren: () => import('app/modules/axiomaim/administration/users/users.routes')},
                 {path: 'products', loadChildren: () => import('app/modules/axiomaim/administration/products/products.routes')},
-                {path: 'customers', loadChildren: () => import('app/modules/axiomaim/administration/customers/customers.routes')},
                 {path: 'jobs', loadChildren: () => import('app/modules/axiomaim/administration/jobs/jobs.routes')},
                 {path: 'invoices', loadChildren: () => import('app/modules/axiomaim/administration/invoices/invoices.routes')},
                 {path: 'technicians', loadChildren: () => import('app/modules/axiomaim/administration/technicians/technicians.routes')},
@@ -103,8 +114,7 @@ export const appRoutes: Route[] = [
 
             // CRM
             {path: 'crm', children: [
-                {path: 'leads', loadChildren: () => import('app/modules/axiomaim/crm/leads/leads.routes')},
-                {path: 'pipelines', loadChildren: () => import('app/modules/axiomaim/crm/pipelines/pipelines.routes')},
+                {path: 'contacts', loadChildren: () => import('app/modules/axiomaim/crm/contacts/contacts.routes')},
             ]},
 
             // Projects

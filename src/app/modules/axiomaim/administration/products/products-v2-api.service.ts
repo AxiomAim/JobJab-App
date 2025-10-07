@@ -22,6 +22,7 @@ export const ProductsV2ApiService = createInjectable(() => {
   };
 
   const createItem = async (data: Product):Promise<Product> => {
+    data.orgId = loginUser.orgId;
     const response$ = _productsDataService.createItem(data);
     const response: any = await firstValueFrom(response$)
     return response.data;

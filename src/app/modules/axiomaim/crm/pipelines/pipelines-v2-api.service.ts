@@ -23,6 +23,7 @@ export const PipelinesV2ApiService = createInjectable(() => {
   };
 
   const createItem = async (data: Pipeline):Promise<Pipeline> => {
+    data.orgId = loginUser.orgId;
     const response$ = _pipelinesDataService.createItem(data);
     const response: any = await firstValueFrom(response$)
     return response.data;

@@ -17,6 +17,12 @@
                 <login-user-menu [showAvatar]="false"></login-user-menu>
             </div>
         </div>
+        @if (loginUser.organization ) {
+        <div class="flex w-full flex-col items-center p-4">
+            <organization></organization>
+        </div>
+        }
+
         <!-- User -->
         <div class="flex w-full flex-col items-center p-4">
             <div class="relative h-24 w-24">
@@ -37,6 +43,7 @@
                     {{ loginUser.email }}
                 </div>
             </div>
+
         </div>
     </ng-container>
     <!-- Navigation footer hook -->
@@ -58,10 +65,11 @@
         </button>
         <!-- Components -->
         <div class="ml-auto flex items-center space-x-0.5 pl-2 sm:space-x-2">
-            <languages></languages>
+            <add-item></add-item>
+            <!-- <languages></languages> -->
             <axiomaim-fullscreen class="hidden md:block"></axiomaim-fullscreen>
             <search [appearance]="'bar'"></search>
-            <shortcuts></shortcuts>
+            <!-- <shortcuts></shortcuts> -->
             <messages></messages>
             <button class="lg:hidden" mat-icon-button (click)="quickChat.toggle()">
                 <mat-icon [svgIcon]="'heroicons_outline:chat-bubble-left-right'"></mat-icon>

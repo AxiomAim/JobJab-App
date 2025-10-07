@@ -103,12 +103,8 @@ export class AuthSignInComponent implements OnInit {
      * Sign in
      */
     async signIn() {
-        console.log('signInForm', this.signInForm.value);
       const credentials = this.signInForm.value;
-        console.log('credentials', credentials);
         await this._firebaseAuthV2Service.signIn(credentials).then((loginUser: any) => {
-            console.log('loginUser', loginUser);
-          // const loginUser = this._firebaseAuthV2Service.loginUser();
           // console.log('loginUser', loginUser);
           // Return if the form is invalid
           if (this.signInForm.invalid) {
@@ -153,6 +149,22 @@ export class AuthSignInComponent implements OnInit {
                   this.showAlert = true;
               }
           );
+        }).catch((error) => {
+          console.error('Error during sign-in:', error);
+          // Re-enable the form
+          this.signInForm.enable();
+
+          // Reset the form
+          this.signInNgForm.resetForm();
+
+          // Set the alert
+          this.alert = {
+              type: 'error',
+              message: 'Wrong email or password',
+          };
+
+          // Show the alert
+          this.showAlert = true;
         });
     }
 

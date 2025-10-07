@@ -22,6 +22,7 @@ export const QuotesV2ApiService = createInjectable(() => {
   };
 
   const createItem = async (data: Quote):Promise<Quote> => {
+    data.orgId = loginUser.orgId;
     const response$ = _quotesDataService.createItem(data);
     const response: any = await firstValueFrom(response$)
     return response.data;

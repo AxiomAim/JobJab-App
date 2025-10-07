@@ -1,0 +1,24 @@
+<!-- Button -->
+<button mat-icon-button [matTooltip]="'Add Item'" [matMenuTriggerFor]="leadsMenu">
+    <mat-icon [svgIcon]="'heroicons_outline:plus-circle'"></mat-icon>
+</button>
+
+<!-- Leads menu -->
+<mat-menu [xPosition]="'before'" #leadsMenu="matMenu">
+    <button mat-menu-item>
+        <mat-icon [svgIcon]="'axiomaim:customer'" [routerLink]="['/crm/contacts']"></mat-icon>
+        <span class="ml-3">Add Contact</span>
+    </button>
+    <button mat-menu-item [routerLink]="['/forms/quote']">
+        <mat-icon [svgIcon]="'axiomaim:quote'"></mat-icon>
+        <span class="ml-3">Add Quote</span>
+    </button>
+    <button mat-menu-item>
+        <mat-icon [svgIcon]="'axiomaim:invoice'"></mat-icon>
+        <span class="ml-3">Add Invoice</span>
+    </button>
+    <button mat-menu-item>
+        <mat-icon [svgIcon]="'axiomaim:request'"></mat-icon>
+        <span class="ml-3">Add Request</span>
+    </button>
+</mat-menu>

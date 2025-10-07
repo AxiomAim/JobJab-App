@@ -22,6 +22,7 @@ export const ProjectTeamsV2ApiService = createInjectable(() => {
   };
 
   const createItem = async (data: ProjectTeam):Promise<ProjectTeam> => {
+    data.orgId = loginUser.orgId;
     const response$ = _projectTeamsDataService.createItem(data);
     const response: any = await firstValueFrom(response$)
     return response.data;

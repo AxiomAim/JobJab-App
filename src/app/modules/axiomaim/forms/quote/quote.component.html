@@ -1,0 +1,127 @@
+<div class="absolute inset-0 flex min-w-0 flex-col overflow-hidden">
+    <!-- Header -->
+    <div
+        class="bg-default flex flex-0 flex-col p-4 pb-24 dark:bg-transparent sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:pb-20 sm:pt-4">
+        <div class="min-w-0 flex-1">
+            <!-- Title -->
+            <div class="mt-2">
+                <h2 class="truncate text-3xl font-extrabold leading-7 tracking-tight sm:leading-10 md:text-4xl">
+                    Quote
+                </h2>
+            </div>
+        </div>
+        <!-- Actions -->
+        <div class="mt-6 flex shrink-0 items-center sm:ml-4 sm:mt-0">
+            <contacts-add-item class="mr-2" (contactCreated)="setContact($event)"></contacts-add-item>
+            <select-contact (contactSelected)="setContact($event)"></select-contact>
+        </div>
+    </div>
+    <!-- Main -->
+    <div class="bg-card -mt-16 flex-auto overflow-y-auto rounded-t-2xl p-6 shadow sm:p-10" cdkScrollable>
+        <!-- CONTENT GOES HERE -->
+        <div class="h-400 max-h-400 min-h-400 rounded-2xl border-2 border-dashed border-gray-300">
+
+            <!--/////////////////CUSTOMER DETAILS///////////////////////-->
+            <!-- CUSTOMER -->
+            @if (contact) {
+            <div class="bg-gray-100 flex-auto">
+                <contacts-add-item class="mt-10" [btnIcon]="'mat_outline:edit'" [btnTitle]="'Edit'"
+                    (contactCreated)="setContact($event)"></contacts-add-item>
+
+                <!-- CUSTOMER GOES HERE -->
+                <div class="p-4">
+                    <h3 class="text-xl font-bold mb-2">Customer Details</h3>
+                    <div class="text-lg text-primary font-semibold m-2">{{ contact.firstName }} {{ contact.lastName }}
+                    </div>
+                    @if(contact.company) {
+                    <div class="text-lg text-gray-500 font-semibold m-2">{{ contact.company }}</div>
+                    }
+                    <!-- Emails -->
+                    @if (contact.emails.length) {
+                    <div class="flex">
+                        <mat-icon [svgIcon]="'heroicons_outline:envelope'"></mat-icon>
+                        <div class="ml-6 min-w-0 space-y-1">
+                            @for (
+                            email of contact.emails;
+                            track trackByFn($index, email)
+                            ) {
+                            <div class="flex items-center leading-6">
+                                <a class="text-primary-500 hover:underline" [href]="'mailto:' + email.email"
+                                    target="_blank ">
+                                    {{ email.email }}
+                                </a>
+                                @if (email.label) {
+                                <div class="text-secondary truncate text-md">
+                                    <span class="mx-2">&bull;</span>
+                                    <span class="font-medium">{{
+                                        email.label
+                                        }}</span>
+                                </div>
+                                }
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                    <!-- Phone -->
+                    @if (contact.phoneNumbers.length) {
+                    <div class="flex">
+                        <mat-icon [svgIcon]="'heroicons_outline:phone'"></mat-icon>
+                        <div class="ml-6 min-w-0 space-y-1">
+                            @for (
+                            phoneNumber of contact.phoneNumbers;
+                            track trackByFn($index, phoneNumber)
+                            ) {
+                            <div class="flex items-center leading-6">
+                                <div class="hidden h-4 w-6 overflow-hidden sm:flex" [matTooltip]="
+                                                getCountryByIso(
+                                                    phoneNumber.country
+                                                ).name
+                                            " [style.background]="
+                                                'url(\'/images/apps/contacts/flags.png\') no-repeat 0 0'
+                                            " [style.backgroundSize]="
+                                                '24px 3876px'
+                                            " [style.backgroundPosition]="
+                                                getCountryByIso(
+                                                    phoneNumber.country
+                                                ).flagImagePos
+                                            "></div>
+                                <div class="font-mono sm:ml-3">
+                                    {{
+                                    getCountryByIso(
+                                    phoneNumber.country
+                                    ).code
+                                    }}
+                                </div>
+                                <div class="ml-2.5 font-mono text-secondary">
+                                    {{ phoneNumber.phoneNumber }}
+                                </div>
+                                @if (phoneNumber.label) {
+                                <div class="text-secondary truncate text-md">
+                                    <span class="mx-2">&bull;</span>
+                                    <span class="font-medium">{{
+                                        phoneNumber.label
+                                        }}</span>
+                                </div>
+                                }
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                    <!-- Address -->
+                    @if (contact.address) {
+                    <div class="flex sm:items-center">
+                        <mat-icon [svgIcon]="'heroicons_outline:map-pin'"></mat-icon>
+                        <div class="ml-6 leading-6 text-secondary">
+                            {{ contact.address }}
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+
+        </div>
+    </div>
+</div>
