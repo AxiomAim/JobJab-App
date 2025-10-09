@@ -1,0 +1,374 @@
+// rules_version = '2';
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//     match /{document=**} {
+//       allow read, write: if false;
+//     }
+//   }send-emails
+// }
+
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//     match /{document=**} {
+//       allow read, write;
+//     }
+//   }
+// }
+rules_version = '2'
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow the user to access documents in the "cities" collection
+    // only if they are authenticated.
+    // match /users/{uid} {
+    // 	allow read, update, delete: if request.auth.uid != uid;
+    //   allow create: if request.auth.uid != null;
+    // }
+    // match /users/{uid} {
+    // 	allow read, write: if request.auth.uid == uid
+    // }
+    
+    match /organizations/{Id} {
+      allow read;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /orgs/{Id} {
+      allow read;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /users/{userId} {
+      allow read;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /support-tickets/{ticketId} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }    
+    match /support-time-log/{timeLogId} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }    
+    match /covid-notification/{notificationId} {
+      allow read;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }    
+    match /covid-survey/{surveyId} {
+      allow read;
+      allow create;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }    
+  	match /covid-visitor-survey/{surveyId} {
+      allow read;
+      allow create;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }    
+    match /messages/{messageId} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }    
+    match /fm-study-budget/{fmId} {
+      allow read;
+      allow create;
+      allow write;
+      allow update;
+    }    
+    match /fm-study-budget-items/{fmId} {
+      allow read;
+      allow create;
+      allow write;
+      allow update;
+    }    
+    match /fm-study-bill-items/{fmId} {
+      allow read;
+      allow create;
+      allow write;
+      allow update;
+    }    
+    match /fm-study-invoices/{fmId} {
+      allow read;
+      allow create;
+      allow write;
+      allow update;
+    }    
+    match /fm-study-ledger/{id} {
+      allow read;
+      allow create;
+      allow write;
+      allow update;
+    }        
+    match /logs/{logId} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }    
+    match /sendEmail/{emailId} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /document-share-users/{userId} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /document-share/{docId} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /budget-invoices/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /budget-payments/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;      
+      allow update: if request.auth.uid != null;
+    }
+    match /projects/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /studies/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /study-kit-inventory/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /davesa-help/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /menus/{id} {
+      allow read;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /menu-items/{id} {
+      allow read;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /courses/{id} {
+      allow read;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /project-build/{id} {
+      allow read;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /courses/{id} {
+      allow read;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /course-lessons/{id} {
+      allow read;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /du-courses/{id} {
+      allow read;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /du-course-lessons/{id} {
+      allow read;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /user-course-lessons/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /subscribe/{id} {
+      allow read;
+      allow create;
+      allow write;
+      allow update;
+    }
+    match /feedback/{id} {
+      allow read;
+      allow create;
+      allow write;
+      allow update;
+    }
+    match /project-urs/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /project-teams/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /send-emails/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /csv-documents/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /cvs-sop/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /cvs-sops/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /timesheet/{id} {
+      allow read;
+      allow create;
+      allow write;
+      allow update;
+    }
+    match /rdr-trials/{id} {
+      allow read;
+      allow create;
+      allow write;
+      allow update;
+    }
+    match /app-menu/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /rdr-sites/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /rdr-trials/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /rdr-studies/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /esources/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /esource-data/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /esource-results/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /trials/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /trial-indications/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /cvs-documents/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /cvs-signatures/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /cvs-requirements/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+    match /my-econsent/{id} {
+      allow read: if request.auth.uid != null;
+      allow create: if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
+      allow update: if request.auth.uid != null;
+    }
+
+	match /{document=**} {
+      allow read, write: if request.auth.uid != null;
+    }
+  }
+}
+
+
+

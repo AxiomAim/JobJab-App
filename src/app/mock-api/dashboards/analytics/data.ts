@@ -2315,10 +2315,10 @@ export const analytics = {
             },
         ],
     },
-    newVsReturning: {
-        uniqueVisitors: 46085,
-        series: [80, 20],
-        labels: ['New', 'Returning'],
+    leadsBySource: {
+        uniqueVisitors: 10000,
+        series: [30, 10, 10, 50],
+        labels: ['Google', 'Paid', 'Referral', 'Other'],
     },
     gender: {
         uniqueVisitors: 46085,

@@ -120,6 +120,7 @@ export const appRoutes: Route[] = [
             // Projects
             {path: 'projects', children: [
                 {path: 'quotes', loadChildren: () => import('app/modules/axiomaim/projects/quotes/quotes.routes')},
+                {path: 'quotes-requests', loadChildren: () => import('app/modules/axiomaim/projects/quotes-requests/quotes-requests.routes')},
                 {path: 'project-teams', loadChildren: () => import('app/modules/axiomaim/projects/project-teams/project-teams.routes')},
                 // {path: 'user-roles', loadChildren: () => import('app/modules/axiomaim/administration/user-roles/user-roles.routes')},
                 // {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},

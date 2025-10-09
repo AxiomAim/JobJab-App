@@ -754,6 +754,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 --------------------------------------------------------------------------------
+Package: survey-core
+License: "MIT"
+
+
+--------------------------------------------------------------------------------
 Package: @syncfusion/ej2-pdf-export
 License: "SEE LICENSE IN license"
 
@@ -787,11 +792,6 @@ Under no circumstances can you use this product without (1) either a Community L
 
 The Syncfusion license that contains the terms and conditions can be found at 
 https://www.syncfusion.com/content/downloads/syncfusion_license.pdf
-
---------------------------------------------------------------------------------
-Package: survey-core
-License: "MIT"
-
 
 --------------------------------------------------------------------------------
 Package: perfect-scrollbar

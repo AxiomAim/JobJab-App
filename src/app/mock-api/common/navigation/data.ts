@@ -329,6 +329,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 link: '/projects/quotes',
             },
             {
+                id: 'projects.quotes-requests',
+                title: 'Quotes Requests',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/projects/quotes-requests',
+            },
+            {
                 id: 'projects.project-teams',
                 title: 'Teams',
                 type: 'basic',
