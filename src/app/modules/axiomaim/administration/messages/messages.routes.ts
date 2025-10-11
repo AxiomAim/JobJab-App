@@ -6,10 +6,10 @@ import {
     Routes,
 } from '@angular/router';
 import { of } from 'rxjs';
-import { ContactsV2Service } from './contacts-v2.service';
-import { ContactsDetailsComponent } from './details/details.component';
-import { ContactsComponent } from './contacts.component';
-import { ContactsListComponent } from './list/list.component';
+import { MessagesV2Service } from './messages-v2.service';
+import { MessagesDetailsComponent } from './details/details.component';
+import { MessagesComponent } from './messages.component';
+import { MessagesListComponent } from './list/list.component';
 import { ContactsService } from '../../apps/contacts/contacts.service';
 
 
@@ -23,7 +23,7 @@ const customerResolver = (
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
 ) => {
-    const _productsV2Service = inject(ContactsV2Service);
+    const _productsV2Service = inject(MessagesV2Service);
     const router = inject(Router);
     const oid = route.paramMap.get('id');
     
@@ -51,7 +51,7 @@ const customerResolver = (
  * @param nextState
  */
 const canDeactivateUsersDetails = (
-    component: ContactsDetailsComponent,
+    component: MessagesDetailsComponent,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
     nextState: RouterStateSnapshot
@@ -83,21 +83,21 @@ const canDeactivateUsersDetails = (
 export default [
     {
         path: '',
-        component: ContactsComponent,
+        component: MessagesComponent,
         resolve: {
         },
         children: [
             {
                 path: '',
-                component: ContactsListComponent,
+                component: MessagesListComponent,
                 resolve: {
-                    users: () => inject(ContactsV2Service).getAll(),
+                    users: () => inject(MessagesV2Service).getAll(),
                     countries: () => inject(ContactsService).getCountries(),
                 },
                 children: [
                     {
                         path: ':id',
-                        component: ContactsDetailsComponent,
+                        component: MessagesDetailsComponent,
                         resolve: {
                             // userRoles: () => inject(ProductsV2Service).getUserRoles(),
                             user: customerResolver,

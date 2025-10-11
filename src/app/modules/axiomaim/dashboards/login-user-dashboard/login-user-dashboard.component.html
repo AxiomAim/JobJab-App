@@ -1,0 +1,551 @@
+<div class="flex min-w-0 flex-auto flex-col">
+    <!-- Header -->
+    <div class="bg-card">
+        <div class="mx-auto flex w-full max-w-screen-xl flex-col px-6 sm:px-4">
+            <div class="my-8 flex min-w-0 flex-auto flex-col sm:my-4 sm:flex-row sm:items-center">
+                <!-- Avatar and name -->
+                <div class="flex min-w-0 flex-auto items-center">
+                    <div class="h-16 w-16 flex-0 overflow-hidden rounded-full">
+                        <img class="h-full w-full object-cover"
+                            [src]="loginUser.avatar ? loginUser.avatar : 'images/avatars/placeholder.png'" />
+                    </div>
+                    <div class="ml-4 flex min-w-0 flex-col">
+                        <ng-container *transloco="let t">
+                            <div
+                                class="truncate text-2xl font-semibold leading-7 tracking-tight md:text-5xl md:leading-snug">
+                                {{ t('welcome-back') }}, {{ loginUser.firstName}}
+                            </div>
+                        </ng-container>
+                        <div class="flex items-center">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bell'"></mat-icon>
+                            <div class="text-secondary ml-1.5 truncate leading-6">
+                                You have 2 new messages and 15 new tasks
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Actions -->
+                <users-edit-item></users-edit-item>
+                <!-- <div class="mt-6 flex items-center space-x-3 sm:ml-2 sm:mt-0">
+                    <button mat-flat-button [color]="'primary'">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-8-tooth'"></mat-icon>
+                        <span class="ml-2">Settings</span>
+                    </button>
+                </div> -->
+            </div>
+            <!-- CRM selector -->
+            <!-- <div class="bg-default relative flex cursor-pointer self-start overflow-hidden rounded-t-xl border border-b-0 pb-1 pl-5 pr-4 pt-2"
+                matRipple [matMenuTriggerFor]="projectsMenu">
+                <div class="flex items-center">
+                    <div class="overflow-hidden">
+                        <div class="truncate font-medium leading-6">
+                            {{ selectedCRM }}
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center pl-2">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_mini:chevron-down'"></mat-icon>
+                    </div>
+                </div>
+                <mat-menu #projectsMenu="matMenu" [xPosition]="'before'">
+                    <button mat-menu-item (click)="selectedCRM = 'ACME Corp. Backend App'">
+                        ACME Corp. Backend App
+                    </button>
+                    <button mat-menu-item (click)="selectedCRM = 'ACME Corp. Frontend App'">
+                        ACME Corp. Frontend App
+                    </button>
+                    <button mat-menu-item (click)="selectedCRM = 'Creapond'">
+                        Creapond
+                    </button>
+                    <button mat-menu-item (click)="selectedCRM = 'Withinpixels'">
+                        Withinpixels
+                    </button>
+                </mat-menu>
+            </div> -->
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="-mt-px flex-auto border-t pt-4 sm:pt-2">
+        <div class="mx-auto w-full max-w-screen-xl">
+            <!-- Tabs -->
+            <mat-tab-group class="sm:px-2" mat-stretch-tabs="false" [animationDuration]="'0'">
+                <!-- Home -->
+                <mat-tab label="CRM Dashboard">
+                    <ng-template matTabContent>
+                        <div class="grid w-full min-w-0 grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
+                            <!-- Total Leads -->
+                            <div class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow">
+                                <!-- <div class="flex items-start justify-between">
+                                    <div class="truncate text-lg font-medium leading-6 tracking-tight">
+                                        Total Leads
+                                    </div>
+                                    <div class="-mr-3 -mt-2 ml-2">
+                                        <button mat-icon-button [matMenuTriggerFor]="summaryMenu">
+                                            <mat-icon class="icon-size-5" [svgIcon]="
+                                                    'heroicons_mini:ellipsis-vertical'
+                                                "></mat-icon>
+                                        </button>
+                                        <mat-menu #summaryMenu="matMenu">
+                                            <button mat-menu-item>
+                                                Yesterday
+                                            </button>
+                                            <button mat-menu-item>
+                                                2 days ago
+                                            </button>
+                                            <button mat-menu-item>
+                                                3 days ago
+                                            </button>
+                                        </mat-menu>
+                                    </div>
+                                </div> -->
+                                <div class="mt-2 flex flex-col items-center">
+                                    <div
+                                        class="text-7xl font-bold leading-none tracking-tight text-blue-500 sm:text-8xl">
+                                        {{ this._loginUserDashboardV2Service.totalLeads().length ?
+                                        this._loginUserDashboardV2Service.totalLeads().length : 0 }}
+                                    </div>
+                                    <div class="text-lg font-medium text-blue-600 dark:text-blue-500">
+                                        Total Leads
+                                    </div>
+                                    <!-- <div class="text-secondary mt-5 flex w-full items-baseline justify-center">
+                                        <div class="truncate text-md font-medium">
+                                            Completed:
+                                        </div>
+                                        <div class="ml-1.5 text-lg font-semibold">
+                                            13
+                                        </div>
+                                    </div> -->
+                                </div>
+                            </div>
+                            <!-- Overdue -->
+                            <div class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow">
+                                <!-- <div class="flex items-start justify-between">
+                                    <div class="truncate text-lg font-medium leading-6 tracking-tight">
+                                        New Leads
+                                    </div>
+                                    <div class="-mr-3 -mt-2 ml-2">
+                                        <button mat-icon-button [matMenuTriggerFor]="overdueMenu">
+                                            <mat-icon class="icon-size-5" [svgIcon]="
+                                                    'heroicons_mini:ellipsis-vertical'
+                                                "></mat-icon>
+                                        </button>
+                                        <mat-menu #overdueMenu="matMenu">
+                                            <button mat-menu-item>
+                                                Yesterday
+                                            </button>
+                                            <button mat-menu-item>
+                                                2 days ago
+                                            </button>
+                                            <button mat-menu-item>
+                                                3 days ago
+                                            </button>
+                                        </mat-menu>
+                                    </div>
+                                </div> -->
+                                <div class="mt-2 flex flex-col items-center">
+                                    <div
+                                        class="text-7xl font-bold leading-none tracking-tight text-amber-500 sm:text-8xl">
+                                        {{ this._loginUserDashboardV2Service.newLeads().length ?
+                                        this._loginUserDashboardV2Service.newLeads().length :
+                                        0 }}
+                                    </div>
+                                    <div class="text-lg font-medium text-amber-600 dark:text-amber-500">
+                                        New Leads
+                                    </div>
+                                    <!-- <div class="text-secondary mt-5 flex w-full items-baseline justify-center">
+                                        <div class="truncate text-md font-medium">
+                                            From yesterday:
+                                        </div>
+                                        <div class="ml-1.5 text-lg font-semibold">
+                                            9
+                                        </div>
+                                    </div> -->
+                                </div>
+                            </div>
+                            <!-- Issues -->
+                            <div class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow">
+                                <!-- <div class="flex items-start justify-between">
+                                    <div class="truncate text-lg font-medium leading-6 tracking-tight">
+                                        Lost Leads
+                                    </div>
+                                    <div class="-mr-3 -mt-2 ml-2">
+                                        <button mat-icon-button [matMenuTriggerFor]="issuesMenu">
+                                            <mat-icon class="icon-size-5" [svgIcon]="
+                                                    'heroicons_mini:ellipsis-vertical'
+                                                "></mat-icon>
+                                        </button>
+                                        <mat-menu #issuesMenu="matMenu">
+                                            <button mat-menu-item>
+                                                Yesterday
+                                            </button>
+                                            <button mat-menu-item>
+                                                2 days ago
+                                            </button>
+                                            <button mat-menu-item>
+                                                3 days ago
+                                            </button>
+                                        </mat-menu>
+                                    </div>
+                                </div> -->
+                                <div class="mt-2 flex flex-col items-center">
+                                    <div
+                                        class="text-7xl font-bold leading-none tracking-tight text-warn-500 sm:text-8xl">
+                                        0
+                                    </div>
+                                    <div class="text-lg font-medium text-warn-600 dark:text-warn-500">
+                                        Lost Leads
+                                    </div>
+                                    <!-- <div class="text-secondary mt-5 flex w-full items-baseline justify-center">
+                                        <div class="truncate text-md font-medium">
+                                            Closed today:
+                                        </div>
+                                        <div class="ml-1.5 text-lg font-semibold">
+                                            19
+                                        </div>
+                                    </div> -->
+                                </div>
+                            </div>
+                            <!-- Features -->
+                            <div class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow">
+                                <!-- <div class="flex items-start justify-between">
+                                    <div class="truncate text-lg font-medium leading-6 tracking-tight">
+                                        New Customers
+                                    </div>
+                                    <div class="-mr-3 -mt-2 ml-2">
+                                        <button mat-icon-button [matMenuTriggerFor]="featuresMenu">
+                                            <mat-icon class="icon-size-5" [svgIcon]="
+                                                    'heroicons_mini:ellipsis-vertical'
+                                                "></mat-icon>
+                                        </button>
+                                        <mat-menu #featuresMenu="matMenu">
+                                            <button mat-menu-item>
+                                                Yesterday
+                                            </button>
+                                            <button mat-menu-item>
+                                                2 days ago
+                                            </button>
+                                            <button mat-menu-item>
+                                                3 days ago
+                                            </button>
+                                        </mat-menu>
+                                    </div>
+                                </div> -->
+                                <div class="mt-2 flex flex-col items-center">
+                                    <div
+                                        class="text-7xl font-bold leading-none tracking-tight text-green-500 sm:text-8xl">
+                                        0
+                                    </div>
+                                    <div class="text-lg font-medium text-green-600 dark:text-green-500">
+                                        New Customers
+                                    </div>
+                                    <!-- <div class="text-secondary mt-5 flex w-full items-baseline justify-center">
+                                        <div class="truncate text-md font-medium">
+                                            Implemented:
+                                        </div>
+                                        <div class="ml-1.5 text-lg font-semibold">
+                                            16
+                                        </div>
+                                    </div> -->
+                                </div>
+                            </div>
+                            <!-- Github issues summary -->
+                            <!-- Task distribution -->
+                            <!-- Schedule -->
+                        </div>
+                        <div class="mt-6 grid w-full grid-cols-1 gap-8 sm:grid-cols-2 md:mt-8 lg:grid-cols-4">
+                            <!-- Leads By Source -->
+                            <div class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow">
+                                <div class="flex items-start justify-between">
+                                    <div class="truncate text-lg font-medium leading-6 tracking-tight">
+                                        Leads By Source
+                                    </div>
+                                    <div class="ml-2">
+                                        <button class="bg-hover h-6 min-h-6 rounded-full px-2" mat-button
+                                            [matMenuTriggerFor]="conversionMenu">
+                                            <span class="text-secondary text-sm font-medium">30 days</span>
+                                        </button>
+                                        <mat-menu #conversionMenu="matMenu">
+                                            <button mat-menu-item>30 days</button>
+                                            <button mat-menu-item>3 months</button>
+                                            <button mat-menu-item>9 months</button>
+                                        </mat-menu>
+                                    </div>
+                                </div>
+                                <div class="mt-6 flex h-44 flex-auto flex-col">
+                                    <apx-chart class="flex h-full w-full flex-auto items-center justify-center"
+                                        [chart]="chartLeadsBySource.chart" [colors]="chartLeadsBySource.colors"
+                                        [labels]="chartLeadsBySource.labels"
+                                        [plotOptions]="chartLeadsBySource.plotOptions"
+                                        [series]="chartLeadsBySource.series" [states]="chartLeadsBySource.states"
+                                        [tooltip]="chartLeadsBySource.tooltip"></apx-chart>
+                                </div>
+                                <div class="mt-8">
+                                    <div class="-my-3 divide-y">
+                                        @for (
+                                        dataset of data.leadsBySource.series;
+                                        track dataset;
+                                        let i = $index
+                                        ) {
+                                        <div class="grid grid-cols-3 py-3">
+                                            <div class="flex items-center">
+                                                <div class="h-2 w-2 flex-0 rounded-full" [style.backgroundColor]="
+                                            chartLeadsBySource.colors[i]
+                                        "></div>
+                                                <div class="ml-3 truncate">
+                                                    {{ data.leadsBySource.labels[i] }}
+                                                </div>
+                                            </div>
+                                            <div class="text-right font-medium">
+                                                {{
+                                                (data.leadsBySource.uniqueVisitors *
+                                                dataset) /
+                                                100 | number: '1.0-0'
+                                                }}
+                                            </div>
+                                            <div class="text-secondary text-right">
+                                                {{ dataset }}%
+                                            </div>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </ng-template>
+                </mat-tab>
+                <mat-tab label="CRM Analysis">
+                    <ng-template matTabContent>
+                        <div class="mt-6 grid w-full grid-cols-1 gap-8 sm:grid-cols-2 md:mt-8 lg:grid-cols-4">
+                            <!-- Leads By Source -->
+                            <div class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow">
+                                <div class="flex items-start justify-between">
+                                    <div class="truncate text-lg font-medium leading-6 tracking-tight">
+                                        Leads By Source
+                                    </div>
+                                    <div class="ml-2">
+                                        <button class="bg-hover h-6 min-h-6 rounded-full px-2" mat-button
+                                            [matMenuTriggerFor]="conversionMenu">
+                                            <span class="text-secondary text-sm font-medium">30 days</span>
+                                        </button>
+                                        <mat-menu #conversionMenu="matMenu">
+                                            <button mat-menu-item>30 days</button>
+                                            <button mat-menu-item>3 months</button>
+                                            <button mat-menu-item>9 months</button>
+                                        </mat-menu>
+                                    </div>
+                                </div>
+                                <div class="mt-6 flex h-44 flex-auto flex-col">
+                                    <apx-chart class="flex h-full w-full flex-auto items-center justify-center"
+                                        [chart]="chartLeadsBySource.chart" [colors]="chartLeadsBySource.colors"
+                                        [labels]="chartLeadsBySource.labels"
+                                        [plotOptions]="chartLeadsBySource.plotOptions"
+                                        [series]="chartLeadsBySource.series" [states]="chartLeadsBySource.states"
+                                        [tooltip]="chartLeadsBySource.tooltip"></apx-chart>
+                                </div>
+                                <div class="mt-8">
+                                    <div class="-my-3 divide-y">
+                                        @for (
+                                        dataset of data.leadsBySource.series;
+                                        track dataset;
+                                        let i = $index
+                                        ) {
+                                        <div class="grid grid-cols-3 py-3">
+                                            <div class="flex items-center">
+                                                <div class="h-2 w-2 flex-0 rounded-full" [style.backgroundColor]="
+                                            chartLeadsBySource.colors[i]
+                                        "></div>
+                                                <div class="ml-3 truncate">
+                                                    {{ data.leadsBySource.labels[i] }}
+                                                </div>
+                                            </div>
+                                            <div class="text-right font-medium">
+                                                {{
+                                                (data.leadsBySource.uniqueVisitors *
+                                                dataset) /
+                                                100 | number: '1.0-0'
+                                                }}
+                                            </div>
+                                            <div class="text-secondary text-right">
+                                                {{ dataset }}%
+                                            </div>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Gender -->
+                            <div class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow">
+                                <div class="flex items-start justify-between">
+                                    <div class="truncate text-lg font-medium leading-6 tracking-tight">
+                                        Gender
+                                    </div>
+                                    <div class="ml-2">
+                                        <button class="bg-hover h-6 min-h-6 rounded-full px-2" mat-button
+                                            [matMenuTriggerFor]="conversionMenu">
+                                            <span class="text-secondary text-sm font-medium">30 days</span>
+                                        </button>
+                                        <mat-menu #conversionMenu="matMenu">
+                                            <button mat-menu-item>30 days</button>
+                                            <button mat-menu-item>3 months</button>
+                                            <button mat-menu-item>9 months</button>
+                                        </mat-menu>
+                                    </div>
+                                </div>
+                                <div class="mt-6 flex h-44 flex-auto flex-col">
+                                    <apx-chart class="flex h-full w-full flex-auto items-center justify-center"
+                                        [chart]="chartGender.chart" [colors]="chartGender.colors"
+                                        [labels]="chartGender.labels" [plotOptions]="chartGender.plotOptions"
+                                        [series]="chartGender.series" [states]="chartGender.states"
+                                        [tooltip]="chartGender.tooltip"></apx-chart>
+                                </div>
+                                <div class="mt-8">
+                                    <div class="-my-3 divide-y">
+                                        @for (
+                                        dataset of data.gender.series;
+                                        track dataset;
+                                        let i = $index
+                                        ) {
+                                        <div class="grid grid-cols-3 py-3">
+                                            <div class="flex items-center">
+                                                <div class="h-2 w-2 flex-0 rounded-full" [style.backgroundColor]="
+                                            chartGender.colors[i]
+                                        "></div>
+                                                <div class="ml-3 truncate">
+                                                    {{ data.gender.labels[i] }}
+                                                </div>
+                                            </div>
+                                            <div class="text-right font-medium">
+                                                {{
+                                                (data.gender.uniqueVisitors * dataset) /
+                                                100 | number: '1.0-0'
+                                                }}
+                                            </div>
+                                            <div class="text-secondary text-right">
+                                                {{ dataset }}%
+                                            </div>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Age -->
+                            <div class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow">
+                                <div class="flex items-start justify-between">
+                                    <div class="truncate text-lg font-medium leading-6 tracking-tight">
+                                        Age
+                                    </div>
+                                    <div class="ml-2">
+                                        <button class="bg-hover h-6 min-h-6 rounded-full px-2" mat-button
+                                            [matMenuTriggerFor]="conversionMenu">
+                                            <span class="text-secondary text-sm font-medium">30 days</span>
+                                        </button>
+                                        <mat-menu #conversionMenu="matMenu">
+                                            <button mat-menu-item>30 days</button>
+                                            <button mat-menu-item>3 months</button>
+                                            <button mat-menu-item>9 months</button>
+                                        </mat-menu>
+                                    </div>
+                                </div>
+                                <div class="mt-6 flex h-44 flex-auto flex-col">
+                                    <apx-chart class="flex h-full w-full flex-auto items-center justify-center"
+                                        [chart]="chartAge.chart" [colors]="chartAge.colors" [labels]="chartAge.labels"
+                                        [plotOptions]="chartAge.plotOptions" [series]="chartAge.series"
+                                        [states]="chartAge.states" [tooltip]="chartAge.tooltip"></apx-chart>
+                                </div>
+                                <div class="mt-8">
+                                    <div class="-my-3 divide-y">
+                                        @for (
+                                        dataset of data.age.series;
+                                        track dataset;
+                                        let i = $index
+                                        ) {
+                                        <div class="grid grid-cols-3 py-3">
+                                            <div class="flex items-center">
+                                                <div class="h-2 w-2 flex-0 rounded-full" [style.backgroundColor]="
+                                            chartAge.colors[i]
+                                        "></div>
+                                                <div class="ml-3 truncate">
+                                                    {{ data.age.labels[i] }}
+                                                </div>
+                                            </div>
+                                            <div class="text-right font-medium">
+                                                {{
+                                                (data.age.uniqueVisitors * dataset) /
+                                                100 | number: '1.0-0'
+                                                }}
+                                            </div>
+                                            <div class="text-secondary text-right">
+                                                {{ dataset }}%
+                                            </div>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Language -->
+                            <div class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow">
+                                <div class="flex items-start justify-between">
+                                    <div class="truncate text-lg font-medium leading-6 tracking-tight">
+                                        Language
+                                    </div>
+                                    <div class="ml-2">
+                                        <button class="bg-hover h-6 min-h-6 rounded-full px-2" mat-button
+                                            [matMenuTriggerFor]="conversionMenu">
+                                            <span class="text-secondary text-sm font-medium">30 days</span>
+                                        </button>
+                                        <mat-menu #conversionMenu="matMenu">
+                                            <button mat-menu-item>30 days</button>
+                                            <button mat-menu-item>3 months</button>
+                                            <button mat-menu-item>9 months</button>
+                                        </mat-menu>
+                                    </div>
+                                </div>
+                                <div class="mt-6 flex h-44 flex-auto flex-col">
+                                    <apx-chart class="flex h-full w-full flex-auto items-center justify-center"
+                                        [chart]="chartLanguage.chart" [colors]="chartLanguage.colors"
+                                        [labels]="chartLanguage.labels" [plotOptions]="chartLanguage.plotOptions"
+                                        [series]="chartLanguage.series" [states]="chartLanguage.states"
+                                        [tooltip]="chartLanguage.tooltip"></apx-chart>
+                                </div>
+                                <div class="mt-8">
+                                    <div class="-my-3 divide-y">
+                                        @for (
+                                        dataset of data.language.series;
+                                        track dataset;
+                                        let i = $index
+                                        ) {
+                                        <div class="grid grid-cols-3 py-3">
+                                            <div class="flex items-center">
+                                                <div class="h-2 w-2 flex-0 rounded-full" [style.backgroundColor]="
+                                            chartLanguage.colors[i]
+                                        "></div>
+                                                <div class="ml-3 truncate">
+                                                    {{ data.language.labels[i] }}
+                                                </div>
+                                            </div>
+                                            <div class="text-right font-medium">
+                                                {{
+                                                (data.language.uniqueVisitors *
+                                                dataset) /
+                                                100 | number: '1.0-0'
+                                                }}
+                                            </div>
+                                            <div class="text-secondary text-right">
+                                                {{ dataset }}%
+                                            </div>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </mat-tab>
+
+                <!-- Team -->
+            </mat-tab-group>
+        </div>
+    </div>
+</div>

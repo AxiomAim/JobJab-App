@@ -25,13 +25,13 @@ import { GridAllModule } from '@syncfusion/ej2-angular-grids';
 import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-messages.component';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
+import { User } from '../users.model';
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
-import { QuotesRequestsV2Service } from '../quotes-requests-v2.service';
-import { User } from 'app/modules/axiomaim/administration/users/users.model';
+import { UsersV2Service } from '../users-v2.service';
 
 @Component({
-    selector: 'quotes-requests-add-item',
-    templateUrl: './add-item.component.html',
+    selector: 'users-edit-item',
+    templateUrl: './edit-item.component.html',
     styles: [
         `
             settings {
@@ -75,32 +75,17 @@ import { User } from 'app/modules/axiomaim/administration/users/users.model';
 
     ]
 })
-export class QuotesRequestsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
+export class UsersEditItemComponent implements OnInit, AfterViewInit, OnDestroy {
     _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
-    _quotesRequestsV2Service = inject(QuotesRequestsV2Service);
     _alertMessagesService = inject(AlertMessagesService);
+    _usersV2Service = inject(UsersV2Service);
+    loginUser = signal<User | null>(null);
 
-    formFieldHelpers: string[] = [''];
-    fixedSubscriptInput: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    dynamicSubscriptInput: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    fixedSubscriptInputWithHint: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    dynamicSubscriptInputWithHint: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-
-
-    @ViewChild('newItemDrawer') newItemDrawer: AxiomaimDrawerComponent;
+    @ViewChild('editItemDrawer') editItemDrawer: AxiomaimDrawerComponent;
     @Output() drawerStateChanged = new EventEmitter<boolean>();
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-    quotesRequestForm: UntypedFormGroup;
-    #loginUser = signal<User | null>(null);
+    userForm: UntypedFormGroup;
     showRole: string[] = ["admin"];
     user_roles: any[] = [];
     reLoad: boolean = true;
@@ -121,8 +106,9 @@ export class QuotesRequestsAddItemComponent implements OnInit, AfterViewInit, On
         private _router: Router,
         private _axiomaimConfigService: AxiomaimConfigService
     ) {
-        this.#loginUser.set(this._firebaseAuthV2Service.loginUser());
-        console.log('#loginUser', this.#loginUser());
+        // this._firebaseAuthV2Service.loadFromStorage();
+        this.loginUser.set(this._firebaseAuthV2Service.loginUser());
+        console.log('*****Edit User*****', this.loginUser());
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -142,7 +128,7 @@ export class QuotesRequestsAddItemComponent implements OnInit, AfterViewInit, On
     ngAfterViewInit(): void {
         // Subscribe to drawer state changes and emit to parent
         // This needs to be in ngAfterViewInit because ViewChild is not available in ngOnInit
-        this.newItemDrawer.openedChanged
+        this.editItemDrawer.openedChanged
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((opened: boolean) => {
                 this.drawerStateChanged.emit(opened);
@@ -162,21 +148,17 @@ export class QuotesRequestsAddItemComponent implements OnInit, AfterViewInit, On
     /**
      * Set Form Group 
      */
-    setFormGroup() {
-        this.quotesRequestForm = this._formBuilder.group({
-            company: [""],
-            name: ["", [Validators.required]],
-            email: ["", [Validators.required, Validators.email]],
-            phone: ["", [Validators.required]],
-            address: ["", [Validators.required]],
-            description: ["", [Validators.required]],
-            house: [false],
-            driveway: [false],
-            walkway: [false],
-            fence: [false],
-            deck_patio: [false],
-            other: [false],
+    async setFormGroup() {
+        this.userForm = this._formBuilder.group({
+            email: [this.loginUser().email, [Validators.required, Validators.email]],
+            firstName: [this.loginUser().firstName, [Validators.required]],
+            lastName: [this.loginUser().lastName, [Validators.required]],
+            address: [this.loginUser().address, [Validators.required]],
+            mobileCountry: [this.loginUser().mobileCountry],
+            mobileNo: [this.loginUser().mobileNo],
           });
+          console.log('Edit User Form', this.userForm.value);
+
     }
 
 
@@ -189,7 +171,7 @@ export class QuotesRequestsAddItemComponent implements OnInit, AfterViewInit, On
         this.resetForm();
         
         // Open the drawer
-        this.newItemDrawer.open();
+        this.editItemDrawer.open();
     }
 
     /**
@@ -203,7 +185,7 @@ export class QuotesRequestsAddItemComponent implements OnInit, AfterViewInit, On
         this.resetAdditionalProperties();
         
         // Close the drawer
-        this.newItemDrawer.close();
+        this.editItemDrawer.close();
     }
 
     /**
@@ -211,15 +193,15 @@ export class QuotesRequestsAddItemComponent implements OnInit, AfterViewInit, On
      */
     private resetForm(): void {
         // Reset form values
-        this.quotesRequestForm.reset();
+        this.userForm.reset();
         
         // Clear all validation states
-        this.quotesRequestForm.markAsUntouched();
-        this.quotesRequestForm.markAsPristine();
+        this.userForm.markAsUntouched();
+        this.userForm.markAsPristine();
         
         // Reset each form control individually to ensure clean state
-        Object.keys(this.quotesRequestForm.controls).forEach(key => {
-            const control = this.quotesRequestForm.get(key);
+        Object.keys(this.userForm.controls).forEach(key => {
+            const control = this.userForm.get(key);
             if (control) {
                 control.setErrors(null);
                 control.markAsUntouched();
@@ -228,7 +210,7 @@ export class QuotesRequestsAddItemComponent implements OnInit, AfterViewInit, On
         });
         
         // Set default values for form fields that need them
-        this.quotesRequestForm.patchValue({
+        this.userForm.patchValue({
             active: true,
             user_roles: [],
             site_account_id: [],
@@ -276,13 +258,5 @@ export class QuotesRequestsAddItemComponent implements OnInit, AfterViewInit, On
   trackByFn(index: number, item: any): any {
       return item.id || index;
   }
-    
-
-  /**
-   * Get the form field helpers as string
-   */
-    getFormFieldHelpersAsString(): string {
-      return this.formFieldHelpers.join(' ');
-  }
-    
+        
 }

@@ -10,7 +10,7 @@ import { LayoutComponent } from 'app/layout/layout.component';
 export const appRoutes: Route[] = [
 
     // Redirect empty path to '/dashboards/crm'
-    {path: '', pathMatch : 'full', redirectTo: 'dashboards/crm'},
+    {path: '', pathMatch : 'full', redirectTo: 'dashboards/login-user-dashboard'},
 
     // Redirect signed-in user to the '/dashboards/crm'
     //
@@ -20,7 +20,7 @@ export const appRoutes: Route[] = [
     {
         path: 'signed-in-redirect',
         pathMatch : 'full',
-        redirectTo: 'dashboards/crm'
+        redirectTo: 'dashboards/login-user-dashboard'
     },
 
     // Auth routes for guests
@@ -81,6 +81,7 @@ export const appRoutes: Route[] = [
 
             // Dashboards
             {path: 'dashboards', children: [
+                {path: 'login-user-dashboard', loadChildren: () => import('app/modules/axiomaim/dashboards/login-user-dashboard/login-user-dashboard.routes')},
                 {path: 'crm', loadChildren: () => import('app/modules/axiomaim/dashboards/crm/crm.routes')},
                 {path: 'project', loadChildren: () => import('app/modules/axiomaim/dashboards/project/project.routes')},
                 {path: 'analytics', loadChildren: () => import('app/modules/axiomaim/dashboards/analytics/analytics.routes')},
@@ -102,6 +103,7 @@ export const appRoutes: Route[] = [
 
             // Administration
             {path: 'administration', children: [
+                {path: 'messages', loadChildren: () => import('app/modules/axiomaim/administration/messages/messages.routes')},
                 {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
                 {path: 'user-roles', loadChildren: () => import('app/modules/axiomaim/administration/user-roles/user-roles.routes')},
                 {path: 'users', loadChildren: () => import('app/modules/axiomaim/administration/users/users.routes')},
@@ -109,7 +111,7 @@ export const appRoutes: Route[] = [
                 {path: 'jobs', loadChildren: () => import('app/modules/axiomaim/administration/jobs/jobs.routes')},
                 {path: 'invoices', loadChildren: () => import('app/modules/axiomaim/administration/invoices/invoices.routes')},
                 {path: 'technicians', loadChildren: () => import('app/modules/axiomaim/administration/technicians/technicians.routes')},
-                // {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
+                {path: 'newsletters', loadChildren: () => import('app/modules/axiomaim/administration/newsletters/newsletters.routes')},
             ]},
 
             // CRM

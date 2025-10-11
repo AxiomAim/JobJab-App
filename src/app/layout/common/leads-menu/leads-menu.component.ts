@@ -31,7 +31,6 @@ import { Lead } from 'app/modules/axiomaim/crm/leads/leads.model';
     imports: [
         MatButtonModule, 
         MatMenuModule, 
-        NgTemplateOutlet,
         MatIconModule, 
         RouterLink
     ],

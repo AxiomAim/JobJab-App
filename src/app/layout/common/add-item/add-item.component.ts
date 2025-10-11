@@ -29,11 +29,9 @@ import { take } from 'rxjs';
     imports: [
         MatButtonModule, 
         MatMenuModule, 
-        NgTemplateOutlet,
         MatIconModule,
         RouterLink,
         MatTooltipModule,
-        CustomersAddItemComponent
     ],
 })
 export class AddItemComponent implements OnInit, OnDestroy {
