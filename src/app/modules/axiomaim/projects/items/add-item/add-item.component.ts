@@ -15,7 +15,7 @@ import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { TextFieldModule } from '@angular/cdk/text-field';
@@ -28,7 +28,17 @@ import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-mes
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
 import { ItemsV2Service } from '../items-v2.service';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
+export interface Category {
+  name: string;
+}
+
+interface ItemType {
+  value: string;
+  viewValue: string;
+}
 @Component({
     selector: 'items-add-item',
     templateUrl: './add-item.component.html',
@@ -46,6 +56,14 @@ import { User } from 'app/modules/axiomaim/administration/users/users.model';
                     right: 0 !important;
                 }
             }
+
+            .chip-list {
+                width: 100%;
+            }
+            .item-type-select {
+                width: 100%;
+            }
+
         `,
     ],
     encapsulation: ViewEncapsulation.None,
@@ -71,7 +89,7 @@ import { User } from 'app/modules/axiomaim/administration/users/users.model';
         MatChipsModule,
         MatSidenavModule,
         GridAllModule,
-        AddressLookupComponent
+        
 
     ]
 })
@@ -80,20 +98,15 @@ export class ItemsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     _itemsV2Service = inject(ItemsV2Service);
     _alertMessagesService = inject(AlertMessagesService);
 
-    formFieldHelpers: string[] = [''];
-    fixedSubscriptInput: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    dynamicSubscriptInput: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    fixedSubscriptInputWithHint: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    dynamicSubscriptInputWithHint: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-
+    readonly addOnBlur = true;
+    readonly separatorKeysCodes = [ENTER, COMMA] as const;
+    readonly categories = signal<Category[]>([]);
+    readonly announcer = inject(LiveAnnouncer);
+    selectedValue: string;
+    itemTypes: ItemType[] = [
+        {value: 'product', viewValue: 'Product'},
+        {value: 'service', viewValue: 'Service'},
+    ];
 
     @ViewChild('newItemDrawer') newItemDrawer: AxiomaimDrawerComponent;
     @Output() drawerStateChanged = new EventEmitter<boolean>();
@@ -163,31 +176,15 @@ export class ItemsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
      * Set Form Group 
      */
     setFormGroup() {
+
         this.itemForm = this._formBuilder.group({
-            email: ["", [Validators.required, Validators.email]],
-            name: [""],
-            company: ["", [Validators.required]],
-            address: ["", [Validators.required]],
-            mobileCountry: [""],
-            mobileNo: [""],
-            house: [""],
-            houseItem: [""],
-            driveway: [""],
-            drivewayItem: [""],
-            walkway: [""],
-            walkwayItem: [""],
-            fence: [""],
-            fenceItem: [""],
-            deck: [""],
-            deckItem: [""],
-            patio: [""],
-            patioItem: [""],
-            bin: [""],
-            binItem: [""],
-            binQuarterly: [""],
-            binQuarterlyItem: [""],
-            binMonthly: [""],
-            binMonthlyItem: [""],
+            sku: [""],
+            // categories: [[], [Validators.required]],
+            name: ["", [Validators.required]],
+            description: ["", [Validators.required]],
+            price: ["", [Validators.required]],
+            itemType: [[], [Validators.required]],
+            // images: this._formBuilder.array([]),
           });
     }
 
@@ -196,6 +193,51 @@ export class ItemsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
     
+    add(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    // Add our fruit
+    if (value) {
+      this.categories.update(categories => [...categories, {name: value}]);
+    }
+
+    // Clear the input value
+    event.chipInput!.clear();
+  }
+
+  remove(category: Category): void {
+    this.categories.update(categories => {
+      const index = categories.indexOf(category);
+      if (index < 0) {
+        return categories;
+      }
+
+      categories.splice(index, 1);
+      this.announcer.announce(`Removed ${category.name}`);
+      return [...categories];
+    });
+  }
+
+  edit(category: Category, event: MatChipEditedEvent) {
+    const value = event.value.trim();
+
+    // Remove fruit if it no longer has a name
+    if (!value) {
+      this.remove(category);
+      return;
+    }
+
+    // Edit existing fruit
+    this.categories.update(categories => {
+      const index = categories.indexOf(category);
+      if (index >= 0) {
+        categories[index].name = value;
+        return [...categories];
+      }
+      return categories;
+    });
+  }
+
     openDrawer(): void {
         // Reset form to ensure clean state when opening
         this.resetForm();
@@ -288,13 +330,6 @@ export class ItemsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
   trackByFn(index: number, item: any): any {
       return item.id || index;
   }
-    
 
-  /**
-   * Get the form field helpers as string
-   */
-    getFormFieldHelpersAsString(): string {
-      return this.formFieldHelpers.join(' ');
-  }
     
 }

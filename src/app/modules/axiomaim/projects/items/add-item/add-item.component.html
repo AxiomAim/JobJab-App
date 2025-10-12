@@ -1,7 +1,7 @@
 <!-- Settings toggle -->
 <button mat-button [matTooltip]="'New User'" (click)="openDrawer()" #messagesOrigin>
     <mat-icon class="icon-size-6" [svgIcon]="'mat_outline:add'"></mat-icon>
-    <span class="text-md">Add</span>
+    <span class="text-md">Add Item</span>
 </button>
 
 <axiomaim-drawer class="z-999 w-3/4 min-w-3/4 sm:w-3/4 sm:min-w-3/4 mt-16 " fixed [mode]="'over'"
@@ -25,123 +25,76 @@
                 <form [formGroup]="itemForm">
                     <div class="mt-8">
                         <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                            <mat-label>Email</mat-label>
+                            <mat-label>SKU</mat-label>
                             <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                [svgIcon]="'mat_solid:email'"></mat-icon>
-                            <input matInput [formControlName]="'email'" [placeholder]="'Email'" [spellcheck]="false" />
+                                [svgIcon]="'mat_solid:airplane_ticket'"></mat-icon>
+                            <input matInput [formControlName]="'sku'" [placeholder]="'Email'" [spellcheck]="false" />
                         </mat-form-field>
                     </div>
 
-                    <!-- <div class="flex flex-wrap gap-2"> -->
+                    <div class="mt-8">
+                        <mat-form-field class="chip-list">
+                            <mat-label>Categories</mat-label>
+                            <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                [svgIcon]="'heroicons_solid:clipboard-document-list'"></mat-icon>
+                            <mat-chip-grid #chipGrid aria-label="Enter category">
+                                @for (category of categories(); track category) {
+                                <mat-chip-row (removed)="remove(category)" [editable]="true"
+                                    (edited)="edit(category, $event)"
+                                    [aria-description]="'press enter to edit ' + category.name">
+                                    <button matChipEdit [attr.aria-label]="'edit ' + category.name">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    {{category.name}}
+                                    <button matChipRemove [attr.aria-label]="'remove ' + category.name">
+                                        <mat-icon>cancel</mat-icon>
+                                    </button>
+                                </mat-chip-row>
+                                }
+                                <input placeholder="New category..." [matChipInputFor]="chipGrid"
+                                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                    [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event)" />
+                            </mat-chip-grid>
+                        </mat-form-field>
+                    </div>
                     <div class="mt-8">
                         <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
                             <mat-label>Name</mat-label>
                             <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-                            <input matInput [formControlName]="'name'" [placeholder]="'Customer Name'"
+                                [svgIcon]="'heroicons_solid:code-bracket-square'"></mat-icon>
+                            <input matInput [formControlName]="'name'" [placeholder]="'Item Name'"
                                 [spellcheck]="false" />
                         </mat-form-field>
                     </div>
                     <div class="mt-8">
-                        <address-lookup class="w-full" label="Address" [control]="itemForm.controls['address']"
-                            placeholder="Enter address">
-                        </address-lookup>
+                        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                            <mat-label>Description</mat-label>
+                            <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                [svgIcon]="'mat_solid:description'"></mat-icon>
+                            <textarea matInput rows="3" [formControlName]="'description'" [placeholder]="'Description'"
+                                [spellcheck]="false"></textarea>
+                        </mat-form-field>
                     </div>
-                    <div class="flex gap-2">
-                        <div class="w-1/2">
-                            <section class="example-section flex mt-8">
-                                <div class="w-2/5">
-                                    <mat-checkbox formControlName="house">House</mat-checkbox>
-                                </div>
-                                <div class="w-3/5">
-                                    <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                                        <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                            [svgIcon]="'heroicons_solid:currency-dollar'"></mat-icon>
-                                        <input matInput [formControlName]="'houseQuote'" [placeholder]="'House Quote'"
-                                            [spellcheck]="false" />
-                                    </mat-form-field>
-                                </div>
-                            </section>
-                        </div>
-                        <div class="w-1/2">
-                            <section class="example-section flex mt-8">
-                                <div class="w-2/5">
-                                    <mat-checkbox formControlName="driveway">Driveway</mat-checkbox>
-                                </div>
-                                <div class="w-3/5">
-                                    <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                                        <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                            [svgIcon]="'heroicons_solid:currency-dollar'"></mat-icon>
-                                        <input matInput [formControlName]="'drivewayQuote'"
-                                            [placeholder]="'Driveway Quote'" [spellcheck]="false" />
-                                    </mat-form-field>
-                                </div>
-                            </section>
-                        </div>
+                    <div class="mt-8">
+                        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                            <mat-label>Price</mat-label>
+                            <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                [svgIcon]="'heroicons_solid:currency-dollar'"></mat-icon>
+                            <input matInput [formControlName]="'price'" [placeholder]="'Price'" [spellcheck]="false" />
+                        </mat-form-field>
                     </div>
-                    <div class="flex gap-2">
-                        <div class="w-1/2">
-                            <section class="example-section flex mt-8">
-                                <div class="w-2/5">
-                                    <mat-checkbox formControlName="walkway">Walkeway</mat-checkbox>
-                                </div>
-                                <div class="w-3/5">
-                                    <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                                        <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                            [svgIcon]="'heroicons_solid:currency-dollar'"></mat-icon>
-                                        <input matInput [formControlName]="'walkwayQuote'"
-                                            [placeholder]="'Walkway Quote'" [spellcheck]="false" />
-                                    </mat-form-field>
-                                </div>
-                            </section>
-                        </div>
-                        <div class="w-1/2">
-                            <section class="example-section flex mt-8">
-                                <div class="w-2/5">
-                                    <mat-checkbox formControlName="fence">Fence</mat-checkbox>
-                                </div>
-                                <div class="w-3/5">
-                                    <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                                        <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                            [svgIcon]="'heroicons_solid:currency-dollar'"></mat-icon>
-                                        <input matInput [formControlName]="'fenceQuote'" [placeholder]="'Fence Quote'"
-                                            [spellcheck]="false" />
-                                    </mat-form-field>
-                                </div>
-                            </section>
-                        </div>
-                    </div>
-                    <div class="flex gap-2">
-                        <div class="w-1/2">
-                            <section class="example-section flex mt-8">
-                                <div class="w-2/5">
-                                    <mat-checkbox formControlName="deck">Deck</mat-checkbox>
-                                </div>
-                                <div class="w-3/5">
-                                    <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                                        <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                            [svgIcon]="'heroicons_solid:currency-dollar'"></mat-icon>
-                                        <input matInput [formControlName]="'deckQuote'" [placeholder]="'Deck Quote'"
-                                            [spellcheck]="false" />
-                                    </mat-form-field>
-                                </div>
-                            </section>
-                        </div>
-                        <div class="w-1/2">
-                            <section class="example-section flex mt-8">
-                                <div class="w-2/5">
-                                    <mat-checkbox formControlName="patio">Patio</mat-checkbox>
-                                </div>
-                                <div class="w-3/5">
-                                    <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                                        <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                            [svgIcon]="'heroicons_solid:currency-dollar'"></mat-icon>
-                                        <input matInput [formControlName]="'patioQuote'" [placeholder]="'Patio Quote'"
-                                            [spellcheck]="false" />
-                                    </mat-form-field>
-                                </div>
-                            </section>
-                        </div>
+
+                    <div class="mt-8">
+                        <mat-form-field class="item-type-select">
+                            <mat-label>Item Type</mat-label>
+                            <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                [svgIcon]="'heroicons_solid:ticket'"></mat-icon>
+                            <mat-select [formControlName]="'itemType'" name="itemType">
+                                @for (itemType of itemTypes; track itemType) {
+                                <mat-option [value]="itemType.value">{{itemType.viewValue}}</mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
                     </div>
 
                     <!-- </div> -->

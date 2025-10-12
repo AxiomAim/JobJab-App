@@ -41,6 +41,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MessagesV2Service } from '../messages-v2.service';
 import { MessagesAddItemComponent } from '../add-item/add-item.component';
 
+//SendClick
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getAuth } from 'firebase/auth';
 @Component({
     selector: 'messages-list',
     templateUrl: './list.component.html',
@@ -218,5 +221,27 @@ export class MessagesListComponent implements OnInit, OnDestroy {
      */
     trackByFn(index: number, item: any): any {
         return item.id || index;
+    }
+
+    ////SendClick////////
+    private functions = getFunctions();
+    private sendNotification = httpsCallable(this.functions, 'sendClickNotification');
+    private auth = getAuth();
+
+    async onSendClick() {
+        if (!this.auth.currentUser) {
+        console.error('User not signed in');
+        return;
+        }
+
+        try {
+        const result = await this.sendNotification({
+            token: 'device-fcm-token-here',  // Get from client registration
+            message: 'You just clicked to share this!',
+        });
+        console.log('Notification sent:', result.data);
+        } catch (error: any) {
+        console.error('Error:', error.code, error.message);
+        }
     }
 }

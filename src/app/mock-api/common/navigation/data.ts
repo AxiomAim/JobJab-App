@@ -343,6 +343,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         icon: 'heroicons_outline:home',
         children: [
             {
+                id: 'projects.items',
+                title: 'Items',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/projects/items',
+            },
+            {
                 id: 'projects.quotes',
                 title: 'Quotes',
                 type: 'basic',

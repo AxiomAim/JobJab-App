@@ -5,51 +5,54 @@ export class ItemModel implements BaseDto {
     constructor(
         id: string,
         orgId: string,
-        projectId: string,
-        item: number,
+        sort: number,
+        sku: string,
+        categories: string[],
         name: string,
         description: string,
         price: number,
-        priceType: string,
-        priceMeasure: string,
-        image: string,
+        itemType: string,
+        measure: string,
+        images: string[],
         discount: number,
-        cartCount: number,
-        categoryId: number,
+        quantity: number,
+        categoriesId: number,
         createdAt?: string,
         updatedAt?: string,
         deletedAt?: string,
         ) {
             this.id = id;
             this.orgId = orgId;
-            this.projectId = projectId;
-            this.item = item;
+            this.sort = sort;
+            this.sku = sku;
+            this.categories = categories;
             this.name = name;
             this.description = description;
             this.price = price;
-            this.priceType = priceType;
-            this.priceMeasure = priceMeasure;
-            this.image = image;
+            this.itemType = itemType;
+            this.measure = measure;
+            this.images = images;
             this.discount = discount;
-            this.cartCount = cartCount;
-            this.categoryId = categoryId;
+            this.quantity = quantity;
+            this.categoriesId = categoriesId;
             this.createdAt = createdAt;
             this.updatedAt = updatedAt;
             this.deletedAt = deletedAt;
     }
     public id: string;
     public orgId: string;
-    public projectId: string;
-    public item: number;
+    public sort: number;
+    public sku: string;
+    public categories: string[];
     public name: string;
     public description: string;
     public price: number;
-    public priceType: string;
-    public priceMeasure: string;
-    public image: string;
+    public itemType: string;
+    public measure: string;
+    public images: string[];
     public discount: number;
-    public cartCount: number;
-    public categoryId: number;
+    public quantity: number;
+    public categoriesId: number;
     public createdAt?: string;
     public updatedAt?: string;
     public deletedAt?: string;
@@ -60,17 +63,18 @@ export class ItemModel implements BaseDto {
         return {
             id: dto.id ? dto.id : '',
             orgId: dto.orgId ? dto.orgId : '',
-            projectId: dto.projectId ? dto.projectId : '',
-            item: dto.item ? dto.item : 0,
+            sort: dto.sort ? dto.sort : 0,
+            sku: dto.sku ? dto.sku : '',
+            categories: dto.categories ? dto.categories : [],
             name: dto.name ? dto.name : '',
             description: dto.description ? dto.description : '',
             price: dto.price ? dto.price : 0,
-            priceType: dto.priceType ? dto.priceType : '',
-            priceMeasure: dto.priceMeasure ? dto.priceMeasure : '',
-            image: dto.image ? dto.image : '',
+            itemType: dto.itemType ? dto.itemType : '',
+            measure: dto.measure ? dto.measure : '',
+            images: dto.images ? dto.images : [],
             discount: dto.discount ? dto.discount : 0,
-            cartCount: dto.cartCount ? dto.cartCount : 0,
-            categoryId: dto.categoryId ? dto.categoryId : 0,
+            quantity: dto.quantity ? dto.quantity : 0,
+            categoriesId: dto.categoriesId ? dto.categoriesId : 0,
             createdAt: dto.createdAt ? dto.createdAt : date,
             updatedAt: dto.updatedAt ? dto.updatedAt : date,
             deletedAt: dto.deletedAt ? dto.deletedAt : '',
@@ -82,17 +86,18 @@ export class ItemModel implements BaseDto {
         return {
             id: uuidv4().toString(),
             orgId: '',
-            projectId: '',
-            item: 0,
+            sort: 0,
+            sku: '',
+            categories: [],
             name: '',
             description: '',
             price: 0,
-            priceType: '',
-            priceMeasure: '',
-            image: '',
+            itemType: '',
+            measure: '',
+            images: [],
             discount: 0,
-            cartCount: 0,
-            categoryId: 0,
+            quantity: 0,
+            categoriesId: 0,
             createdAt: date,
             updatedAt: date,
             deletedAt: '',
@@ -104,17 +109,18 @@ export class ItemModel implements BaseDto {
 export interface Item extends BaseDto {
     id: string;
     orgId: string;
-    projectId: string;
-    item: number;
+    sort: number;
+    sku: string;
+    categories: string[];
     name: string;
     description: string;
     price: number;
-    priceType: string;
-    priceMeasure: string;
-    image: string;
+    itemType: string;
+    measure: string;
+    images: string[];
     discount: number;
-    cartCount: number;
-    categoryId: number;
+    quantity: number;
+    categoriesId: number;
     createdAt?: string;
     updatedAt?: string;
     deletedAt?: string;    

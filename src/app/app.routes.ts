@@ -121,6 +121,7 @@ export const appRoutes: Route[] = [
 
             // Projects
             {path: 'projects', children: [
+                {path: 'items', loadChildren: () => import('app/modules/axiomaim/projects/items/items.routes')},
                 {path: 'quotes', loadChildren: () => import('app/modules/axiomaim/projects/quotes/quotes.routes')},
                 {path: 'quotes-requests', loadChildren: () => import('app/modules/axiomaim/projects/quotes-requests/quotes-requests.routes')},
                 {path: 'project-teams', loadChildren: () => import('app/modules/axiomaim/projects/project-teams/project-teams.routes')},
