@@ -42,7 +42,7 @@ import { UserTimesheetsV2Service } from '../user-timesheets-v2.service';
 import { UserTimesheetsAddItemComponent } from '../add-item/add-item.component';
 
 @Component({
-    selector: 'users-list',
+    selector: 'user-timesheets-list',
     templateUrl: './list.component.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,30 +62,30 @@ import { UserTimesheetsAddItemComponent } from '../add-item/add-item.component';
         I18nPluralPipe,
         UserTimesheetsAddItemComponent
     ],
+
 })
-export class UsersListComponent implements OnInit, OnDestroy {
-    _usersV2Service = inject(UserTimesheetsV2Service);
+export class UserTimesheetsListComponent implements OnInit, OnDestroy {
+    UserTimesheetsV2Service = inject(UserTimesheetsV2Service);
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
 
-    private _users: BehaviorSubject<UserTimesheet[] | null> = new BehaviorSubject(
+    private _userTimesheets: BehaviorSubject<UserTimesheet[] | null> = new BehaviorSubject(
         null
     );
-    get users$(): Observable<UserTimesheet[]> {
-        return this._users.asObservable();
+    get userTimesheets$(): Observable<UserTimesheet[]> {
+        return this._userTimesheets.asObservable();
     }
 
-    private _user: BehaviorSubject<UserTimesheet | null> = new BehaviorSubject(
+    private _userTimesheet: BehaviorSubject<UserTimesheet | null> = new BehaviorSubject(
         null
     );
-    get user$(): Observable<UserTimesheet> {
-        return this._user.asObservable();
+    get userTimesheet$(): Observable<UserTimesheet> {
+        return this._userTimesheet.asObservable();
     }
 
-    userCount: number = 0;
-    usersTableColumns: string[] = ['name', 'email', 'phoneNumber', 'job'];
+    userTimsheetCount: number = 0;
     drawerMode: 'side' | 'over';
     searchInputControl: UntypedFormControl = new UntypedFormControl();
-    selectedUser: UserTimesheet;
+    selectedUserTimesheet: UserTimesheet;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -110,24 +110,24 @@ export class UsersListComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         // Get the users
-        this._users.next(this._usersV2Service.users());
-        this.users$
+        this._userTimesheets.next(this.UserTimesheetsV2Service.userTimesheets());
+        this.userTimesheets$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((users: UserTimesheet[]) => {
                 // Update the counts
-                this.userCount = users.length;
+                this.userTimsheetCount = users.length;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
 
         // Get the user
-        this._user.next(this._usersV2Service.user());
-        this.user$
+        this._userTimesheet.next(this.UserTimesheetsV2Service.userTimesheet());
+        this.userTimesheet$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((user: UserTimesheet) => {
                 // Update the selected user
-                this.selectedUser = user;
+                this.selectedUserTimesheet = user;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -139,18 +139,18 @@ export class UsersListComponent implements OnInit, OnDestroy {
                 takeUntil(this._unsubscribeAll),
                 switchMap((query) =>
                     // Search
-                    this._usersV2Service.search(query)
+                    this.UserTimesheetsV2Service.search(query)
                 )
             )
             .subscribe((resUsers) => {
-                this._users.next(resUsers);
+                this._userTimesheets.next(resUsers);
             });
 
         // Subscribe to MatDrawer opened change
         this.matDrawer.openedChange.subscribe((opened) => {
             if (!opened) {
                 // Remove the selected user when drawer closed
-                this.selectedUser = null;
+                this.selectedUserTimesheet = null;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();

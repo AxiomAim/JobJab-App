@@ -39,12 +39,11 @@ import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
 import { Tag } from 'app/core/models/tag.model';
 import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
-import { Country, UserTimesheet } from '../user-timesheets.model';
+import { UserTimesheet } from '../user-timesheets.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { UserRole } from '../../user-roles/user-roles.model';
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
 import { UserTimesheetsV2Service } from '../user-timesheets-v2.service';
-import { UserRolesV2Service } from '../../user-roles/user-roles-v2.service';
 
 
 interface PhonenumberType {
@@ -53,7 +52,7 @@ interface PhonenumberType {
   }
 
 @Component({
-    selector: 'users-details',
+    selector: 'user-timesheets-details',
     templateUrl: './details.component.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,9 +75,8 @@ interface PhonenumberType {
         SelectMultiComponent,
     ],
 })
-export class UsersDetailsComponent implements OnInit, OnDestroy {
-    _usersV2Service = inject(UserTimesheetsV2Service);
-    _userRolesV2Service = inject(UserRolesV2Service);
+export class UserTimesheetsDetailsComponent implements OnInit, OnDestroy {
+    _userTimesheetsV2Service = inject(UserTimesheetsV2Service);
     _axiomaimLoadingService = inject(AxiomaimLoadingService);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
     @ViewChild('tagsPanel') private _tagsPanel: TemplateRef<any>;
@@ -91,24 +89,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
     }
 
 
-    userRoles: UserRole[] = [];
-
-    private _countries: BehaviorSubject<Country[] | null> = new BehaviorSubject(
-        []
-    );
-    get countries$(): Observable<Country[]> {
-        return this._countries.asObservable();
-    }
-
-    countries: Country[];
-    
-    phonenumberTypes: PhonenumberType[] = [
-        {value: 'mobile', viewValue: 'Mobile'},
-        {value: 'work', viewValue: 'Work'},
-        {value: 'home', viewValue: 'Home'},
-        {value: 'other', viewValue: 'Other'},
-        ];
-    
+    userRoles: UserRole[] = [];    
 
 
     editMode: boolean = false;
@@ -147,10 +128,10 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        this.loginUser = this._usersV2Service.loginUser();
+        this.loginUser = this._userTimesheetsV2Service.loginUser();
         // this.organization = this._usersV2Service.organization();
-        this.users = this._usersV2Service.users();
-        this.user = this._usersV2Service.user();
+        this.users = this._userTimesheetsV2Service.userTimesheets();
+        this.user = this._userTimesheetsV2Service.userTimesheet();
         // this.userRoles = this._usersV2Service.userRoles();
         // Open the drawer
         this._usersListComponent.matDrawer.open();
@@ -158,13 +139,9 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
 
         // Create the user form
         this.userForm = this._formBuilder.group({
-            id: [''],
-            avatar: [null],
-            firstName: ['', [Validators.required]],
-            lastName: ['', [Validators.required]],
-            phoneNumbers: this._formBuilder.array([]),
-            address: [null],
-            activeUser:  [true, [Validators.required]],
+            dayAt: ['', [Validators.required]],
+            startAt: ['', [Validators.required]],
+            endAt: ['', [Validators.required]],
         });
 
         this._changeDetectorRef.markForCheck();
@@ -173,15 +150,6 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
         this.userForm.patchValue(this.user);
         // this._countries.next(this._usersV2Service.countries());
 
-        // Get the country telephone codes
-        this.countries$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((codes: Country[]) => {
-                this.countries = codes;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
     }
 
     /**
@@ -235,7 +203,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
         // const user = this.userForm.getRawValue();
 
         // Update the user on the server
-        this._usersV2Service
+        this._userTimesheetsV2Service
             .updateItem(this.user)
             .then(() => {
                 // Toggle the edit mode off
@@ -279,7 +247,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
                         : this.users[nextUserIndex].id;
 
                 // Delete the user
-                this._usersV2Service
+                this._userTimesheetsV2Service
                     .deleteItem(id)
                     .then((isDeleted) => {
                         // Return if the user wasn't deleted...
@@ -310,59 +278,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
-    /**
-     * Upload avatar
-     *
-     * @param fileList
-     */
-    uploadAvatar(event: any): void {
-        console.log('event', event.target.files[0])
-        this._axiomaimLoadingService.show()        
-        // this._usersV2Service.uploadAvatar(event.target.files[0], 'users').subscribe({
-        //     next: (response: any) => {
-        //         this._axiomaimLoadingService.hide();
-        //         console.log('uploadAvatar', response)
-        //         this.user.avatarPath = response.filePath;
-        //         this.user.avatarFile = response.fileName;
-        //         this.user.avatarType = response.fileType;
-        //         this.user.avatarUrl = response.fileUrl;
-        //         this.user.avatar = response.fileUrl;                
-        //         this._user.next(this.user);
-        //         console.log('user', this.user);
-        //     },
-        //     error: (error: any) => {
-        //         this._axiomaimLoadingService.hide();
-        //         console.error('error', error);
-        //     },
-        // });
-    }
 
-    /**
-     * Remove the avatar
-     */
-    removeAvatar(): void {
-        // Get the form control for 'avatar'
-        const avatarFormControl = this.userForm.get('avatar');
-
-        // Set the avatar as null
-        avatarFormControl.setValue(null);
-
-        // Set the file input value as null
-        this._avatarFileInput.nativeElement.value = null;
-
-        // Update the user
-        this.user.avatar = null;
-    }
-
-    onOptionSelected(data: any[]) {
-        console.log('onOptionSelected', data);
-        this.user.userRoles = data;
-        this._user.next(this.user);
-        // console.log('onOptionSelected', this.user);
-        // this.user$.subscribe((resUser: User) => {
-
-        // });
-    }
     /**
      * Open tags panel
      */
@@ -502,18 +418,6 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
     //     }
     // }
 
-
-        /**
-     * Get country info by iso code
-     *
-     * @param iso
-     */
-        getCountryByIso(iso: string): Country {
-            if(iso) {
-                return this.countries.find((country) => country.iso === iso);
-    
-            }
-        }
 
         
     /**

@@ -1,41 +1,41 @@
 import { createInjectable } from "ngxtension/create-injectable";
 import { inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
-import { UserTimesheetsDataService } from "./user-timesheets-data.service";
-import { UserTimesheet } from "./user-timesheets.model";
+import { NotesDataService } from "./notes-data.service";
+import { Note } from "./notes.model";
 import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
 
-export const UserTimesheetsV2ApiService = createInjectable(() => {
-  const _userTimesheetsDataService = inject(UserTimesheetsDataService);
+export const NotesV2ApiService = createInjectable(() => {
+  const _notesDataService = inject(NotesDataService);
   const loginUser = inject(FirebaseAuthV2Service).loginUser();
   
-  const getAll = async ():Promise<UserTimesheet[]> => {
-    const response$ = _userTimesheetsDataService.getAll(loginUser.orgId);
+  const getAll = async ():Promise<Note[]> => {
+    const response$ = _notesDataService.getAll(loginUser.orgId);
     const response: any = await firstValueFrom(response$)
     return response;
   };
 
-  const getItem = async (id):Promise<UserTimesheet> => {
-    const response$ = _userTimesheetsDataService.getItem(id);
+  const getItem = async (id):Promise<Note> => {
+    const response$ = _notesDataService.getItem(id);
     const response = await firstValueFrom(response$)
     return response;
   };
 
-  const createItem = async (data: UserTimesheet):Promise<UserTimesheet> => {
+  const createItem = async (data: Note):Promise<Note> => {
     data.orgId = loginUser.orgId;
-    const response$ = _userTimesheetsDataService.createItem(data);
+    const response$ = _notesDataService.createItem(data);
     const response: any = await firstValueFrom(response$)
     return response.data;
   };
 
-  const updateItem = async (data: UserTimesheet):Promise<UserTimesheet> => {
-    const response$ = _userTimesheetsDataService.updateItem(data);
+  const updateItem = async (data: Note):Promise<Note> => {
+    const response$ = _notesDataService.updateItem(data);
     const response: any = await firstValueFrom(response$)
     return response.data;
   };
 
   const deleteItem = async (id: string):Promise<object> => {
-    const response$ = _userTimesheetsDataService.deleteItem(id);
+    const response$ = _notesDataService.deleteItem(id);
     const response: any = await firstValueFrom(response$)
     return response.data;
   };

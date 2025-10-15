@@ -111,6 +111,7 @@ export const appRoutes: Route[] = [
                 {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
                 {path: 'user-roles', loadChildren: () => import('app/modules/axiomaim/administration/user-roles/user-roles.routes')},
                 {path: 'users', loadChildren: () => import('app/modules/axiomaim/administration/users/users.routes')},
+                {path: 'user-timesheets', loadChildren: () => import('app/modules/axiomaim/administration/user-timesheets/user-timesheets.routes')},
                 {path: 'products', loadChildren: () => import('app/modules/axiomaim/administration/products/products.routes')},
                 {path: 'jobs', loadChildren: () => import('app/modules/axiomaim/administration/jobs/jobs.routes')},
                 {path: 'invoices', loadChildren: () => import('app/modules/axiomaim/administration/invoices/invoices.routes')},

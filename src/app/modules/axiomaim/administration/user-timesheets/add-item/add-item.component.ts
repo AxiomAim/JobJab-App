@@ -1,5 +1,5 @@
 import { NgClass, NgFor, NgForOf, NgIf } from '@angular/common';
-import { Component, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild, ViewEncapsulation, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild, ViewEncapsulation, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -26,9 +26,9 @@ import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-m
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
 import { UserTimesheet } from '../user-timesheets.model';
-import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
+import {provideNativeDateAdapter} from '@angular/material/core';
 import { SelectUserComponent } from 'app/layout/common/select-user/select-user.component';
-
+import {MatTimepicker, MatTimepickerModule} from '@angular/material/timepicker';
 @Component({
     selector: 'user-timesheets-add-item',
     templateUrl: './add-item.component.html',
@@ -49,6 +49,7 @@ import { SelectUserComponent } from 'app/layout/common/select-user/select-user.c
         `,
     ],
     encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [
         MatIconModule,
@@ -75,7 +76,8 @@ import { SelectUserComponent } from 'app/layout/common/select-user/select-user.c
         SelectUserComponent,
         MatTimepickerModule,
 
-    ]
+    ],
+    providers: [provideNativeDateAdapter()],
 })
 export class UserTimesheetsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
@@ -100,6 +102,10 @@ export class UserTimesheetsAddItemComponent implements OnInit, AfterViewInit, On
     site_account_id: any[] = [];
     isLoading = signal<boolean>(false);
 
+    startTimeControl = new FormControl(); // Optional: For reactive forms
+    endTimeControl = new FormControl(); // Optional: For reactive forms
+    @ViewChild('startTimePicker') startTimePicker!: MatTimepicker<Date>;
+    @ViewChild('endTimePicker') endTimePicker!: MatTimepicker<Date>;
     /**
      * Constructor
      */
@@ -118,8 +124,17 @@ export class UserTimesheetsAddItemComponent implements OnInit, AfterViewInit, On
     /**
      * On init
      */
-    ngOnInit(): void {
+    async ngOnInit() {
+        // Optional: Set initial time
+        const initialTime = new Date();
+        initialTime.setHours(14, 30, 0); // 2:30 PM
+        // this.startTime.setValue(initialTime);
+        // this.endTime.setValue(initialTime);
         this.setFormGroup();
+        // this.startTimePicker.selected.subscribe(startTime => {
+        //     });
+        // this.endTimePicker.selected.subscribe(endTime => {
+        //     });
     }
 
     /**
@@ -244,7 +259,7 @@ export class UserTimesheetsAddItemComponent implements OnInit, AfterViewInit, On
 
     }
               
-    selectedUser(event: any) {
+    onUserSelected(event: any) {
         console.log('selectedUser event', event);
         if (event) {
             this.userForm.patchValue({ userId: event.id });

@@ -6,7 +6,7 @@ import {
     provideAppInitializer,
 } from '@angular/core';
 import { LuxonDateAdapter } from '@angular/material-luxon-adapter';
-import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, provideNativeDateAdapter } from '@angular/material/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideAxiomaim } from '@axiomaim';
@@ -82,6 +82,7 @@ export const appConfig: ApplicationConfig = {
         // Axiomaim
         provideAuth(),
         provideIcons(),
+        provideNativeDateAdapter(),
         provideAxiomaim({
             mockApi: {
                 delay: 0,

@@ -238,6 +238,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 link: '/administration/users',
             },
             {
+                id: 'administration.user-timesheets',
+                title: 'User Timesheets',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/administration/user-timesheets',
+            },
+            {
                 id: 'administration.user-roles',
                 title: 'User Roles',
                 type: 'basic',

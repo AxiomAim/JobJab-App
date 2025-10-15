@@ -5,11 +5,11 @@ import {
     RouterStateSnapshot,
     Routes,
 } from '@angular/router';
-import { UsersComponent } from 'app/modules/axiomaim/administration/users/users.component';
-import { UsersDetailsComponent } from 'app/modules/axiomaim/administration/users/details/details.component';
-import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
 import { of } from 'rxjs';
 import { UserTimesheetsV2Service } from './user-timesheets-v2.service';
+import { UserTimesheetsDetailsComponent } from './details/details.component';
+import { UserTimesheetsComponent } from './user-timesheets.component';
+import { UserTimesheetsListComponent } from './list/list.component';
 
 
 /**
@@ -50,7 +50,7 @@ const userResolver = (
  * @param nextState
  */
 const canDeactivateUsersDetails = (
-    component: UsersDetailsComponent,
+    component: UserTimesheetsDetailsComponent,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
     nextState: RouterStateSnapshot
@@ -82,20 +82,20 @@ const canDeactivateUsersDetails = (
 export default [
     {
         path: '',
-        component: UsersComponent,
+        component: UserTimesheetsComponent,
         resolve: {
         },
         children: [
             {
                 path: '',
-                component: UsersListComponent,
+                component: UserTimesheetsListComponent,
                 resolve: {
                     users: () => inject(UserTimesheetsV2Service).getAll(),
                 },
                 children: [
                     {
                         path: ':id',
-                        component: UsersDetailsComponent,
+                        component: UserTimesheetsDetailsComponent,
                         resolve: {
                             // userRoles: () => inject(UsersV2Service).getUserRoles(),
                             user: userResolver,

@@ -14,7 +14,7 @@
             <div class="ml-3 text-2xl font-semibold tracking-tight">
                 Add Item
             </div>
-            <button class="ml-auto" mat-icon-button (click)="close()" [disabled]="isLoading()">
+            <button class="ml-auto mr-10" mat-icon-button (click)="close()" [disabled]="isLoading()">
                 <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
             </button>
         </div>
@@ -24,7 +24,7 @@
             <div class="w-full max-w-3xl">
                 <form [formGroup]="userForm">
                     <div class="mt-8">
-                        <select-user [userSelected]="selectedUser(event$)"></select-user>
+                        <select-user (userSelected)="onUserSelected($event)"></select-user>
                     </div>
 
                     <div class="mt-8">
@@ -39,23 +39,35 @@
                         </mat-form-field>
                     </div>
 
-                    <!-- <div class="flex flex-wrap gap-2"> -->
+
                     <div class="mt-8">
-                        <mat-form-field>
-                            <mat-label>Start time</mat-label>
-                            <input matInput [formControlName]="'startAt'" [matTimepicker]="picker">
-                            <mat-timepicker-toggle matIconSuffix [for]="picker" />
-                            <mat-timepicker #picker />
+                        <mat-form-field appearance="fill">
+                            <mat-label>Start Time</mat-label>
+                            <input matInput [matTimepicker]="startTimePicker" [formControl]="startTimeControl"
+                                placeholder="HH:MM">
+                            <mat-timepicker-toggle matSuffix [for]="startTimePicker"></mat-timepicker-toggle>
+                            <mat-timepicker #startTimePicker [interval]="'30m'"></mat-timepicker>
                         </mat-form-field>
                     </div>
+
                     <div class="mt-8">
+                        <mat-form-field appearance="fill">
+                            <mat-label>End Time</mat-label>
+                            <input matInput [matTimepicker]="endTimePicker" [formControl]="endTimeControl"
+                                placeholder="HH:MM">
+                            <mat-timepicker-toggle matSuffix [for]="endTimePicker"></mat-timepicker-toggle>
+                            <mat-timepicker #endTimePicker [interval]="'30m'"></mat-timepicker>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- <div class="mt-8">
                         <mat-form-field>
                             <mat-label>End time</mat-label>
                             <input matInput [formControlName]="'endAt'" [matTimepicker]="picker">
                             <mat-timepicker-toggle matIconSuffix [for]="picker" />
                             <mat-timepicker #picker />
                         </mat-form-field>
-                    </div>
+                    </div> -->
                     <!-- </div> -->
                     <div class="mt-8">
                         <!-- Actions -->

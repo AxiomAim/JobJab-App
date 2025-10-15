@@ -14,19 +14,19 @@
                     <!-- Title -->
                     <div>
                         <div class="text-4xl font-extrabold leading-none tracking-tight">
-                            Users
+                            User Timesheets
                         </div>
                         <div class="text-secondary ml-0.5 font-medium">
-                            @if (userCount > 0) {
-                            {{ userCount }}
+                            @if (userTimsheetCount > 0) {
+                            {{ userTimsheetCount }}
                             }
                             {{
-                            userCount
+                            userTimsheetCount
                             | i18nPlural
                             : {
-                            '=0': 'No users',
-                            '=1': 'user',
-                            other: 'users',
+                            '=0': 'No userTimesheets',
+                            '=1': 'userTimesheet',
+                            other: 'userTimesheets',
                             }
                             }}
                         </div>
@@ -42,11 +42,11 @@
                                         'heroicons_solid:magnifying-glass'
                                     "></mat-icon>
                                 <input matInput [formControl]="searchInputControl" [autocomplete]="'off'"
-                                    [placeholder]="'Search users'" />
+                                    [placeholder]="'Search userTimesheets'" />
                             </mat-form-field>
                         </div>
-                        <!-- Add user button -->
-                        <users-add-item></users-add-item>
+                        <!-- Add userTimesheet button -->
+                        <user-timesheets-add-item></user-timesheets-add-item>
                         <!-- <button class="ml-4" mat-button [color]="'primary'" (click)="openComposeDialog()">
                             <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
                             <span class="ml-2 mr-1">Add</span>
@@ -62,62 +62,62 @@
 
                 <!-- Users list -->
                 <div class="relative">
-                    @if (users$ | async; as users) {
-                    @if (users.length) {
+                    @if (userTimesheets$ | async; as userTimesheets) {
+                    @if (userTimesheets.length) {
                     @for (
-                    user of users;
-                    track trackByFn(i, user);
+                    userTimesheet of userTimesheets;
+                    track trackByFn(i, userTimesheet);
                     let i = $index
                     ) {
                     <!-- Group -->
                     <!-- @if (
                     i === 0 ||
-                    user.firstName.charAt(0) !==
-                    users[i - 1].firstName.charAt(0)
+                    userTimesheet.firstName.charAt(0) !==
+                    userTimesheets[i - 1].firstName.charAt(0)
                     ) {
                     <div
                         class="text-secondary sticky top-0 z-10 -mt-px border-b border-t bg-gray-50 px-6 py-1 font-medium uppercase dark:bg-gray-900 md:px-8">
-                        {{ user.firstName.charAt(0) }}
+                        {{ userTimesheet.firstName.charAt(0) }}
                     </div>
                     } -->
                     <!-- User -->
                     <a class="z-20 flex cursor-pointer items-center border-b px-6 py-4 md:px-8" [ngClass]="{
                                         'dark:hover:bg-hover hover:bg-gray-100':
-                                            !selectedUser ||
-                                            selectedUser.id !== user.id,
+                                            !selectedUserTimesheet ||
+                                            selectedUserTimesheet.id !== userTimesheet.id,
                                         'bg-primary-50 dark:bg-hover':
-                                            selectedUser &&
-                                            selectedUser.id === user.id,
-                                    }" [routerLink]="['./', user.id]">
+                                            selectedUserTimesheet &&
+                                            selectedUserTimesheet.id === userTimesheet.id,
+                                    }" [routerLink]="['./', userTimesheet.id]">
                         <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
-                            @if (user.avatar) {
-                            <img class="h-full w-full object-cover" [src]="user.avatar" alt="User avatar" />
+                            @if (userTimesheet.avatar) {
+                            <img class="h-full w-full object-cover" [src]="userTimesheet.avatar" alt="User avatar" />
                             }
-                            @if (!user.avatar) {
+                            @if (!userTimesheet.avatar) {
                             <div class="flex h-full w-full items-center justify-center rounded-full  text-lg uppercase text-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                                [ngClass]="user.activeUser ? 'bg-green-200' : 'bg-gray-200'">
-                                {{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0) }}
+                                [ngClass]="userTimesheet.activeUser ? 'bg-green-200' : 'bg-gray-200'">
+                                {{ userTimesheet.firstName?.charAt(0) }}{{ userTimesheet.lastName?.charAt(0) }}
                             </div>
                             }
                         </div>
                         <div class="ml-4 min-w-0">
                             <div class="truncate font-medium leading-5">
-                                {{ user.displayName }}
+                                {{ userTimesheet.displayName }}
                             </div>
                             <div class="text-secondary truncate leading-5">
-                                {{ user.email }}
+                                {{ userTimesheet.email }}
                             </div>
                         </div>
                     </a>
                     }
                     } @else {
                     <div class="border-t p-8 text-center text-4xl font-semibold tracking-tight sm:p-16">
-                        There are no users!
+                        There are no userTimesheets!
                     </div>
                     }
                     }
 
-                    <!-- No users -->
+                    <!-- No userTimesheets -->
                 </div>
             </div>
         </mat-drawer-content>

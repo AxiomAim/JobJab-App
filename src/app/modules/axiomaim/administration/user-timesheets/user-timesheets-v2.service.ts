@@ -6,58 +6,58 @@ import { UserTimesheet } from "./user-timesheets.model";
 
 export const UserTimesheetsV2Service = createInjectable(() => {
   const _router = inject(Router);
-  const _usersV2ApiService = inject(UserTimesheetsV2ApiService);
-  const allUsers = signal<UserTimesheet[] | null>(null);
-  const users = signal<UserTimesheet[] | null>(null);
-  const user = signal<UserTimesheet | null>(null);
+  const _userTimesheetsV2ApiService = inject(UserTimesheetsV2ApiService);
+  const allUserTimesheets = signal<UserTimesheet[] | null>(null);
+  const userTimesheets = signal<UserTimesheet[] | null>(null);
+  const userTimesheet = signal<UserTimesheet | null>(null);
   const loginUser = signal<UserTimesheet | null>(null);
 
   const getAll = async ():Promise<UserTimesheet[]> => {
-    const response = await _usersV2ApiService.getAll();
-    allUsers.set(response);
-    users.set(response);
+    const response = await _userTimesheetsV2ApiService.getAll();
+    allUserTimesheets.set(response);
+    userTimesheets.set(response);
     return response;
   };
 
   const getItem = async (oid: string): Promise<UserTimesheet> => {
-    const response = await _usersV2ApiService.getItem(oid);
-    user.set(response);
+    const response = await _userTimesheetsV2ApiService.getItem(oid);
+    userTimesheet.set(response);
     return response;
   };
 
   const createItem = async (data: UserTimesheet): Promise<UserTimesheet> => {
-    const response = await _usersV2ApiService.createItem(data);
-    user.set(response);
+    const response = await _userTimesheetsV2ApiService.createItem(data);
+    userTimesheet.set(response);
     return response;
   };
 
   const updateItem = async (data: UserTimesheet): Promise<UserTimesheet> => {
-    const response = await _usersV2ApiService.updateItem(data);
+    const response = await _userTimesheetsV2ApiService.updateItem(data);
     return response;
   };
 
   const deleteItem = async (oid: string): Promise<any> => {
-    const response = await _usersV2ApiService.deleteItem(oid);
-    user.set(null);
+    const response = await _userTimesheetsV2ApiService.deleteItem(oid);
+    userTimesheet.set(null);
     return response;
   };
 
   const setUser = async (thisUser: UserTimesheet): Promise<UserTimesheet> => {
-    user.set(thisUser);
-    return user();
+    userTimesheet.set(thisUser);
+    return userTimesheet();
   };
   
 
   const search = async (query: string): Promise<any[]> => {
     try {
       // const response: any = await _participantsV2ApiService.updateParticipantItem(data);
-      let searchResults = allUsers().filter(
+      let searchResults = allUserTimesheets().filter(
         (searchResults: any) =>
           searchResults.name &&
         searchResults.name.toLowerCase().includes(query.toLowerCase())
       );
       searchResults.sort((a: any, b: any) => a.name.localeCompare(b.name));
-      users.set(searchResults);
+      userTimesheets.set(searchResults);
       return searchResults;
     }
     catch (error) {
@@ -67,9 +67,9 @@ export const UserTimesheetsV2Service = createInjectable(() => {
   };
 
   return {
-    users: computed(() => users()),
-    allUsers: computed(() => allUsers()),
-    user: computed(() => user()),
+    userTimesheets: computed(() => userTimesheets()),
+    allUserTimesheets: computed(() => allUserTimesheets()),
+    userTimesheet: computed(() => userTimesheet()),
     loginUser: computed(() => loginUser()),
     getAll,
     getItem,
