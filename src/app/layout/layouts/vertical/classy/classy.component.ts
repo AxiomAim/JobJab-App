@@ -23,7 +23,6 @@ import { Subject, takeUntil } from 'rxjs';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { CustomersMenuComponent } from 'app/layout/common/customers-menu/customers-menu.component';
-import { QuotesDetailsComponent } from 'app/modules/axiomaim/projects/quotes/details/details.component';
 import { QuotesMenuComponent } from 'app/layout/common/quotes-menu/quotes-menu.component';
 import { OrganizationComponent } from 'app/layout/common/organization/organization.component';
 import { AddItemComponent } from 'app/layout/common/add-item/add-item.component';
