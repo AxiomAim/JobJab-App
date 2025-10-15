@@ -12,7 +12,7 @@ import {
   query, 
   WhereFilterOp
 } from '@angular/fire/firestore';
-import { UserRole } from './user-roles.model';
+import { Module } from './modules.model';
 import { FirestoreQuery, FirestoreV2Service } from 'app/core/auth-firebase/firestore-v2.service';
 
 @Injectable(
@@ -20,20 +20,20 @@ import { FirestoreQuery, FirestoreV2Service } from 'app/core/auth-firebase/fires
         providedIn: 'root',
     }
 )
-export class UserRolesDataService extends BaseDataService<UserRole> {
+export class ModulesDataService extends BaseDataService<Module> {
     _firestore = inject(FirestoreV2Service)
 
     constructor(
       public firestore: Firestore
 
     ) {
-        super('user-roles');
+        super('modules');
     }
     
-    public getAll(orgId: string): Observable<UserRole[]> {
+    public getAll(orgId: string): Observable<Module[]> {
         return  this._firestore.getAll(orgId, this.baseCollection);
     }
-    public getItem(id: string): Observable<UserRole> {
+    public getItem(id: string): Observable<Module> {
         return this._firestore.getItem(this.baseCollection, id);
     }
 
@@ -41,25 +41,25 @@ export class UserRolesDataService extends BaseDataService<UserRole> {
     //     return this._firestore.updateItem<Item>(this.baseCollection, data.id, data);
     // }
     
-    public updateItem(data: Partial<UserRole>): Observable<UserRole> {
+    public updateItem(data: Partial<Module>): Observable<Module> {
         // Assuming 'id' is the primary key
         const { id, ...updateData } = data; 
         // Only update if there are actual changes
         if (Object.keys(updateData).length === 0) {
-          return of(data as UserRole); // Or throw an error if this shouldn't happen
+          return of(data as Module); // Or throw an error if this shouldn't happen
         }
       
-        return this._firestore.updateItem<UserRole>(this.baseCollection, id, updateData);
+        return this._firestore.updateItem<Module>(this.baseCollection, id, updateData);
       }
       
     // public deleteItem(id: string): Observable<Item> {
     //     return this._firestore.deleteItem(this.baseCollection, id);
     // }
 
-    public deleteItem(id: string): Observable<UserRole> {
+    public deleteItem(id: string): Observable<Module> {
       // 1. Fetch the document before deleting
       return this._firestore.getItem(this.baseCollection, id).pipe(
-        map((item) => item as UserRole),
+        map((item) => item as Module),
         switchMap((document) => {
           if (document) { 
             // 2. Delete the document if it exists
@@ -78,7 +78,7 @@ export class UserRolesDataService extends BaseDataService<UserRole> {
     //     return this._firestore.createItem<Item>(this.baseCollection, data);
     // }
 
-    public createItem(data: UserRole): Observable<UserRole> {
+    public createItem(data: Module): Observable<Module> {
         return this._firestore.createItem(this.baseCollection, data).pipe(take(1),
           tap((createdProduct) => { 
             console.log('Item created successfully:', createdProduct); 
@@ -91,21 +91,21 @@ export class UserRolesDataService extends BaseDataService<UserRole> {
         );
       }
 
-    public getQuery(fieldName: string, operator: WhereFilterOp, value: string): Observable<UserRole[]> {
+    public getQuery(fieldName: string, operator: WhereFilterOp, value: string): Observable<Module[]> {
         return this._firestore.getQuery(this.baseCollection, fieldName, operator, value);
     }
 
-    public bulkCreate(data: Partial<UserRole>[]): Observable<UserRole[]> { 
-      return this._firestore.bulkCreate<UserRole>(this.baseCollection, data as UserRole[]); 
+    public bulkCreate(data: Partial<Module>[]): Observable<Module[]> { 
+      return this._firestore.bulkCreate<Module>(this.baseCollection, data as Module[]); 
     }
 
-    public getQueryWhereclause(queries: FirestoreQuery[]): Observable<UserRole[]> {
-      return this._firestore.getQueryWhereclause<UserRole>(this.baseCollection, queries);
+    public getQueryWhereclause(queries: FirestoreQuery[]): Observable<Module[]> {
+      return this._firestore.getQueryWhereclause<Module>(this.baseCollection, queries);
   }
 
 
-    public bulkUpdate(data: Partial<UserRole>[]): Observable<UserRole[]> { 
-      return this._firestore.bulkUpdate<UserRole>(this.baseCollection, data as UserRole[]); 
+    public bulkUpdate(data: Partial<Module>[]): Observable<Module[]> { 
+      return this._firestore.bulkUpdate<Module>(this.baseCollection, data as Module[]); 
     }
 
     public bulkDelete(ids: string[]) { 
@@ -122,11 +122,11 @@ export class UserRolesDataService extends BaseDataService<UserRole> {
    */
     public getPaged(
       pageSize: number,
-      startAfterDoc?: UserRole,
+      startAfterDoc?: Module,
       orderByField?: string,
       orderByDirection: 'asc' | 'desc' = 'asc'
-    ): Observable<{ data: UserRole[]; lastDoc: UserRole | null }> {
-      return new Observable<{ data: UserRole[]; lastDoc: UserRole | null }>((observer) => {
+    ): Observable<{ data: Module[]; lastDoc: Module | null }> {
+      return new Observable<{ data: Module[]; lastDoc: Module | null }>((observer) => {
         const collectionRef = collection(this.firestore, this.baseCollection);
         let q = query(collectionRef, limit(pageSize));
   
@@ -140,12 +140,12 @@ export class UserRolesDataService extends BaseDataService<UserRole> {
   
         getDocs(q)
           .then((querySnapshot) => {
-            const data: UserRole[] = [];
-            let lastDoc: UserRole | null = null;
+            const data: Module[] = [];
+            let lastDoc: Module | null = null;
   
             querySnapshot.forEach((doc) => {
-              data.push(doc.data() as UserRole);
-              lastDoc = doc.data() as UserRole; // Get the last document for next page
+              data.push(doc.data() as Module);
+              lastDoc = doc.data() as Module; // Get the last document for next page
             });
   
             observer.next({ data, lastDoc });

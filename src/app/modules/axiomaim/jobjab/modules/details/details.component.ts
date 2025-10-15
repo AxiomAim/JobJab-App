@@ -38,12 +38,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
 import { Tag } from 'app/core/models/tag.model';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
-import { UserRole } from '../user-roles.model';
+import { Module } from '../modules.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
-import { UserRolesV2Service } from '../user-roles-v2.service';
+import { ModulesV2Service } from '../modules-v2.service';
 import { User } from 'app/core/user/user.types';
-import { UserRolesListComponent } from '../list/list.component';
+import { ModulesListComponent } from '../list/list.component';
 
 
 interface PhonenumberType {
@@ -52,7 +52,7 @@ interface PhonenumberType {
   }
 
 @Component({
-    selector: 'user-roles-details',
+    selector: 'modules-details',
     templateUrl: './details.component.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -74,17 +74,17 @@ interface PhonenumberType {
         TextFieldModule,
     ],
 })
-export class UserRolesDetailsComponent implements OnInit, OnDestroy {
-    _userRolesV2Service = inject(UserRolesV2Service);
+export class ModulesDetailsComponent implements OnInit, OnDestroy {
+    _modulesV2Service = inject(ModulesV2Service);
     _axiomaimLoadingService = inject(AxiomaimLoadingService);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
     @ViewChild('tagsPanel') private _tagsPanel: TemplateRef<any>;
     @ViewChild('tagsPanelOrigin') private _tagsPanelOrigin: ElementRef;
-    private _userRole: BehaviorSubject<UserRole | null> = new BehaviorSubject(
+    private _module: BehaviorSubject<Module | null> = new BehaviorSubject(
         null
     );
-    get userRole$(): Observable<UserRole> {
-        return this._userRole.asObservable();
+    get module$(): Observable<Module> {
+        return this._module.asObservable();
     }
 
 
@@ -92,9 +92,9 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
     tags: Tag[];
     tagsEditMode: boolean = false;
     filteredTags: Tag[];
-    userRole: UserRole;
-    userRoleForm: UntypedFormGroup;
-    userRoles: UserRole[];
+    module: Module;
+    moduleForm: UntypedFormGroup;
+    modules: Module[];
     private _tagsPanelOverlayRef: OverlayRef;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -108,7 +108,7 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
     constructor(
         private _activatedRoute: ActivatedRoute,
         private _changeDetectorRef: ChangeDetectorRef,
-        private _userRolesListComponent: UserRolesListComponent,
+        private _modulesListComponent: ModulesListComponent,
         private _formBuilder: UntypedFormBuilder,
         private _axiomaimConfirmationService: AxiomaimConfirmationService,
         private _renderer2: Renderer2,
@@ -125,22 +125,22 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        this.userRoles = this._userRolesV2Service.userRoles();
-        this.userRole = this._userRolesV2Service.userRole();
+        this.modules = this._modulesV2Service.modules();
+        this.module = this._modulesV2Service.module();
         // Open the drawer
-        this._userRolesListComponent.matDrawer.open();
+        this._modulesListComponent.matDrawer.open();
         const phonePattern = "^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"; 
 
-        // Create the userRole form
-        this.userRoleForm = this._formBuilder.group({
+        // Create the module form
+        this.moduleForm = this._formBuilder.group({
             name: ['', [Validators.required]],
             description: ['', [Validators.required]],
         });
 
         this._changeDetectorRef.markForCheck();
 
-        this._userRolesListComponent.matDrawer.open();
-        this.userRoleForm.patchValue(this.userRole);
+        this._modulesListComponent.matDrawer.open();
+        this.moduleForm.patchValue(this.module);
 
     }
 
@@ -166,12 +166,12 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
      * Close the drawer
      */
     closeDrawer(): Promise<MatDrawerToggleResult> {
-        return this._userRolesListComponent.matDrawer.close();
+        return this._modulesListComponent.matDrawer.close();
     }
 
     close(): void {
         this.editMode = false;
-        this.userRoleForm.patchValue(this.userRole);
+        this.moduleForm.patchValue(this.module);
     }
 
     /**
@@ -191,17 +191,17 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Update the userRole
+     * Update the module
      */
     updateItem(): void {        
-        this.userRole = {...this._userRole.getValue(), ...this.userRoleForm.getRawValue()};
-        console.log('userRole', this.userRole);
-        // Get the userRole object
-        // const userRole = this.userRoleForm.getRawValue();
+        this.module = {...this._module.getValue(), ...this.moduleForm.getRawValue()};
+        console.log('module', this.module);
+        // Get the module object
+        // const module = this.moduleForm.getRawValue();
 
-        // Update the userRole on the server
-        this._userRolesV2Service
-            .updateItem(this.userRole)
+        // Update the module on the server
+        this._modulesV2Service
+            .updateItem(this.module)
             .then(() => {
                 // Toggle the edit mode off
                 this.toggleEditMode(false);
@@ -209,14 +209,14 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Delete the userRole
+     * Delete the module
      */
     deleteProduct(): void {
         // Open the confirmation dialog
         const confirmation = this._axiomaimConfirmationService.open({
-            title: 'Delete userRole',
+            title: 'Delete module',
             message:
-                'Are you sure you want to delete this userRole? This action cannot be undone!',
+                'Are you sure you want to delete this module? This action cannot be undone!',
             actions: {
                 confirm: {
                     label: 'Delete',
@@ -228,31 +228,31 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
         confirmation.afterClosed().subscribe((result) => {
             // If the confirm button pressed...
             if (result === 'confirmed') {
-                // Get the current userRole's id
-                const id = this.userRole.id;
+                // Get the current module's id
+                const id = this.module.id;
 
-                // Get the next/previous userRole's id
-                const currentProductIndex = this.userRoles.findIndex(
+                // Get the next/previous module's id
+                const currentProductIndex = this.modules.findIndex(
                     (item) => item.id === id
                 );
                 const nextProductIndex =
                     currentProductIndex +
-                    (currentProductIndex === this.userRoles.length - 1 ? -1 : 1);
+                    (currentProductIndex === this.modules.length - 1 ? -1 : 1);
                 const nextProductId =
-                    this.userRoles.length === 1 && this.userRoles[0].id === id
+                    this.modules.length === 1 && this.modules[0].id === id
                         ? null
-                        : this.userRoles[nextProductIndex].id;
+                        : this.modules[nextProductIndex].id;
 
-                // Delete the userRole
-                this._userRolesV2Service
+                // Delete the module
+                this._modulesV2Service
                     .deleteItem(id)
                     .then((isDeleted) => {
-                        // Return if the userRole wasn't deleted...
+                        // Return if the module wasn't deleted...
                         if (!isDeleted) {
                             return;
                         }
 
-                        // Navigate to the next userRole if available
+                        // Navigate to the next module if available
                         if (nextProductId) {
                             this._router.navigate(['../', nextProductId], {
                                 relativeTo: this._activatedRoute,
@@ -283,17 +283,17 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
     uploadAvatar(event: any): void {
         console.log('event', event.target.files[0])
         this._axiomaimLoadingService.show()        
-        // this._userRolesV2Service.uploadAvatar(event.target.files[0], 'userRoles').subscribe({
+        // this._modulesV2Service.uploadAvatar(event.target.files[0], 'modules').subscribe({
         //     next: (response: any) => {
         //         this._axiomaimLoadingService.hide();
         //         console.log('uploadAvatar', response)
-        //         this.userRole.avatarPath = response.filePath;
-        //         this.userRole.avatarFile = response.fileName;
-        //         this.userRole.avatarType = response.fileType;
-        //         this.userRole.avatarUrl = response.fileUrl;
-        //         this.userRole.avatar = response.fileUrl;                
-        //         this._userRole.next(this.userRole);
-        //         console.log('userRole', this.userRole);
+        //         this.module.avatarPath = response.filePath;
+        //         this.module.avatarFile = response.fileName;
+        //         this.module.avatarType = response.fileType;
+        //         this.module.avatarUrl = response.fileUrl;
+        //         this.module.avatar = response.fileUrl;                
+        //         this._module.next(this.module);
+        //         console.log('module', this.module);
         //     },
         //     error: (error: any) => {
         //         this._axiomaimLoadingService.hide();
@@ -307,7 +307,7 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
      */
     removeAvatar(): void {
         // Get the form control for 'avatar'
-        const avatarFormControl = this.userRoleForm.get('avatar');
+        const avatarFormControl = this.moduleForm.get('avatar');
 
         // Set the avatar as null
         avatarFormControl.setValue(null);
@@ -315,16 +315,16 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
         // Set the file input value as null
         this._avatarFileInput.nativeElement.value = null;
 
-        // Update the userRole
-        // this.userRole.avatar = null;
+        // Update the module
+        // this.module.avatar = null;
     }
 
     onOptionSelected(data: any[]) {
         console.log('onOptionSelected', data);
-        // this.userRole.userRoleRoles = data;
-        this._userRole.next(this.userRole);
-        // console.log('onOptionSelected', this.userRole);
-        // this.userRole$.subscribe((resProduct: Product) => {
+        // this.module.moduleRoles = data;
+        this._module.next(this.module);
+        // console.log('onOptionSelected', this.module);
+        // this.module$.subscribe((resProduct: Product) => {
 
         // });
     }
@@ -455,14 +455,14 @@ export class UserRolesDetailsComponent implements OnInit, OnDestroy {
 
     //     // If there is a tag...
     //     const tag = this.filteredTags[0];
-    //     const isTagApplied = this.userRole.tags.find((id) => id === tag.id);
+    //     const isTagApplied = this.module.tags.find((id) => id === tag.id);
 
-    //     // If the found tag is already applied to the userRole...
+    //     // If the found tag is already applied to the module...
     //     if (isTagApplied) {
-    //         // Remove the tag from the userRole
+    //         // Remove the tag from the module
     //         this.removeTagFromProduct(tag);
     //     } else {
-    //         // Otherwise add the tag to the userRole
+    //         // Otherwise add the tag to the module
     //         this.addTagToProduct(tag);
     //     }
     // }

@@ -26,12 +26,12 @@ import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.s
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
-import { UserRolesV2Service } from '../user-roles-v2.service';
-import { UserRole, UserRoleModel } from '../user-roles.model';
+import { ModulesV2Service } from '../modules-v2.service';
+import { Module, ModuleModel } from '../modules.model';
 import { Overlay } from '@angular/cdk/overlay';
 
 @Component({
-    selector: 'user-roles-add-item',
+    selector: 'modules-add-item',
     templateUrl: './add-item.component.html',
     styles: [
         `
@@ -77,15 +77,15 @@ import { Overlay } from '@angular/cdk/overlay';
         NgClass,
     ]
 })
-export class UserRolesAddItemComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
-    // @Input() userRole: UserRole;
+export class ModulesAddItemComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+    // @Input() module: Module;
     @Input() btnIcon: string = 'mat_outline:add';
-    @Input() btnTitle: string = 'Add User Role';
+    @Input() btnTitle: string = 'Add Module';
     @Input() external: boolean = false;
-    @Output() userRoleCreated: EventEmitter<UserRole> = new EventEmitter<UserRole>();
+    @Output() moduleCreated: EventEmitter<Module> = new EventEmitter<Module>();
     loginUser = inject(FirebaseAuthV2Service).loginUser();
     _alertMessagesService = inject(AlertMessagesService);
-    _userRolesV2Service = inject(UserRolesV2Service);
+    _modulesV2Service = inject(ModulesV2Service);
 
     formFieldHelpers: string[] = [''];
     fixedSubscriptInput: FormControl = new FormControl('', [
@@ -106,7 +106,7 @@ export class UserRolesAddItemComponent implements OnInit, AfterViewInit, OnDestr
     @Output() drawerStateChanged = new EventEmitter<boolean>();
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-    userRoleForm: UntypedFormGroup;
+    moduleForm: UntypedFormGroup;
     #loginUser = signal<User | null>(null);
     showRole: string[] = ["admin"];
     user_roles: any[] = [];
@@ -119,7 +119,7 @@ export class UserRolesAddItemComponent implements OnInit, AfterViewInit, OnDestr
     sitesDropDownData: any[] = [];
     site_account_id: any[] = [];
     isLoading = signal<boolean>(false);
-    public newUserRole: UserRole = UserRoleModel.emptyDto();
+    public newModule: Module = ModuleModel.emptyDto();
 
     /**
      * Constructor
@@ -140,16 +140,16 @@ export class UserRolesAddItemComponent implements OnInit, AfterViewInit, OnDestr
         console.log('#loginUser', this.#loginUser());
 
         // Create the basic form structure early
-        this.userRoleForm = this._formBuilder.group({
+        this.moduleForm = this._formBuilder.group({
             name: ["", [Validators.required]],
             description: ["", [Validators.required]],
         });
 
         // Effect to watch for changes in the service signal
         effect(() => {
-            const userRole = this._userRolesV2Service.userRole();
-            const data = userRole || UserRoleModel.emptyDto();
-            this.newUserRole = data;
+            const module = this._modulesV2Service.module();
+            const data = module || ModuleModel.emptyDto();
+            this.newModule = data;
             this.updateFormData(data);
         });
     }
@@ -189,18 +189,18 @@ export class UserRolesAddItemComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     ngOnChanges(): void {        
-        // Handle changes to @Input() userRole if needed
-        this.newUserRole = this._userRolesV2Service.userRole();
-        this.updateFormData(this.newUserRole);
+        // Handle changes to @Input() module if needed
+        this.newModule = this._modulesV2Service.module();
+        this.updateFormData(this.newModule);
     }
 
 
     /**
      * Update form data without recreating the form
      */
-    updateFormData(data: UserRole): void {
+    updateFormData(data: Module): void {
         // Patch simple values
-        this.userRoleForm.patchValue({
+        this.moduleForm.patchValue({
             name: data.name || '',
             description: data.description || '',
         });
@@ -239,15 +239,15 @@ export class UserRolesAddItemComponent implements OnInit, AfterViewInit, OnDestr
      */
     private resetForm(): void {
         // Update to empty data
-        this.updateFormData(UserRoleModel.emptyDto());
+        this.updateFormData(ModuleModel.emptyDto());
         
         // Clear all validation states
-        this.userRoleForm.markAsUntouched();
-        this.userRoleForm.markAsPristine();
+        this.moduleForm.markAsUntouched();
+        this.moduleForm.markAsPristine();
         
         // Reset each form control individually to ensure clean state
-        Object.keys(this.userRoleForm.controls).forEach(key => {
-            const control = this.userRoleForm.get(key);
+        Object.keys(this.moduleForm.controls).forEach(key => {
+            const control = this.moduleForm.get(key);
             if (control) {
                 control.setErrors(null);
                 control.markAsUntouched();
@@ -256,7 +256,7 @@ export class UserRolesAddItemComponent implements OnInit, AfterViewInit, OnDestr
         });
         
         // Set default values for form fields that need them (if any)
-        this.userRoleForm.patchValue({
+        this.moduleForm.patchValue({
             active: true,
             user_roles: [],
             site_account_id: [],
@@ -293,25 +293,25 @@ export class UserRolesAddItemComponent implements OnInit, AfterViewInit, OnDestr
         console.log('onSubmit');
         let date: any = new Date().toISOString();
 
-        this.newUserRole.orgId = this.loginUser.orgId;
-        this.newUserRole.name = this.userRoleForm.get('name').value
-        this.newUserRole.description = this.userRoleForm.get('description').value
-        if(this._userRolesV2Service.userRole() === null){
-            await this._userRolesV2Service.createItem(this.newUserRole);
-            await this._userRolesV2Service.getAll();
-            this.sendUserRole();
+        this.newModule.orgId = this.loginUser.orgId;
+        this.newModule.name = this.moduleForm.get('name').value
+        this.newModule.description = this.moduleForm.get('description').value
+        if(this._modulesV2Service.module() === null){
+            await this._modulesV2Service.createItem(this.newModule);
+            await this._modulesV2Service.getAll();
+            this.sendModule();
         } else {
-            await this._userRolesV2Service.updateItem(this.newUserRole);
-            await this._userRolesV2Service.getAll();
-            this.sendUserRole();
-            this.external ? null : this._router.navigate(['/administration/userRoles']);
+            await this._modulesV2Service.updateItem(this.newModule);
+            await this._modulesV2Service.getAll();
+            this.sendModule();
+            this.external ? null : this._router.navigate(['/crm/modules']);
         }
         
         // this.isLoading.set(true);
     }
               
-    sendUserRole() {
-        this.userRoleCreated.emit(this.newUserRole);
+    sendModule() {
+        this.moduleCreated.emit(this.newModule);
         this.close();
     }
 

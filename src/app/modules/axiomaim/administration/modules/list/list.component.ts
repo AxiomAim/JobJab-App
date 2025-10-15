@@ -36,13 +36,13 @@ import {
     switchMap,
     takeUntil,
 } from 'rxjs';
-import { UserRole } from '../user-roles.model';
+import { Module } from '../modules.model';
 import { MatDialog } from '@angular/material/dialog';
-import { UserRolesV2Service } from '../user-roles-v2.service';
-import { UserRolesAddItemComponent } from '../add-item/add-item.component';
+import { ModulesV2Service } from '../modules-v2.service';
+import { ModulesAddItemComponent } from '../add-item/add-item.component';
 
 @Component({
-    selector: 'user-roles-list',
+    selector: 'modules-list',
     templateUrl: './list.component.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,31 +60,31 @@ import { UserRolesAddItemComponent } from '../add-item/add-item.component';
         RouterLink,
         AsyncPipe,
         I18nPluralPipe,
-        UserRolesAddItemComponent
+        ModulesAddItemComponent
     ],
 })
-export class UserRolesListComponent implements OnInit, OnDestroy {
-    _userRolesV2Service = inject(UserRolesV2Service);
+export class ModulesListComponent implements OnInit, OnDestroy {
+    _modulesV2Service = inject(ModulesV2Service);
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
 
-    private _userRoles: BehaviorSubject<UserRole[] | null> = new BehaviorSubject(
+    private _modules: BehaviorSubject<Module[] | null> = new BehaviorSubject(
         null
     );
-    get userRoles$(): Observable<UserRole[]> {
-        return this._userRoles.asObservable();
+    get modules$(): Observable<Module[]> {
+        return this._modules.asObservable();
     }
 
-    private _userRole: BehaviorSubject<UserRole | null> = new BehaviorSubject(
+    private _module: BehaviorSubject<Module | null> = new BehaviorSubject(
         null
     );
-    get userRole$(): Observable<UserRole> {
-        return this._userRole.asObservable();
+    get module$(): Observable<Module> {
+        return this._module.asObservable();
     }
 
-    userRoleCount: number = 0;
+    moduleCount: number = 0;
     drawerMode: 'side' | 'over';
     searchInputControl: UntypedFormControl = new UntypedFormControl();
-    selectedProduct: UserRole;
+    selectedProduct: Module;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -108,23 +108,23 @@ export class UserRolesListComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        // Get the userRoles
-        this._userRoles.next(this._userRolesV2Service.userRoles());
-        this.userRoles$
+        // Get the modules
+        this._modules.next(this._modulesV2Service.modules());
+        this.modules$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((userRoles: UserRole[]) => {
+            .subscribe((modules: Module[]) => {
                 // Update the counts
-                this.userRoleCount = userRoles.length;
+                this.moduleCount = modules.length;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
 
         // Get the product
-        this._userRole.next(this._userRolesV2Service.userRole());
-        this.userRole$
+        this._module.next(this._modulesV2Service.module());
+        this.module$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((product: UserRole) => {
+            .subscribe((product: Module) => {
                 // Update the selected product
                 this.selectedProduct = product;
 
@@ -138,11 +138,11 @@ export class UserRolesListComponent implements OnInit, OnDestroy {
                 takeUntil(this._unsubscribeAll),
                 switchMap((query) =>
                     // Search
-                    this._userRolesV2Service.search(query)
+                    this._modulesV2Service.search(query)
                 )
             )
             .subscribe((resProducts) => {
-                this._userRoles.next(resProducts);
+                this._modules.next(resProducts);
             });
 
         // Subscribe to MatDrawer opened change

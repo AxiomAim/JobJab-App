@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BaseDto } from 'app/core/models/base-dto.model';
 
-export class UserRoleModel implements BaseDto {
+export class ModuleModel implements BaseDto {
     constructor(
         id: string,
         orgId: string,
@@ -30,7 +30,7 @@ export class UserRoleModel implements BaseDto {
     public updatedAt?: string;
     public deletedAt?: string;
 
-    public static toDto(dto: UserRole): UserRole {
+    public static toDto(dto: Module): Module {
         let date: any = new Date().toISOString();
 
         return {
@@ -45,7 +45,7 @@ export class UserRoleModel implements BaseDto {
         };
     }
 
-    public static emptyDto():UserRole {
+    public static emptyDto():Module {
         let date: any = new Date().toISOString();
         return {
             id: uuidv4().toString(),
@@ -61,7 +61,7 @@ export class UserRoleModel implements BaseDto {
     }
 }
 
-export interface UserRole  extends BaseDto {
+export interface Module  extends BaseDto {
     id: string;
     orgId: string;
     name: string;

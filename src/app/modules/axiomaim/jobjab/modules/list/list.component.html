@@ -14,19 +14,19 @@
                     <!-- Title -->
                     <div>
                         <div class="text-4xl font-extrabold leading-none tracking-tight">
-                            User Roles
+                            Modules
                         </div>
                         <div class="text-secondary ml-0.5 font-medium">
-                            @if (userRoleCount > 0) {
-                            {{ userRoleCount }}
+                            @if (moduleCount > 0) {
+                            {{ moduleCount }}
                             }
                             {{
-                            userRoleCount
+                            moduleCount
                             | i18nPlural
                             : {
-                            '=0': 'No userRoles',
-                            '=1': 'userRole',
-                            other: 'userRoles',
+                            '=0': 'No modules',
+                            '=1': 'module',
+                            other: 'modules',
                             }
                             }}
                         </div>
@@ -42,73 +42,73 @@
                                         'heroicons_solid:magnifying-glass'
                                     "></mat-icon>
                                 <input matInput [formControl]="searchInputControl" [autocomplete]="'off'"
-                                    [placeholder]="'Search userRoles'" />
+                                    [placeholder]="'Search modules'" />
                             </mat-form-field>
                         </div>
-                        <!-- Add userRole button -->
-                        <user-roles-add-item></user-roles-add-item>
+                        <!-- Add module button -->
+                        <modules-add-item></modules-add-item>
 
                     </div>
                 </div>
 
                 <!-- Sources list -->
                 <div class="relative">
-                    @if (userRoles$ | async; as userRoles) {
-                    @if (userRoles.length) {
+                    @if (modules$ | async; as modules) {
+                    @if (modules.length) {
                     @for (
-                    userRole of userRoles;
-                    track trackByFn(i, userRole);
+                    module of modules;
+                    track trackByFn(i, module);
                     let i = $index
                     ) {
                     <!-- Group -->
                     <!-- @if (
                     i === 0 ||
-                    userRole.firstName.charAt(0) !==
-                    userRoles[i - 1].firstName.charAt(0)
+                    module.firstName.charAt(0) !==
+                    modules[i - 1].firstName.charAt(0)
                     ) {
                     <div
                         class="text-secondary sticky top-0 z-10 -mt-px border-b border-t bg-gray-50 px-6 py-1 font-medium uppercase dark:bg-gray-900 md:px-8">
-                        {{ userRole.firstName.charAt(0) }}
+                        {{ module.firstName.charAt(0) }}
                     </div>
                     } -->
                     <!-- Source -->
                     <a class="z-20 flex cursor-pointer items-center border-b px-6 py-4 md:px-8" [ngClass]="{
                                         'dark:hover:bg-hover hover:bg-gray-100':
                                             !selectedSource ||
-                                            selectedSource.id !== userRole.id,
+                                            selectedSource.id !== module.id,
                                         'bg-primary-50 dark:bg-hover':
                                             selectedSource &&
-                                            selectedSource.id === userRole.id,
-                                    }" [routerLink]="['./', userRole.id]">
+                                            selectedSource.id === module.id,
+                                    }" [routerLink]="['./', module.id]">
                         <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
-                            @if (userRole.avatar) {
-                            <img class="h-full w-full object-cover" [src]="userRole.avatar" alt="Source avatar" />
+                            @if (module.avatar) {
+                            <img class="h-full w-full object-cover" [src]="module.avatar" alt="Source avatar" />
                             }
-                            @if (!userRole.avatar) {
+                            @if (!module.avatar) {
                             <div class="flex h-full w-full items-center justify-center rounded-full  text-lg uppercase text-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                                [ngClass]="userRole.activeSource ? 'bg-green-200' : 'bg-gray-200'">
-                                {{ userRole.name?.charAt(0) }}{{ userRole.name?.charAt(1) }}
+                                [ngClass]="module.activeSource ? 'bg-green-200' : 'bg-gray-200'">
+                                {{ module.name?.charAt(0) }}{{ module.name?.charAt(1) }}
                             </div>
                             }
                         </div>
                         <div class="ml-4 min-w-0">
                             <div class="truncate font-medium leading-5">
-                                {{ userRole.name }}
+                                {{ module.name }}
                             </div>
                             <div class="text-secondary truncate leading-5">
-                                {{ userRole.description }}
+                                {{ module.description }}
                             </div>
                         </div>
                     </a>
                     }
                     } @else {
                     <div class="border-t p-8 text-center text-4xl font-semibold tracking-tight sm:p-16">
-                        There are no userRoles!
+                        There are no modules!
                     </div>
                     }
                     }
 
-                    <!-- No userRoles -->
+                    <!-- No modules -->
                 </div>
             </div>
         </mat-drawer-content>

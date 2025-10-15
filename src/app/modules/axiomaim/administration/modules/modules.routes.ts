@@ -6,10 +6,11 @@ import {
     Routes,
 } from '@angular/router';
 import { of } from 'rxjs';
-import { UserRolesV2Service } from './user-roles-v2.service';
-import { UserRolesDetailsComponent } from './details/details.component';
-import { UserRolesComponent } from './user-roles.component';
-import { UserRolesListComponent } from './list/list.component';
+import { ModulesV2Service } from './modules-v2.service';
+import { ModulesDetailsComponent } from './details/details.component';
+import { ModulesComponent } from './modules.component';
+import { ModulesListComponent } from './list/list.component';
+import { ContactsService } from '../../apps/contacts/contacts.service';
 
 
 /**
@@ -22,7 +23,7 @@ const customerResolver = (
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
 ) => {
-    const _productsV2Service = inject(UserRolesV2Service);
+    const _productsV2Service = inject(ModulesV2Service);
     const router = inject(Router);
     const oid = route.paramMap.get('id');
     
@@ -50,7 +51,7 @@ const customerResolver = (
  * @param nextState
  */
 const canDeactivateUsersDetails = (
-    component: UserRolesDetailsComponent,
+    component: ModulesDetailsComponent,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
     nextState: RouterStateSnapshot
@@ -64,7 +65,7 @@ const canDeactivateUsersDetails = (
     // If the next state doesn't contain '/users'
     // it means we are navigating away from the
     // users app
-    if (!nextState.url.includes('/user-roles')) {
+    if (!nextState.url.includes('/sources')) {
         // Let it navigate
         return true;
     }
@@ -82,23 +83,24 @@ const canDeactivateUsersDetails = (
 export default [
     {
         path: '',
-        component: UserRolesComponent,
+        component: ModulesComponent,
         resolve: {
         },
         children: [
             {
                 path: '',
-                component: UserRolesListComponent,
+                component: ModulesListComponent,
                 resolve: {
-                    userRoles: () => inject(UserRolesV2Service).getAll(),
+                    users: () => inject(ModulesV2Service).getAll(),
+                    countries: () => inject(ContactsService).getCountries(),
                 },
                 children: [
                     {
                         path: ':id',
-                        component: UserRolesDetailsComponent,
+                        component: ModulesDetailsComponent,
                         resolve: {
                             // userRoles: () => inject(ProductsV2Service).getUserRoles(),
-                            userRole: customerResolver,
+                            user: customerResolver,
                         },
                         canDeactivate: [canDeactivateUsersDetails],
                     },

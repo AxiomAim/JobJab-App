@@ -1,41 +1,41 @@
 import { createInjectable } from "ngxtension/create-injectable";
 import { inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
-import { UserRolesDataService } from "./user-roles-data.service";
-import { UserRole } from "./user-roles.model";
+import { ModulesDataService } from "./modules-data.service";
+import { Module } from "./modules.model";
 import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
 
-export const UserRolesV2ApiService = createInjectable(() => {
-  const _userRolesDataService = inject(UserRolesDataService);
+export const ModulesV2ApiService = createInjectable(() => {
+  const _modulesDataService = inject(ModulesDataService);
   const loginUser = inject(FirebaseAuthV2Service).loginUser();
   
-  const getAll = async ():Promise<UserRole[]> => {
-    const response$ = _userRolesDataService.getAll(loginUser.orgId);
+  const getAll = async ():Promise<Module[]> => {
+    const response$ = _modulesDataService.getAll(loginUser.orgId);
     const response: any = await firstValueFrom(response$)
     return response;
   };
 
-  const getItem = async (id):Promise<UserRole> => {
-    const response$ = _userRolesDataService.getItem(id);
+  const getItem = async (id):Promise<Module> => {
+    const response$ = _modulesDataService.getItem(id);
     const response = await firstValueFrom(response$)
     return response;
   };
 
-  const createItem = async (data: UserRole):Promise<UserRole> => {
+  const createItem = async (data: Module):Promise<Module> => {
     data.orgId = loginUser.orgId;
-    const response$ = _userRolesDataService.createItem(data);
+    const response$ = _modulesDataService.createItem(data);
     const response: any = await firstValueFrom(response$)
     return response.data;
   };
 
-  const updateItem = async (data: UserRole):Promise<UserRole> => {
-    const response$ = _userRolesDataService.updateItem(data);
+  const updateItem = async (data: Module):Promise<Module> => {
+    const response$ = _modulesDataService.updateItem(data);
     const response: any = await firstValueFrom(response$)
     return response.data;
   };
 
   const deleteItem = async (id: string):Promise<object> => {
-    const response$ = _userRolesDataService.deleteItem(id);
+    const response$ = _modulesDataService.deleteItem(id);
     const response: any = await firstValueFrom(response$)
     return response.data;
   };
