@@ -11,6 +11,7 @@ import { ContactsDetailsComponent } from './details/details.component';
 import { ContactsComponent } from './contacts.component';
 import { ContactsListComponent } from './list/list.component';
 import { ContactsService } from '../../apps/contacts/contacts.service';
+import { SourcesV2Service } from '../sources/sources-v2.service';
 
 
 /**
@@ -93,6 +94,7 @@ export default [
                 resolve: {
                     users: () => inject(ContactsV2Service).getAll(),
                     countries: () => inject(ContactsService).getCountries(),
+                    sources: () => inject(SourcesV2Service).getAll(),
                 },
                 children: [
                     {

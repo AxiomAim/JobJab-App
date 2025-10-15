@@ -10,6 +10,7 @@ export class UserModel implements BaseDto {
     constructor(
         id: string,
         orgId: string,
+        background: string,
         organization: Organization,
         domain: string,
         firstTime: boolean,
@@ -28,7 +29,6 @@ export class UserModel implements BaseDto {
         address: string,
         emailSignature: string,
         avatar: string,
-        background: string,
         linkedIn: string,
         phoneNumbers: PhoneNumber[],
         mobileCountry?: string,
@@ -48,6 +48,7 @@ export class UserModel implements BaseDto {
         ) {
             this.id = id;
             this.orgId = orgId;
+            this.background = background;
             this.organization = organization;
             this.domain = domain;
             this.firstTime = firstTime;
@@ -86,6 +87,7 @@ export class UserModel implements BaseDto {
     }
     public id: string;
     public orgId: string;
+    public background: string;
     public organization: Organization;
     public domain: string;
     public firstTime: boolean;
@@ -118,7 +120,6 @@ export class UserModel implements BaseDto {
     public avatarPath: string;
     public avatarFile: string;
     public avatarType: string;
-    public background: string;
     public linkedIn: string;
     public phoneNumbers: PhoneNumber[];
     public thumb?: string;
@@ -145,6 +146,7 @@ export class UserModel implements BaseDto {
         return {
             id: dto.id ? dto.id : '',
             orgId: dto.orgId ? dto.orgId : '',
+            background: dto.background ? dto.background : 'images/backgrounds/jobjab_users.jpg',
             organization: dto.organization ? dto.organization : null,
             domain: dto.domain ? dto.domain : '',
             firstTime: dto.firstTime ? dto.firstTime : true,
@@ -163,7 +165,6 @@ export class UserModel implements BaseDto {
             emailKey: dto.emailKey ? dto.emailKey : '',
             personalEmail: dto.personalEmail ? dto.personalEmail : '',
             avatar: dto.avatar ? dto.avatar : '',
-            background: dto.background ? dto.background : 'images/cards/axiomaim-card.jpg',
             linkedIn: dto.linkedIn ? dto.linkedIn : '',
             phoneNumbers: dto.phoneNumbers ? dto.phoneNumbers : [],
             mobileCountry: dto.mobileCountry ? dto.mobileCountry : '',
@@ -190,6 +191,7 @@ export class UserModel implements BaseDto {
         return {
             id: uuidv4().toString(),
             orgId: '',
+            background: 'images/backgrounds/jobjab_users.jpg',
             organization: null,
             domain: '',
             firstTime: true,
@@ -208,7 +210,6 @@ export class UserModel implements BaseDto {
             emailKey: '',
             personalEmail: '',
             avatar: '',
-            background: 'images/cards/33-640x480.jpg',
             linkedIn: '',
             phoneNumbers: [],
             mobileCountry: '',
@@ -235,6 +236,7 @@ export class UserModel implements BaseDto {
 export interface User  extends BaseDto {
     id: string;
     orgId: string;
+    background: string;
     organization: Organization; 
     domain: string;
     firstTime: boolean;
@@ -253,7 +255,6 @@ export interface User  extends BaseDto {
     address: string;
     emailSignature: string;
     avatar: string;
-    background: string;
     linkedIn: string;
     phoneNumbers: PhoneNumber[];
     mobileCountry?: string;

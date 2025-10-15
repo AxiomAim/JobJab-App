@@ -1,11 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BaseDto } from 'app/core/models/base-dto.model';
+import { Source } from '../sources/sources.model';
 
 export class ContactModel implements BaseDto {
     constructor(
         id: string,
         orgId: string,
-        source: string,
+        background: string,
+        source: Source,
         firstName: string,
         lastName: string,
         company: string,
@@ -34,6 +36,7 @@ export class ContactModel implements BaseDto {
         ) {
             this.id = id;
             this.orgId = orgId;
+            this.background = background;
             this.source = source;
             this.firstName = firstName;
             this.lastName = lastName;
@@ -56,7 +59,8 @@ export class ContactModel implements BaseDto {
     }
     public id: string;
     public orgId: string;
-    public source: string;
+    public background: string;
+    public source: Source;
     public firstName: string;
     public lastName: string;
     public company: string;
@@ -91,7 +95,8 @@ export class ContactModel implements BaseDto {
         return {
             id: dto.id ? dto.id : '',
             orgId: dto.orgId ? dto.orgId : '',
-            source: dto.source ? dto.source : '',
+            background: dto.background ? dto.background : 'images/backgrounds/jobjab_contacts.jpg',
+            source: dto.source ? dto.source : null,
             firstName: dto.firstName ? dto.firstName : '',
             lastName: dto.lastName ? dto.lastName : '',
             company: dto.company ? dto.company : '',
@@ -124,7 +129,8 @@ export class ContactModel implements BaseDto {
         return {
             id: uuidv4().toString(),
             orgId: '',
-            source: '',
+            background: 'images/backgrounds/jobjab_contacts.jpg',
+            source: null,
             firstName: '',
             lastName: '',
             company: '',
@@ -157,7 +163,8 @@ export class ContactModel implements BaseDto {
 export interface Contact  extends BaseDto {
     id: string;
     orgId: string;
-    source: string;
+    background: string;
+    source: Source;
     firstName: string;
     lastName: string;
     company: string;

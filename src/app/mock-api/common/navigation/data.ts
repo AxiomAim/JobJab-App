@@ -309,6 +309,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 icon: 'heroicons_outline:clipboard-document-check',
                 link: '/crm/contacts',
             },
+            {
+                id: 'administration.sources',
+                title: 'Lead Sources',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/crm/sources',
+            },
         ],
     },
     {

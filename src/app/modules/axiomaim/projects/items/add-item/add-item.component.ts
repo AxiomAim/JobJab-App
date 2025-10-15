@@ -30,6 +30,10 @@ import { ItemsV2Service } from '../items-v2.service';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { AxiomaimCardComponent } from '@axiomaim/components/card';
+import { ImageGalleryComponent } from 'app/layout/common/image-gallery/image-gallery.component';
+import { Item, ItemModel } from '../items.model';
+import { Image } from 'app/core/models/image.model';
 
 export interface Category {
   name: string;
@@ -89,11 +93,87 @@ interface ItemType {
         MatChipsModule,
         MatSidenavModule,
         GridAllModule,
+        AxiomaimCardComponent,
+        ImageGalleryComponent
         
 
     ]
 })
 export class ItemsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
+    public testImages: Image[] = [
+        {
+            id: '2bfa2be5-7688-48d5-b5ac-dc0d9ac97f14',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/female-10.jpg',
+            title: 'Nadia Mcknight',
+            sort: 1,
+        },
+        {
+            id: '77a4383b-b5a5-4943-bc46-04c3431d1566',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/male-19.jpg',
+            title: 'Best Blackburn',
+            sort: 1,
+        },
+        {
+            id: '8bb0f597-673a-47ca-8c77-2f83219cb9af',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/male-14.jpg',
+            title: 'Duncan Carver',
+            sort: 1,
+        },
+        {
+            id: 'c318e31f-1d74-49c5-8dae-2bc5805e2fdb',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/male-01.jpg',
+            title: 'Martin Richards',
+            sort: 1,
+        },
+        {
+            id: '0a8bc517-631a-4a93-aacc-000fa2e8294c',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/female-20.jpg',
+            title: 'Candice Munoz',
+            sort: 1,
+        },
+        {
+            id: 'a4c9945a-757b-40b0-8942-d20e0543cabd',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/female-01.jpg',
+            title: 'Vickie Mosley',
+            sort: 1,
+        },
+        {
+            id: 'b8258ccf-48b5-46a2-9c95-e0bd7580c645',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/female-02.jpg',
+            title: 'Tina Harris',
+            sort: 1,
+        },
+        {
+            id: 'f004ea79-98fc-436c-9ba5-6cfe32fe583d',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/male-02.jpg',
+            title: 'Holt Manning',
+            sort: 1,
+        },
+        {
+            id: '8b69fe2d-d7cc-4a3d-983d-559173e37d37',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/female-03.jpg',
+            title: 'Misty Ramsey',
+            sort: 1,
+        },
+        {
+            id: '8b69fe2d-d7cc-4a3d-983d-559173e37d37',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/cards/34-640x480.jpg',
+            title: 'Misty Ramsey',
+            sort: 1,
+        },
+    ];
+
+
     _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     _itemsV2Service = inject(ItemsV2Service);
     _alertMessagesService = inject(AlertMessagesService);
@@ -112,6 +192,7 @@ export class ItemsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     @Output() drawerStateChanged = new EventEmitter<boolean>();
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    item: Item = ItemModel.emptyDto();
     itemForm: UntypedFormGroup;
     #loginUser = signal<User | null>(null);
     showRole: string[] = ["admin"];

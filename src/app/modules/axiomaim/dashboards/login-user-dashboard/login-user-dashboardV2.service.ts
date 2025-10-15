@@ -1,8 +1,6 @@
 import { createInjectable } from "ngxtension/create-injectable";
 import { signal, computed, inject } from "@angular/core";
 import { Router } from "@angular/router";
-import { LeadsV2Service } from "../../crm/leads/leads-v2.service";
-import { Lead } from "../../crm/leads/leads.model";
 import { BehaviorSubject, firstValueFrom, Observable, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { ContactsV2Service } from "../../crm/contacts/contacts-v2.service";

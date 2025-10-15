@@ -22,7 +22,6 @@ import { LoginUserMenuComponent } from 'app/layout/common/login-user-menu/login-
 import { Subject, takeUntil } from 'rxjs';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
-import { LeadsMenuComponent } from 'app/layout/common/leads-menu/leads-menu.component';
 import { CustomersMenuComponent } from 'app/layout/common/customers-menu/customers-menu.component';
 import { QuotesDetailsComponent } from 'app/modules/axiomaim/projects/quotes/details/details.component';
 import { QuotesMenuComponent } from 'app/layout/common/quotes-menu/quotes-menu.component';
@@ -47,7 +46,6 @@ import { AddItemComponent } from 'app/layout/common/add-item/add-item.component'
         MessagesComponent,
         RouterOutlet,
         QuickChatComponent,
-        LeadsMenuComponent,
         CustomersMenuComponent,
         QuotesMenuComponent,
         OrganizationComponent,

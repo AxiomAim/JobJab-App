@@ -1,10 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BaseDto } from 'app/core/models/base-dto.model';
+import { Image } from 'app/core/models/image.model';
 
 export class ItemModel implements BaseDto {
     constructor(
         id: string,
         orgId: string,
+        background: string,
         sort: number,
         sku: string,
         categories: string[],
@@ -13,7 +15,7 @@ export class ItemModel implements BaseDto {
         price: number,
         itemType: string,
         measure: string,
-        images: string[],
+        images: Image[],
         discount: number,
         quantity: number,
         categoriesId: number,
@@ -23,6 +25,7 @@ export class ItemModel implements BaseDto {
         ) {
             this.id = id;
             this.orgId = orgId;
+            this.background = background;
             this.sort = sort;
             this.sku = sku;
             this.categories = categories;
@@ -41,6 +44,7 @@ export class ItemModel implements BaseDto {
     }
     public id: string;
     public orgId: string;
+    public background: string;
     public sort: number;
     public sku: string;
     public categories: string[];
@@ -49,7 +53,7 @@ export class ItemModel implements BaseDto {
     public price: number;
     public itemType: string;
     public measure: string;
-    public images: string[];
+    public images: Image[];
     public discount: number;
     public quantity: number;
     public categoriesId: number;
@@ -63,6 +67,7 @@ export class ItemModel implements BaseDto {
         return {
             id: dto.id ? dto.id : '',
             orgId: dto.orgId ? dto.orgId : '',
+            background: dto.background ? dto.background : 'images/backgrounds/jobjab_items.jpg',
             sort: dto.sort ? dto.sort : 0,
             sku: dto.sku ? dto.sku : '',
             categories: dto.categories ? dto.categories : [],
@@ -86,6 +91,7 @@ export class ItemModel implements BaseDto {
         return {
             id: uuidv4().toString(),
             orgId: '',
+            background: 'images/backgrounds/jobjab_items.jpg',
             sort: 0,
             sku: '',
             categories: [],
@@ -109,6 +115,7 @@ export class ItemModel implements BaseDto {
 export interface Item extends BaseDto {
     id: string;
     orgId: string;
+    background: string;
     sort: number;
     sku: string;
     categories: string[];
@@ -117,7 +124,7 @@ export interface Item extends BaseDto {
     price: number;
     itemType: string;
     measure: string;
-    images: string[];
+    images: Image[];
     discount: number;
     quantity: number;
     categoriesId: number;

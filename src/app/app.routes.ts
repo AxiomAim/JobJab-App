@@ -63,8 +63,12 @@ export const appRoutes: Route[] = [
         data: {
             layout: 'empty'
         },
+        // resolve: {
+        //     initialData: initialDataResolver
+        // },
         children: [
             {path: 'home', loadChildren: () => import('app/modules/landing/home/home.routes')},
+            {path: 'pricing', loadChildren: () => import('app/modules/landing/pricing/pricing.routes')},
         ]
     },
 
@@ -117,6 +121,7 @@ export const appRoutes: Route[] = [
             // CRM
             {path: 'crm', children: [
                 {path: 'contacts', loadChildren: () => import('app/modules/axiomaim/crm/contacts/contacts.routes')},
+                {path: 'sources', loadChildren: () => import('app/modules/axiomaim/crm/sources/sources.routes')},
             ]},
 
             // Projects
@@ -146,7 +151,7 @@ export const appRoutes: Route[] = [
                 {path: 'mailbox', loadChildren: () => import('app/modules/axiomaim/apps/mailbox/mailbox.routes')},
                 {path: 'notes', loadChildren: () => import('app/modules/axiomaim/apps/notes/notes.routes')},
                 {path: 'scrumboard', loadChildren: () => import('app/modules/axiomaim/apps/scrumboard/scrumboard.routes')},
-                {path: 'tasks', loadChildren: () => import('app/modules/axiomaim/apps/tasks/tasks.routes')},
+                // {path: 'tasks', loadChildren: () => import('app/modules/axiomaim/apps/tasks/tasks.routes')},
             ]},
 
             // Pages

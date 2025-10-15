@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BaseDto } from 'app/core/models/base-dto.model';
-import { Customer } from '../../crm/customers/customers.model';
 import { Contact } from 'app/layout/common/quick-chat/quick-chat.types';
 
 export class QuotesRequestModel implements BaseDto {
     constructor(
         id: string,
         orgId: string,
+        background: string,
         contactId: string,
         contact: Contact,
         firstName: string,
@@ -28,6 +28,7 @@ export class QuotesRequestModel implements BaseDto {
         ) {
             this.id = id;
             this.orgId = orgId;
+            this.background = background;
             this.contactId = contactId;
             this.contact = contact;
             this.firstName = firstName;
@@ -49,6 +50,7 @@ export class QuotesRequestModel implements BaseDto {
     }
     public id: string;
     public orgId: string;
+    public background: string;
     public contactId: string;
     public contact: Contact;
     public firstName: string;
@@ -74,6 +76,7 @@ export class QuotesRequestModel implements BaseDto {
         return {
             id: dto.id ? dto.id : '',
             orgId: dto.orgId ? dto.orgId : '',
+            background: dto.background ? dto.background : 'images/backgrounds/jobjab_quotes_requests.jpg',
             contactId: dto.contactId ? dto.contactId : '',
             contact: dto.contact ? dto.contact : null,
             firstName: dto.firstName ? dto.firstName : '',
@@ -100,6 +103,7 @@ export class QuotesRequestModel implements BaseDto {
         return {
             id: uuidv4().toString(),
             orgId: '',
+            background: 'images/backgrounds/jobjab_quotes_requests.jpg',
             contactId: '',
             contact: null,
             firstName: '',
@@ -126,6 +130,7 @@ export class QuotesRequestModel implements BaseDto {
 export interface QuotesRequest extends BaseDto {
     id: string;
     orgId: string;
+    background: string;
     contactId: string;
     contact: Contact;
     firstName: string;
