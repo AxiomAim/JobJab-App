@@ -15,7 +15,7 @@ import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { TextFieldModule } from '@angular/cdk/text-field';
@@ -28,7 +28,21 @@ import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-mes
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
 import { ItemsV2Service } from '../items-v2.service';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { AxiomaimCardComponent } from '@axiomaim/components/card';
+import { ImageGalleryComponent } from 'app/layout/common/image-gallery/image-gallery.component';
+import { Item, ItemModel } from '../items.model';
+import { Image } from 'app/core/models/image.model';
 
+export interface Category {
+  name: string;
+}
+
+interface ItemType {
+  value: string;
+  viewValue: string;
+}
 @Component({
     selector: 'items-add-item',
     templateUrl: './add-item.component.html',
@@ -46,6 +60,14 @@ import { User } from 'app/modules/axiomaim/administration/users/users.model';
                     right: 0 !important;
                 }
             }
+
+            .chip-list {
+                width: 100%;
+            }
+            .item-type-select {
+                width: 100%;
+            }
+
         `,
     ],
     encapsulation: ViewEncapsulation.None,
@@ -71,34 +93,106 @@ import { User } from 'app/modules/axiomaim/administration/users/users.model';
         MatChipsModule,
         MatSidenavModule,
         GridAllModule,
-        AddressLookupComponent
+        AxiomaimCardComponent,
+        ImageGalleryComponent
+        
 
     ]
 })
 export class ItemsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
+    public testImages: Image[] = [
+        {
+            id: '2bfa2be5-7688-48d5-b5ac-dc0d9ac97f14',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/female-10.jpg',
+            title: 'Nadia Mcknight',
+            sort: 1,
+        },
+        {
+            id: '77a4383b-b5a5-4943-bc46-04c3431d1566',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/male-19.jpg',
+            title: 'Best Blackburn',
+            sort: 1,
+        },
+        {
+            id: '8bb0f597-673a-47ca-8c77-2f83219cb9af',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/male-14.jpg',
+            title: 'Duncan Carver',
+            sort: 1,
+        },
+        {
+            id: 'c318e31f-1d74-49c5-8dae-2bc5805e2fdb',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/male-01.jpg',
+            title: 'Martin Richards',
+            sort: 1,
+        },
+        {
+            id: '0a8bc517-631a-4a93-aacc-000fa2e8294c',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/female-20.jpg',
+            title: 'Candice Munoz',
+            sort: 1,
+        },
+        {
+            id: 'a4c9945a-757b-40b0-8942-d20e0543cabd',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/female-01.jpg',
+            title: 'Vickie Mosley',
+            sort: 1,
+        },
+        {
+            id: 'b8258ccf-48b5-46a2-9c95-e0bd7580c645',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/female-02.jpg',
+            title: 'Tina Harris',
+            sort: 1,
+        },
+        {
+            id: 'f004ea79-98fc-436c-9ba5-6cfe32fe583d',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/male-02.jpg',
+            title: 'Holt Manning',
+            sort: 1,
+        },
+        {
+            id: '8b69fe2d-d7cc-4a3d-983d-559173e37d37',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/avatars/female-03.jpg',
+            title: 'Misty Ramsey',
+            sort: 1,
+        },
+        {
+            id: '8b69fe2d-d7cc-4a3d-983d-559173e37d37',
+            orgId: '39d9e6b5-f826-43e9-b3b3-d49fbc2ea664',
+            source: 'images/cards/34-640x480.jpg',
+            title: 'Misty Ramsey',
+            sort: 1,
+        },
+    ];
+
+
     _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     _itemsV2Service = inject(ItemsV2Service);
     _alertMessagesService = inject(AlertMessagesService);
 
-    formFieldHelpers: string[] = [''];
-    fixedSubscriptInput: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    dynamicSubscriptInput: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    fixedSubscriptInputWithHint: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    dynamicSubscriptInputWithHint: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-
+    readonly addOnBlur = true;
+    readonly separatorKeysCodes = [ENTER, COMMA] as const;
+    readonly categories = signal<Category[]>([]);
+    readonly announcer = inject(LiveAnnouncer);
+    selectedValue: string;
+    itemTypes: ItemType[] = [
+        {value: 'product', viewValue: 'Product'},
+        {value: 'service', viewValue: 'Service'},
+    ];
 
     @ViewChild('newItemDrawer') newItemDrawer: AxiomaimDrawerComponent;
     @Output() drawerStateChanged = new EventEmitter<boolean>();
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    item: Item = ItemModel.emptyDto();
     itemForm: UntypedFormGroup;
     #loginUser = signal<User | null>(null);
     showRole: string[] = ["admin"];
@@ -163,31 +257,15 @@ export class ItemsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
      * Set Form Group 
      */
     setFormGroup() {
+
         this.itemForm = this._formBuilder.group({
-            email: ["", [Validators.required, Validators.email]],
-            name: [""],
-            company: ["", [Validators.required]],
-            address: ["", [Validators.required]],
-            mobileCountry: [""],
-            mobileNo: [""],
-            house: [""],
-            houseItem: [""],
-            driveway: [""],
-            drivewayItem: [""],
-            walkway: [""],
-            walkwayItem: [""],
-            fence: [""],
-            fenceItem: [""],
-            deck: [""],
-            deckItem: [""],
-            patio: [""],
-            patioItem: [""],
-            bin: [""],
-            binItem: [""],
-            binQuarterly: [""],
-            binQuarterlyItem: [""],
-            binMonthly: [""],
-            binMonthlyItem: [""],
+            sku: [""],
+            // categories: [[], [Validators.required]],
+            name: ["", [Validators.required]],
+            description: ["", [Validators.required]],
+            price: ["", [Validators.required]],
+            itemType: [[], [Validators.required]],
+            // images: this._formBuilder.array([]),
           });
     }
 
@@ -196,6 +274,51 @@ export class ItemsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
     
+    add(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    // Add our fruit
+    if (value) {
+      this.categories.update(categories => [...categories, {name: value}]);
+    }
+
+    // Clear the input value
+    event.chipInput!.clear();
+  }
+
+  remove(category: Category): void {
+    this.categories.update(categories => {
+      const index = categories.indexOf(category);
+      if (index < 0) {
+        return categories;
+      }
+
+      categories.splice(index, 1);
+      this.announcer.announce(`Removed ${category.name}`);
+      return [...categories];
+    });
+  }
+
+  edit(category: Category, event: MatChipEditedEvent) {
+    const value = event.value.trim();
+
+    // Remove fruit if it no longer has a name
+    if (!value) {
+      this.remove(category);
+      return;
+    }
+
+    // Edit existing fruit
+    this.categories.update(categories => {
+      const index = categories.indexOf(category);
+      if (index >= 0) {
+        categories[index].name = value;
+        return [...categories];
+      }
+      return categories;
+    });
+  }
+
     openDrawer(): void {
         // Reset form to ensure clean state when opening
         this.resetForm();
@@ -288,13 +411,6 @@ export class ItemsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
   trackByFn(index: number, item: any): any {
       return item.id || index;
   }
-    
 
-  /**
-   * Get the form field helpers as string
-   */
-    getFormFieldHelpersAsString(): string {
-      return this.formFieldHelpers.join(' ');
-  }
     
 }

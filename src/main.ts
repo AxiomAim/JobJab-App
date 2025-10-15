@@ -30,7 +30,7 @@ export class GoogleMapsService {
   private scriptLoading = false;
   
   // private apiKey: string = 'AIzaSyCHOl5pEV3Lk-vCE0OJqHDcDWYNFRajpEA';  //  <------------------------  Replace with your API key
-  private apiKey: string = 'AIzaSyCnGbv6xWhKii6oeNgzFxzj1jWIlvuTHOo';  //  <------------------------  Replace with your API key
+  private apiKey: string = 'AIzaSyAwefNH09xGlIqzY8j6xuBprX7m1VBil5k';  //  <------------------------  Replace with your API key
 
   constructor(
     private zone: NgZone,

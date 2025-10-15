@@ -2,6 +2,7 @@ export const environment = {
   production: true,
   useEmultaors: false,
   url: '',
+  orgId: "39d9e6b5-f826-43e9-b3b3-d49fbc2ea664",
   firebaseConfig: {
     apiKey: "AIzaSyAwefNH09xGlIqzY8j6xuBprX7m1VBil5k",
     authDomain: "jobjab-app.firebaseapp.com",

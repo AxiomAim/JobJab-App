@@ -6,6 +6,7 @@ export class ProjectTeamModel implements BaseDto {
     constructor(
         id: string,
         orgId: string,
+        background: string,
         name: string,
         description: string,
         members: ProjectTeamMember[],
@@ -15,6 +16,7 @@ export class ProjectTeamModel implements BaseDto {
         ) {
             this.id = id;
             this.orgId = orgId;
+            this.background = background;
             this.name = name;
             this.description = description;
             this.members = members;
@@ -24,6 +26,7 @@ export class ProjectTeamModel implements BaseDto {
     }
     public id: string;
     public orgId: string;
+    public background: string;
     public name: string;
     public description: string;
     public members: ProjectTeamMember[];
@@ -37,6 +40,7 @@ export class ProjectTeamModel implements BaseDto {
         return {
             id: dto.id ? dto.id : '',
             orgId: dto.orgId ? dto.orgId : '',
+            background: dto.background ? dto.background : 'images/backgrounds/jobjab_project_teams.jpg',
             name: dto.name ? dto.name : '',
             description: dto.description ? dto.description : '',
             members: dto.members ? dto.members : [],
@@ -51,6 +55,7 @@ export class ProjectTeamModel implements BaseDto {
         return {
             id: uuidv4().toString(),
             orgId: '',
+            background: 'images/backgrounds/jobjab_project_teams.jpg',
             name: '',
             description: '',
             members: [],
@@ -65,6 +70,7 @@ export class ProjectTeamModel implements BaseDto {
 export interface ProjectTeam  extends BaseDto {
     id: string;
     orgId: string;
+    background: string;
     name: string;
     description: string;
     members: ProjectTeamMember[];

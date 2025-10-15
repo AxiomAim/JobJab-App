@@ -5,6 +5,7 @@ export class JobModel implements BaseDto {
     constructor(
         id: string,
         orgId: string,
+        background: string,
         type: string,
         name: string,
         description: string,
@@ -21,6 +22,7 @@ export class JobModel implements BaseDto {
         ) {
             this.id = id;
             this.orgId = orgId;
+            this.background = background;
             this.type = type;
             this.name = name;
             this.description = description;
@@ -37,6 +39,7 @@ export class JobModel implements BaseDto {
     }
     public id: string;
     public orgId: string;
+    public background: string;
     public type: string;
     public name: string;
     public description: string;
@@ -57,6 +60,7 @@ export class JobModel implements BaseDto {
         return {
             id: dto.id ? dto.id : '',
             orgId: dto.orgId ? dto.orgId : '',
+            background: dto.background ? dto.background : 'images/backgrounds/jobjab_jobs.jpg',
             type: dto.type ? dto.type : '',
             name: dto.name ? dto.name : '',
             description: dto.description ? dto.description : '',
@@ -78,6 +82,7 @@ export class JobModel implements BaseDto {
         return {
             id: uuidv4().toString(),
             orgId: '',
+            background: 'images/backgrounds/jobjab_jobs.jpg',
             type: '',
             name: '',
             description: '',
@@ -99,6 +104,7 @@ export class JobModel implements BaseDto {
 export interface Job  extends BaseDto {
     id: string;
     orgId: string;
+    background: string;
     type: string,
     name: string;
     description: string;

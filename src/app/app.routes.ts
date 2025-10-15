@@ -10,7 +10,7 @@ import { LayoutComponent } from 'app/layout/layout.component';
 export const appRoutes: Route[] = [
 
     // Redirect empty path to '/dashboards/crm'
-    {path: '', pathMatch : 'full', redirectTo: 'dashboards/crm'},
+    {path: '', pathMatch : 'full', redirectTo: 'dashboards/login-user-dashboard'},
 
     // Redirect signed-in user to the '/dashboards/crm'
     //
@@ -20,7 +20,7 @@ export const appRoutes: Route[] = [
     {
         path: 'signed-in-redirect',
         pathMatch : 'full',
-        redirectTo: 'dashboards/crm'
+        redirectTo: 'dashboards/login-user-dashboard'
     },
 
     // Auth routes for guests
@@ -63,8 +63,12 @@ export const appRoutes: Route[] = [
         data: {
             layout: 'empty'
         },
+        // resolve: {
+        //     initialData: initialDataResolver
+        // },
         children: [
             {path: 'home', loadChildren: () => import('app/modules/landing/home/home.routes')},
+            {path: 'pricing', loadChildren: () => import('app/modules/landing/pricing/pricing.routes')},
         ]
     },
 
@@ -81,6 +85,7 @@ export const appRoutes: Route[] = [
 
             // Dashboards
             {path: 'dashboards', children: [
+                {path: 'login-user-dashboard', loadChildren: () => import('app/modules/axiomaim/dashboards/login-user-dashboard/login-user-dashboard.routes')},
                 {path: 'crm', loadChildren: () => import('app/modules/axiomaim/dashboards/crm/crm.routes')},
                 {path: 'project', loadChildren: () => import('app/modules/axiomaim/dashboards/project/project.routes')},
                 {path: 'analytics', loadChildren: () => import('app/modules/axiomaim/dashboards/analytics/analytics.routes')},
@@ -102,24 +107,29 @@ export const appRoutes: Route[] = [
 
             // Administration
             {path: 'administration', children: [
+                {path: 'messages', loadChildren: () => import('app/modules/axiomaim/administration/messages/messages.routes')},
                 {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
                 {path: 'user-roles', loadChildren: () => import('app/modules/axiomaim/administration/user-roles/user-roles.routes')},
                 {path: 'users', loadChildren: () => import('app/modules/axiomaim/administration/users/users.routes')},
+                {path: 'user-timesheets', loadChildren: () => import('app/modules/axiomaim/administration/user-timesheets/user-timesheets.routes')},
                 {path: 'products', loadChildren: () => import('app/modules/axiomaim/administration/products/products.routes')},
                 {path: 'jobs', loadChildren: () => import('app/modules/axiomaim/administration/jobs/jobs.routes')},
                 {path: 'invoices', loadChildren: () => import('app/modules/axiomaim/administration/invoices/invoices.routes')},
                 {path: 'technicians', loadChildren: () => import('app/modules/axiomaim/administration/technicians/technicians.routes')},
-                // {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
+                {path: 'newsletters', loadChildren: () => import('app/modules/axiomaim/administration/newsletters/newsletters.routes')},
             ]},
 
             // CRM
             {path: 'crm', children: [
                 {path: 'contacts', loadChildren: () => import('app/modules/axiomaim/crm/contacts/contacts.routes')},
+                {path: 'sources', loadChildren: () => import('app/modules/axiomaim/crm/sources/sources.routes')},
             ]},
 
             // Projects
             {path: 'projects', children: [
+                {path: 'items', loadChildren: () => import('app/modules/axiomaim/projects/items/items.routes')},
                 {path: 'quotes', loadChildren: () => import('app/modules/axiomaim/projects/quotes/quotes.routes')},
+                {path: 'quotes-requests', loadChildren: () => import('app/modules/axiomaim/projects/quotes-requests/quotes-requests.routes')},
                 {path: 'project-teams', loadChildren: () => import('app/modules/axiomaim/projects/project-teams/project-teams.routes')},
                 // {path: 'user-roles', loadChildren: () => import('app/modules/axiomaim/administration/user-roles/user-roles.routes')},
                 // {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
@@ -142,7 +152,7 @@ export const appRoutes: Route[] = [
                 {path: 'mailbox', loadChildren: () => import('app/modules/axiomaim/apps/mailbox/mailbox.routes')},
                 {path: 'notes', loadChildren: () => import('app/modules/axiomaim/apps/notes/notes.routes')},
                 {path: 'scrumboard', loadChildren: () => import('app/modules/axiomaim/apps/scrumboard/scrumboard.routes')},
-                {path: 'tasks', loadChildren: () => import('app/modules/axiomaim/apps/tasks/tasks.routes')},
+                // {path: 'tasks', loadChildren: () => import('app/modules/axiomaim/apps/tasks/tasks.routes')},
             ]},
 
             // Pages

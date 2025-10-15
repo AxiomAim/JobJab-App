@@ -42,6 +42,12 @@ export const UsersV2Service = createInjectable(() => {
     return response;
   };
 
+  const setUser = async (thisUser: User): Promise<User> => {
+    user.set(thisUser);
+    return user();
+  };
+  
+
   const search = async (query: string): Promise<any[]> => {
     try {
       // const response: any = await _participantsV2ApiService.updateParticipantItem(data);
@@ -71,5 +77,6 @@ export const UsersV2Service = createInjectable(() => {
     createItem,
     updateItem,
     deleteItem,
+    setUser
   };
 });

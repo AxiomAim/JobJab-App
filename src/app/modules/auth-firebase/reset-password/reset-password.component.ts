@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import {
     FormsModule,
     NgForm,
@@ -16,6 +16,7 @@ import { RouterLink } from '@angular/router';
 import { axiomaimAnimations } from '@axiomaim/animations';
 import { AxiomaimAlertComponent, AxiomaimAlertType } from '@axiomaim/components/alert';
 import { AxiomaimValidators } from '@axiomaim/validators';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { finalize } from 'rxjs';
 
@@ -37,6 +38,7 @@ import { finalize } from 'rxjs';
     ],
 })
 export class AuthResetPasswordComponent implements OnInit {
+    private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     @ViewChild('resetPasswordNgForm') resetPasswordNgForm: NgForm;
 
     alert: { type: AxiomaimAlertType; message: string } = {
@@ -97,6 +99,7 @@ export class AuthResetPasswordComponent implements OnInit {
         this.showAlert = false;
 
         // Send the request to the server
+        
         this._authService
             .resetPassword(this.resetPasswordForm.get('password').value)
             .pipe(

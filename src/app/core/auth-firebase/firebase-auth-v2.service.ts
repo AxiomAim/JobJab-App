@@ -284,7 +284,7 @@ export const FirebaseAuthV2Service = createInjectable(() => {
     );
   }
 
-  const sendPasswordReset = (email: string): Observable<boolean> => {
+  const forgotPassword = (email: string): Observable<boolean> => {
     return from(sendPasswordResetEmail(auth, email)).pipe(
       tap(() => authUser.set(null)),
       map(() => true),
@@ -404,7 +404,7 @@ export const FirebaseAuthV2Service = createInjectable(() => {
     removeFromStorage,
     getUserAccount,
     reauthenticateUser,
-    sendPasswordReset,
+    forgotPassword,
     signIn,
     signUp,
     signOut: signOutService,

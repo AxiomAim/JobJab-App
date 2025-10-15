@@ -17,7 +17,6 @@ import {
     AxiomaimVerticalNavigationComponent,
 } from '@axiomaim/components/navigation';
 import { AvailableLangs, TranslocoService } from '@jsverse/transloco';
-import { CustomersAddItemComponent } from 'app/modules/axiomaim/crm/customers/add-item/add-item.component';
 import { take } from 'rxjs';
 
 @Component({
@@ -29,11 +28,9 @@ import { take } from 'rxjs';
     imports: [
         MatButtonModule, 
         MatMenuModule, 
-        NgTemplateOutlet,
         MatIconModule,
         RouterLink,
         MatTooltipModule,
-        CustomersAddItemComponent
     ],
 })
 export class AddItemComponent implements OnInit, OnDestroy {

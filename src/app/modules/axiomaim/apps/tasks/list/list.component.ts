@@ -11,6 +11,7 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    inject,
     Inject,
     OnDestroy,
     OnInit,
@@ -33,8 +34,9 @@ import {
 } from '@axiomaim/components/navigation';
 import { AxiomaimMediaWatcherService } from '@axiomaim/services/media-watcher';
 import { TasksService } from 'app/modules/axiomaim/apps/tasks/tasks.service';
-import { Tag, Task } from 'app/modules/axiomaim/apps/tasks/tasks.types';
 import { Subject, filter, fromEvent, takeUntil } from 'rxjs';
+import { TasksV2Service } from '../tasks-v2.service';
+import { Tag, Task } from '../tasks.model';
 
 @Component({
     selector: 'tasks-list',
@@ -58,6 +60,7 @@ import { Subject, filter, fromEvent, takeUntil } from 'rxjs';
     ],
 })
 export class TasksListComponent implements OnInit, OnDestroy {
+    _tasksV2Service = inject(TasksV2Service);
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
 
     drawerMode: 'side' | 'over';
@@ -92,71 +95,73 @@ export class TasksListComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
+        this.tags = this._tasksV2Service.tags() || [];
+        this.tasks = this._tasksV2Service.tasks() || [];
         // Get the tags
-        this._tasksService.tags$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((tags: Tag[]) => {
-                this.tags = tags;
+        // this._tasksService.tags$
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((tags: Tag[]) => {
+        //         this.tags = tags;
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        //         // Mark for check
+        //         this._changeDetectorRef.markForCheck();
+        //     });
 
         // Get the tasks
-        this._tasksService.tasks$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((tasks: Task[]) => {
-                this.tasks = tasks;
+        // this._tasksService.tasks$
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((tasks: Task[]) => {
+        //         this.tasks = tasks;
 
-                // Update the counts
-                this.tasksCount.total = this.tasks.filter(
-                    (task) => task.type === 'task'
-                ).length;
-                this.tasksCount.completed = this.tasks.filter(
-                    (task) => task.type === 'task' && task.completed
-                ).length;
-                this.tasksCount.incomplete =
-                    this.tasksCount.total - this.tasksCount.completed;
+        //         // Update the counts
+        //         this.tasksCount.total = this.tasks.filter(
+        //             (task) => task.type === 'task'
+        //         ).length;
+        //         this.tasksCount.completed = this.tasks.filter(
+        //             (task) => task.type === 'task' && task.completed
+        //         ).length;
+        //         this.tasksCount.incomplete =
+        //             this.tasksCount.total - this.tasksCount.completed;
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
+        //         // Mark for check
+        //         this._changeDetectorRef.markForCheck();
 
-                // Update the count on the navigation
-                setTimeout(() => {
-                    // Get the component -> navigation data -> item
-                    const mainNavigationComponent =
-                        this._axiomaimNavigationService.getComponent<AxiomaimVerticalNavigationComponent>(
-                            'mainNavigation'
-                        );
+        //         // Update the count on the navigation
+        //         setTimeout(() => {
+        //             // Get the component -> navigation data -> item
+        //             const mainNavigationComponent =
+        //                 this._axiomaimNavigationService.getComponent<AxiomaimVerticalNavigationComponent>(
+        //                     'mainNavigation'
+        //                 );
 
-                    // If the main navigation component exists...
-                    if (mainNavigationComponent) {
-                        const mainNavigation =
-                            mainNavigationComponent.navigation;
-                        const menuItem = this._axiomaimNavigationService.getItem(
-                            'apps.tasks',
-                            mainNavigation
-                        );
+        //             // If the main navigation component exists...
+        //             if (mainNavigationComponent) {
+        //                 const mainNavigation =
+        //                     mainNavigationComponent.navigation;
+        //                 const menuItem = this._axiomaimNavigationService.getItem(
+        //                     'apps.tasks',
+        //                     mainNavigation
+        //                 );
 
-                        // Update the subtitle of the item
-                        menuItem.subtitle =
-                            this.tasksCount.incomplete + ' remaining tasks';
+        //                 // Update the subtitle of the item
+        //                 menuItem.subtitle =
+        //                     this.tasksCount.incomplete + ' remaining tasks';
 
-                        // Refresh the navigation
-                        mainNavigationComponent.refresh();
-                    }
-                });
-            });
+        //                 // Refresh the navigation
+        //                 mainNavigationComponent.refresh();
+        //             }
+        //         });
+        //     });
 
         // Get the task
-        this._tasksService.task$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((task: Task) => {
-                this.selectedTask = task;
+        // this._tasksService.task$
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((task: Task) => {
+        //         this.selectedTask = task;
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        //         // Mark for check
+        //         this._changeDetectorRef.markForCheck();
+        //     });
 
         // Subscribe to media query change
         this._axiomaimMediaWatcherService
@@ -246,7 +251,7 @@ export class TasksListComponent implements OnInit, OnDestroy {
         task.completed = !task.completed;
 
         // Update the task on the server
-        this._tasksService.updateTask(task.id, task).subscribe();
+        // this._tasksService.updateTask(task.id, task).subscribe();
 
         // Mark for check
         this._changeDetectorRef.markForCheck();
@@ -266,7 +271,7 @@ export class TasksListComponent implements OnInit, OnDestroy {
         );
 
         // Save the new order
-        this._tasksService.updateTasksOrders(event.container.data).subscribe();
+        // this._tasksService.updateTasksOrders(event.container.data).subscribe();
 
         // Mark for check
         this._changeDetectorRef.markForCheck();

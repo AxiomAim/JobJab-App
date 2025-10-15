@@ -10,6 +10,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         icon: 'heroicons_outline:home',
         children: [
             {
+                id: 'dashboards.login-user-dashboard',
+                title: 'User Dashboard',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/dashboards/login-user-dashboard',
+            },
+            {
                 id: 'dashboards.crm',
                 title: 'CRM',
                 type: 'basic',
@@ -203,6 +210,20 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         icon: 'heroicons_outline:home',
         children: [
             {
+                id: 'administration.messages',
+                title: 'Messages',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/administration/messages',
+            },
+            {
+                id: 'administration.newsletters',
+                title: 'Newsletter',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/administration/newsletters',
+            },
+            {
                 id: 'administration.organizations',
                 title: 'Organizations',
                 type: 'basic',
@@ -215,6 +236,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 type: 'basic',
                 icon: 'heroicons_outline:clipboard-document-check',
                 link: '/administration/users',
+            },
+            {
+                id: 'administration.user-timesheets',
+                title: 'User Timesheets',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/administration/user-timesheets',
             },
             {
                 id: 'administration.user-roles',
@@ -288,6 +316,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 icon: 'heroicons_outline:clipboard-document-check',
                 link: '/crm/contacts',
             },
+            {
+                id: 'administration.sources',
+                title: 'Lead Sources',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/crm/sources',
+            },
         ],
     },
     {
@@ -322,11 +357,25 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         icon: 'heroicons_outline:home',
         children: [
             {
+                id: 'projects.items',
+                title: 'Items',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/projects/items',
+            },
+            {
                 id: 'projects.quotes',
                 title: 'Quotes',
                 type: 'basic',
                 icon: 'heroicons_outline:clipboard-document-check',
                 link: '/projects/quotes',
+            },
+            {
+                id: 'projects.quotes-requests',
+                title: 'Quotes Requests',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/projects/quotes-requests',
             },
             {
                 id: 'projects.project-teams',

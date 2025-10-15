@@ -38,7 +38,6 @@ import {
 } from 'rxjs';
 import { Contact } from '../contacts.model';
 import { MatDialog } from '@angular/material/dialog';
-import { ProductsComposeComponent } from '../compose/compose.component';
 import { ContactsV2Service } from '../contacts-v2.service';
 import { ContactsAddItemComponent } from '../add-item/add-item.component';
 
@@ -209,18 +208,6 @@ export class ContactsListComponent implements OnInit, OnDestroy {
 
         // Mark for check
         this._changeDetectorRef.markForCheck();
-    }
-
-    /**
-     * Open compose dialog
-     */
-    openComposeDialog(): void {
-        // Open the dialog
-        const dialogRef = this._matDialog.open(ProductsComposeComponent);
-
-        dialogRef.afterClosed().subscribe((result) => {
-            console.log('Compose dialog was closed!');
-        });
     }
 
     /**

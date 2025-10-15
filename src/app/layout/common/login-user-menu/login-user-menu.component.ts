@@ -15,6 +15,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { LoginUserService } from 'app/core/login-user/login-user.service';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
 // import { User } from 'app/core/user/user.types';
@@ -36,14 +37,13 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class LoginUserMenuComponent implements OnInit, OnDestroy {
     private _loginUserService = inject(LoginUserService);
-
+    public loginUser: User = inject(FirebaseAuthV2Service).loginUser();
 
     /* eslint-disable @typescript-eslint/naming-convention */
     static ngAcceptInputType_showAvatar: BooleanInput;
     /* eslint-enable @typescript-eslint/naming-convention */
 
     @Input() showAvatar: boolean = true;
-    loginUser: User;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -121,4 +121,12 @@ export class LoginUserMenuComponent implements OnInit, OnDestroy {
     signOut(): void {
         this._router.navigate(['/sign-out']);
     }
+
+    /**
+     * Login User
+     */
+    showLoginUser(): void {
+        console.log('showLoginUser', this.loginUser);
+    }
+
 }

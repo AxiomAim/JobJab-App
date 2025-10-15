@@ -5,6 +5,7 @@ export class QuoteModel implements BaseDto {
     constructor(
         id: string,
         orgId: string,
+        background: string,
         projectId: string,
         item: number,
         name: string,
@@ -22,6 +23,7 @@ export class QuoteModel implements BaseDto {
         ) {
             this.id = id;
             this.orgId = orgId;
+            this.background = background;
             this.projectId = projectId;
             this.item = item;
             this.name = name;
@@ -39,6 +41,7 @@ export class QuoteModel implements BaseDto {
     }
     public id: string;
     public orgId: string;
+    public background: string;
     public projectId: string;
     public item: number;
     public name: string;
@@ -60,6 +63,7 @@ export class QuoteModel implements BaseDto {
         return {
             id: dto.id ? dto.id : '',
             orgId: dto.orgId ? dto.orgId : '',
+            background: dto.background ? dto.background : 'images/backgrounds/jobjab_quotes.jpg',
             projectId: dto.projectId ? dto.projectId : '',
             item: dto.item ? dto.item : 0,
             name: dto.name ? dto.name : '',
@@ -82,6 +86,7 @@ export class QuoteModel implements BaseDto {
         return {
             id: uuidv4().toString(),
             orgId: '',
+            background: 'images/backgrounds/jobjab_quotes.jpg',
             projectId: '',
             item: 0,
             name: '',
@@ -104,6 +109,7 @@ export class QuoteModel implements BaseDto {
 export interface Quote extends BaseDto {
     id: string;
     orgId: string;
+    background: string;
     projectId: string;
     item: number;
     name: string;

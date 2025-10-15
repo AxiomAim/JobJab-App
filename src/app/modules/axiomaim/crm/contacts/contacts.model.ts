@@ -1,11 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BaseDto } from 'app/core/models/base-dto.model';
+import { Source } from '../sources/sources.model';
 
 export class ContactModel implements BaseDto {
     constructor(
         id: string,
         orgId: string,
-        type: string,
+        background: string,
+        source: Source,
         firstName: string,
         lastName: string,
         company: string,
@@ -15,6 +17,8 @@ export class ContactModel implements BaseDto {
         leadAt: string,
         customer: boolean,
         customerAt: string,
+        cancel: boolean,
+        cancelAt: string,
         touches: Touch[],
         actions: Action[],
         emails: {
@@ -32,7 +36,8 @@ export class ContactModel implements BaseDto {
         ) {
             this.id = id;
             this.orgId = orgId;
-            this.type = type;
+            this.background = background;
+            this.source = source;
             this.firstName = firstName;
             this.lastName = lastName;
             this.company = company;
@@ -42,6 +47,8 @@ export class ContactModel implements BaseDto {
             this.leadAt = leadAt;
             this.customer = customer;
             this.customerAt = customerAt;
+            this.cancel = cancel;
+            this.cancelAt = cancelAt;
             this.touches = touches;
             this.actions = actions;
             this.emails = emails;
@@ -52,7 +59,8 @@ export class ContactModel implements BaseDto {
     }
     public id: string;
     public orgId: string;
-    public type: string;
+    public background: string;
+    public source: Source;
     public firstName: string;
     public lastName: string;
     public company: string;
@@ -62,6 +70,8 @@ export class ContactModel implements BaseDto {
     public leadAt: string;
     public customer: boolean;
     public customerAt: string;
+    public cancel: boolean;
+    public cancelAt: string;
     public touches: Touch[];
     public actions: Action[];
     public emails?: {
@@ -73,6 +83,8 @@ export class ContactModel implements BaseDto {
         phoneNumber: string;
         label: string;
     }[];
+    public sms?: boolean;
+    public smsAt?: string;
     public createdAt?: string;
     public updatedAt?: string;
     public deletedAt?: string;
@@ -83,7 +95,8 @@ export class ContactModel implements BaseDto {
         return {
             id: dto.id ? dto.id : '',
             orgId: dto.orgId ? dto.orgId : '',
-            type: dto.type ? dto.type : '',
+            background: dto.background ? dto.background : 'images/backgrounds/jobjab_contacts.jpg',
+            source: dto.source ? dto.source : null,
             firstName: dto.firstName ? dto.firstName : '',
             lastName: dto.lastName ? dto.lastName : '',
             company: dto.company ? dto.company : '',
@@ -93,6 +106,8 @@ export class ContactModel implements BaseDto {
             leadAt: dto.leadAt ? dto.leadAt : '',
             customer: dto.customer ? dto.customer : false,
             customerAt: dto.customerAt ? dto.customerAt : '',
+            cancel: dto.cancel ? dto.cancel : false,
+            cancelAt: dto.cancelAt ? dto.cancelAt : '',
             touches: dto.touches ? dto.touches : [],
             actions: dto.actions ? dto.actions : [],
             emails: dto.emails ? dto.emails : [
@@ -101,6 +116,8 @@ export class ContactModel implements BaseDto {
             phoneNumbers: dto.phoneNumbers ? dto.phoneNumbers : [
                 // { country: 'us', phoneNumber: '', label: 'Mobile' }
             ],
+            sms: dto.sms ? dto.sms : false,
+            smsAt: dto.smsAt ? dto.smsAt : '',
             createdAt: dto.createdAt ? dto.createdAt : '',
             updatedAt: dto.updatedAt ? dto.updatedAt : '',
             deletedAt: dto.deletedAt ? dto.deletedAt : '',
@@ -112,7 +129,8 @@ export class ContactModel implements BaseDto {
         return {
             id: uuidv4().toString(),
             orgId: '',
-            type: '',
+            background: 'images/backgrounds/jobjab_contacts.jpg',
+            source: null,
             firstName: '',
             lastName: '',
             company: '',
@@ -122,6 +140,8 @@ export class ContactModel implements BaseDto {
             leadAt: '',
             customer: false,
             customerAt: '',
+            cancel: false,
+            cancelAt: '',
             touches: [],
             actions: [],
             emails: [
@@ -130,6 +150,8 @@ export class ContactModel implements BaseDto {
             phoneNumbers: [
                 // { country: 'us', phoneNumber: '', label: 'Mobile' }
             ],
+            sms: false,
+            smsAt: '',
             createdAt: date,
             updatedAt: date,
             deletedAt: '',
@@ -141,7 +163,8 @@ export class ContactModel implements BaseDto {
 export interface Contact  extends BaseDto {
     id: string;
     orgId: string;
-    type: string;
+    background: string;
+    source: Source;
     firstName: string;
     lastName: string;
     company: string;
@@ -151,6 +174,8 @@ export interface Contact  extends BaseDto {
     leadAt: string;
     customer: boolean;
     customerAt: string;
+    cancel: boolean;
+    cancelAt: string;
     touches: Touch[];
     actions: Action[];
     emails: {
@@ -162,6 +187,8 @@ export interface Contact  extends BaseDto {
         phoneNumber: string;
         label: string;
     }[];
+    sms?: boolean;
+    smsAt?: string;
     createdAt?: string;
     updatedAt?: string;
     deletedAt?: string;    

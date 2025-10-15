@@ -30,6 +30,7 @@ import { ContactsV2Service } from '../contacts-v2.service';
 import { ContactsService } from 'app/modules/axiomaim/apps/contacts/contacts.service';
 import { Country, Contact, ContactModel } from '../contacts.model';
 import { Overlay } from '@angular/cdk/overlay';
+import { SourcesV2Service } from '../../sources/sources-v2.service';
 
 @Component({
     selector: 'contacts-add-item',
@@ -86,21 +87,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
     loginUser = inject(FirebaseAuthV2Service).loginUser();
     _alertMessagesService = inject(AlertMessagesService);
     _contactsV2Service = inject(ContactsV2Service);
-
-    formFieldHelpers: string[] = [''];
-    fixedSubscriptInput: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    dynamicSubscriptInput: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    fixedSubscriptInputWithHint: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    dynamicSubscriptInputWithHint: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-
+    _sourcesV2Service = inject(SourcesV2Service);
 
     @ViewChild('newItemDrawer') newItemDrawer: AxiomaimDrawerComponent;
     @Output() drawerStateChanged = new EventEmitter<boolean>();
@@ -150,6 +137,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
             lead: [false, [Validators.required]],
             leadAt: [''],
             customer: [false, [Validators.required]],
+            source: [{}, [Validators.required]],
             customerAt: [''],
             emails: this._formBuilder.array([]),
             phoneNumbers: this._formBuilder.array([]),

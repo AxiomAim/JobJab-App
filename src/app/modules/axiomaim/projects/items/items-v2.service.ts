@@ -65,9 +65,9 @@ export const ItemsV2Service = createInjectable(() => {
   };
 
   return {
-    quotes: computed(() => items()),
-    allQuotes: computed(() => allItems()),
-    quote: computed(() => item()),
+    items: computed(() => items()),
+    allItems: computed(() => allItems()),
+    item: computed(() => item()),
     getAll,
     getItem,
     search,

@@ -1,4 +1,4 @@
-import { CurrencyPipe, NgClass } from '@angular/common';
+import { CurrencyPipe, DecimalPipe, NgClass } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -21,6 +21,7 @@ import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { ReplaySubject, Subject, takeUntil } from 'rxjs';
 import { User } from '../../administration/users/users.model';
 import { CRMV2Service } from './crmV2.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @Component({
@@ -38,20 +39,23 @@ import { CRMV2Service } from './crmV2.service';
         MatButtonToggleModule,
         NgApexchartsModule,
         MatTableModule,
-        NgClass,
-        CurrencyPipe,
+        MatTooltipModule,
+        DecimalPipe,
     ],
 })
 export class CRMComponent implements OnInit, OnDestroy {
     private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     private _crmV2Service = inject(CRMV2Service);
 
-    chartGithubIssues: ApexOptions = {};
-    chartTaskDistribution: ApexOptions = {};
-    chartBudgetDistribution: ApexOptions = {};
-    chartWeeklyExpenses: ApexOptions = {};
-    chartMonthlyExpenses: ApexOptions = {};
-    chartYearlyExpenses: ApexOptions = {};
+    chartVisitors: ApexOptions;
+    chartConversions: ApexOptions;
+    chartImpressions: ApexOptions;
+    chartVisits: ApexOptions;
+    chartVisitorsVsPageViews: ApexOptions;
+    chartLeadsBySource: ApexOptions;
+    chartGender: ApexOptions;
+    chartAge: ApexOptions;
+    chartLanguage: ApexOptions;
     data: any;
     selectedCRM: string = 'CRM Dashboard';
     private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -75,18 +79,11 @@ export class CRMComponent implements OnInit, OnDestroy {
     /**
      * On init
      */
-    ngOnInit(): void {
+    async ngOnInit() {
         // Get the data
-        // this._crmV2Service.data$
-        //     .pipe(takeUntil(this._unsubscribeAll))
-        //     .subscribe((data) => {
-        //         // Store the data
-        //         this.data = data;
-
-        //         // Prepare the chart data
-        //         this._prepareChartData();
-        //     });
-
+        this.data = await this._crmV2Service.getData();
+        await this._prepareChartData();
+        // Attach SVG fill fixer to all ApexCharts
         // Attach SVG fill fixer to all ApexCharts
         window['Apex'] = {
             chart: {
@@ -163,13 +160,228 @@ export class CRMComponent implements OnInit, OnDestroy {
      * @private
      */
     private _prepareChartData(): void {
-        // Github issues
-        this.chartGithubIssues = {
+        // Visitors
+        this.chartVisitors = {
             chart: {
+                animations: {
+                    speed: 400,
+                    animateGradually: {
+                        enabled: false,
+                    },
+                },
+                fontFamily: 'inherit',
+                foreColor: 'inherit',
+                width: '100%',
+                height: '100%',
+                type: 'area',
+                toolbar: {
+                    show: false,
+                },
+                zoom: {
+                    enabled: false,
+                },
+            },
+            colors: ['#818CF8'],
+            dataLabels: {
+                enabled: false,
+            },
+            fill: {
+                colors: ['#312E81'],
+            },
+            grid: {
+                show: true,
+                borderColor: '#334155',
+                padding: {
+                    top: 10,
+                    bottom: -40,
+                    left: 0,
+                    right: 0,
+                },
+                position: 'back',
+                xaxis: {
+                    lines: {
+                        show: true,
+                    },
+                },
+            },
+            series: this.data.visitors.series,
+            stroke: {
+                width: 2,
+            },
+            tooltip: {
+                followCursor: true,
+                theme: 'dark',
+                x: {
+                    format: 'MMM dd, yyyy',
+                },
+                y: {
+                    formatter: (value: number): string => `${value}`,
+                },
+            },
+            xaxis: {
+                axisBorder: {
+                    show: false,
+                },
+                axisTicks: {
+                    show: false,
+                },
+                crosshairs: {
+                    stroke: {
+                        color: '#475569',
+                        dashArray: 0,
+                        width: 2,
+                    },
+                },
+                labels: {
+                    offsetY: -20,
+                    style: {
+                        colors: '#CBD5E1',
+                    },
+                },
+                tickAmount: 20,
+                tooltip: {
+                    enabled: false,
+                },
+                type: 'datetime',
+            },
+            yaxis: {
+                axisTicks: {
+                    show: false,
+                },
+                axisBorder: {
+                    show: false,
+                },
+                min: (min): number => min - 750,
+                max: (max): number => max + 250,
+                tickAmount: 5,
+                show: false,
+            },
+        };
+
+        // Conversions
+        this.chartConversions = {
+            chart: {
+                animations: {
+                    enabled: false,
+                },
                 fontFamily: 'inherit',
                 foreColor: 'inherit',
                 height: '100%',
-                type: 'line',
+                type: 'area',
+                sparkline: {
+                    enabled: true,
+                },
+            },
+            colors: ['#38BDF8'],
+            fill: {
+                colors: ['#38BDF8'],
+                opacity: 0.5,
+            },
+            series: this.data.conversions.series,
+            stroke: {
+                curve: 'smooth',
+            },
+            tooltip: {
+                followCursor: true,
+                theme: 'dark',
+            },
+            xaxis: {
+                type: 'category',
+                categories: this.data.conversions.labels,
+            },
+            yaxis: {
+                labels: {
+                    formatter: (val): string => val.toString(),
+                },
+            },
+        };
+
+        // Impressions
+        this.chartImpressions = {
+            chart: {
+                animations: {
+                    enabled: false,
+                },
+                fontFamily: 'inherit',
+                foreColor: 'inherit',
+                height: '100%',
+                type: 'area',
+                sparkline: {
+                    enabled: true,
+                },
+            },
+            colors: ['#34D399'],
+            fill: {
+                colors: ['#34D399'],
+                opacity: 0.5,
+            },
+            series: this.data.impressions.series,
+            stroke: {
+                curve: 'smooth',
+            },
+            tooltip: {
+                followCursor: true,
+                theme: 'dark',
+            },
+            xaxis: {
+                type: 'category',
+                categories: this.data.impressions.labels,
+            },
+            yaxis: {
+                labels: {
+                    formatter: (val): string => val.toString(),
+                },
+            },
+        };
+
+        // Visits
+        this.chartVisits = {
+            chart: {
+                animations: {
+                    enabled: false,
+                },
+                fontFamily: 'inherit',
+                foreColor: 'inherit',
+                height: '100%',
+                type: 'area',
+                sparkline: {
+                    enabled: true,
+                },
+            },
+            colors: ['#FB7185'],
+            fill: {
+                colors: ['#FB7185'],
+                opacity: 0.5,
+            },
+            series: this.data.visits.series,
+            stroke: {
+                curve: 'smooth',
+            },
+            tooltip: {
+                followCursor: true,
+                theme: 'dark',
+            },
+            xaxis: {
+                type: 'category',
+                categories: this.data.visits.labels,
+            },
+            yaxis: {
+                labels: {
+                    formatter: (val): string => val.toString(),
+                },
+            },
+        };
+
+        // Visitors vs Page Views
+        this.chartVisitorsVsPageViews = {
+            chart: {
+                animations: {
+                    enabled: false,
+                },
+                fontFamily: 'inherit',
+                foreColor: 'inherit',
+                height: '100%',
+                type: 'area',
                 toolbar: {
                     show: false,
                 },
@@ -179,286 +391,287 @@ export class CRMComponent implements OnInit, OnDestroy {
             },
             colors: ['#64748B', '#94A3B8'],
             dataLabels: {
-                enabled: true,
-                enabledOnSeries: [0],
-                background: {
-                    borderWidth: 0,
-                },
+                enabled: false,
+            },
+            fill: {
+                colors: ['#64748B', '#94A3B8'],
+                opacity: 0.5,
             },
             grid: {
-                borderColor: 'var(--axiomaim-border)',
+                show: false,
+                padding: {
+                    bottom: -40,
+                    left: 0,
+                    right: 0,
+                },
             },
-            labels: this.data.githubIssues.labels,
             legend: {
                 show: false,
             },
-            plotOptions: {
-                bar: {
-                    columnWidth: '50%',
-                },
-            },
-            series: this.data.githubIssues.series,
-            states: {
-                hover: {
-                    filter: {
-                        type: 'darken',
-                    },
-                },
-            },
+            series: this.data.visitorsVsPageViews.series,
             stroke: {
-                width: [3, 0],
+                curve: 'smooth',
+                width: 2,
             },
             tooltip: {
                 followCursor: true,
                 theme: 'dark',
+                x: {
+                    format: 'MMM dd, yyyy',
+                },
             },
             xaxis: {
                 axisBorder: {
                     show: false,
                 },
-                axisTicks: {
-                    color: 'var(--axiomaim-border)',
-                },
                 labels: {
+                    offsetY: -20,
+                    rotate: 0,
                     style: {
                         colors: 'var(--axiomaim-text-secondary)',
                     },
                 },
+                tickAmount: 3,
                 tooltip: {
                     enabled: false,
                 },
+                type: 'datetime',
             },
             yaxis: {
                 labels: {
-                    offsetX: -16,
                     style: {
                         colors: 'var(--axiomaim-text-secondary)',
                     },
                 },
+                max: (max): number => max + 250,
+                min: (min): number => min - 250,
+                show: false,
+                tickAmount: 5,
             },
         };
 
-        // Task distribution
-        this.chartTaskDistribution = {
+
+        // New vs. returning
+        this.chartLeadsBySource = {
             chart: {
+                animations: {
+                    speed: 400,
+                    animateGradually: {
+                        enabled: false,
+                    },
+                },
                 fontFamily: 'inherit',
                 foreColor: 'inherit',
                 height: '100%',
-                type: 'polarArea',
-                toolbar: {
-                    show: false,
-                },
-                zoom: {
-                    enabled: false,
+                type: 'donut',
+                sparkline: {
+                    enabled: true,
                 },
             },
-            labels: this.data.taskDistribution.labels,
-            legend: {
-                position: 'bottom',
-            },
+            colors: ['#3182CE', '#319795', '#DD6B20', '#805AD5'],
+            labels: this.data.leadsBySource.labels,
             plotOptions: {
-                polarArea: {
-                    spokes: {
-                        connectorColors: 'var(--axiomaim-border)',
-                    },
-                    rings: {
-                        strokeColor: 'var(--axiomaim-border)',
+                pie: {
+                    customScale: 0.9,
+                    expandOnClick: false,
+                    donut: {
+                        size: '70%',
                     },
                 },
             },
-            series: this.data.taskDistribution.series,
+            series: this.data.leadsBySource.series,
             states: {
                 hover: {
                     filter: {
-                        type: 'darken',
+                        type: 'none',
                     },
                 },
-            },
-            stroke: {
-                width: 2,
-            },
-            theme: {
-                monochrome: {
-                    enabled: true,
-                    color: '#93C5FD',
-                    shadeIntensity: 0.75,
-                    shadeTo: 'dark',
+                active: {
+                    filter: {
+                        type: 'none',
+                    },
                 },
             },
             tooltip: {
-                followCursor: true,
-                theme: 'dark',
-            },
-            yaxis: {
-                labels: {
-                    style: {
-                        colors: 'var(--axiomaim-text-secondary)',
-                    },
-                },
-            },
-        };
-
-        // Budget distribution
-        this.chartBudgetDistribution = {
-            chart: {
-                fontFamily: 'inherit',
-                foreColor: 'inherit',
-                height: '100%',
-                type: 'radar',
-                sparkline: {
-                    enabled: true,
-                },
-            },
-            colors: ['#818CF8'],
-            dataLabels: {
                 enabled: true,
-                formatter: (val: number): string | number => `${val}%`,
-                textAnchor: 'start',
-                style: {
-                    fontSize: '13px',
-                    fontWeight: 500,
-                },
-                background: {
-                    borderWidth: 0,
-                    padding: 4,
-                },
-                offsetY: -15,
+                fillSeriesColor: false,
+                theme: 'dark',
+                custom: ({
+                    seriesIndex,
+                    w,
+                }): string => `<div class="flex items-center h-8 min-h-8 max-h-8 px-3">
+                                                    <div class="w-3 h-3 rounded-full" style="background-color: ${w.config.colors[seriesIndex]};"></div>
+                                                    <div class="ml-2 text-md leading-none">${w.config.labels[seriesIndex]}:</div>
+                                                    <div class="ml-2 text-md font-bold leading-none">${w.config.series[seriesIndex]}%</div>
+                                                </div>`,
             },
-            markers: {
-                strokeColors: '#818CF8',
-                strokeWidth: 4,
+        };
+
+        // Gender
+        this.chartGender = {
+            chart: {
+                animations: {
+                    speed: 400,
+                    animateGradually: {
+                        enabled: false,
+                    },
+                },
+                fontFamily: 'inherit',
+                foreColor: 'inherit',
+                height: '100%',
+                type: 'donut',
+                sparkline: {
+                    enabled: true,
+                },
             },
+            colors: ['#319795', '#4FD1C5'],
+            labels: this.data.gender.labels,
             plotOptions: {
-                radar: {
-                    polygons: {
-                        strokeColors: 'var(--axiomaim-border)',
-                        connectorColors: 'var(--axiomaim-border)',
+                pie: {
+                    customScale: 0.9,
+                    expandOnClick: false,
+                    donut: {
+                        size: '70%',
                     },
                 },
             },
-            series: this.data.budgetDistribution.series,
-            stroke: {
-                width: 2,
-            },
-            tooltip: {
-                theme: 'dark',
-                y: {
-                    formatter: (val: number): string => `${val}%`,
-                },
-            },
-            xaxis: {
-                labels: {
-                    show: true,
-                    style: {
-                        fontSize: '12px',
-                        fontWeight: '500',
+            series: this.data.gender.series,
+            states: {
+                hover: {
+                    filter: {
+                        type: 'none',
                     },
                 },
-                categories: this.data.budgetDistribution.categories,
+                active: {
+                    filter: {
+                        type: 'none',
+                    },
+                },
             },
-            yaxis: {
-                max: (max: number): number =>
-                    parseInt((max + 10).toFixed(0), 10),
-                tickAmount: 7,
+            tooltip: {
+                enabled: true,
+                fillSeriesColor: false,
+                theme: 'dark',
+                custom: ({
+                    seriesIndex,
+                    w,
+                }): string => `<div class="flex items-center h-8 min-h-8 max-h-8 px-3">
+                                                     <div class="w-3 h-3 rounded-full" style="background-color: ${w.config.colors[seriesIndex]};"></div>
+                                                     <div class="ml-2 text-md leading-none">${w.config.labels[seriesIndex]}:</div>
+                                                     <div class="ml-2 text-md font-bold leading-none">${w.config.series[seriesIndex]}%</div>
+                                                 </div>`,
             },
         };
 
-        // Weekly expenses
-        this.chartWeeklyExpenses = {
+        // Age
+        this.chartAge = {
             chart: {
                 animations: {
-                    enabled: false,
+                    speed: 400,
+                    animateGradually: {
+                        enabled: false,
+                    },
                 },
                 fontFamily: 'inherit',
                 foreColor: 'inherit',
                 height: '100%',
-                type: 'line',
+                type: 'donut',
                 sparkline: {
                     enabled: true,
                 },
             },
-            colors: ['#22D3EE'],
-            series: this.data.weeklyExpenses.series,
-            stroke: {
-                curve: 'smooth',
+            colors: ['#DD6B20', '#F6AD55'],
+            labels: this.data.age.labels,
+            plotOptions: {
+                pie: {
+                    customScale: 0.9,
+                    expandOnClick: false,
+                    donut: {
+                        size: '70%',
+                    },
+                },
+            },
+            series: this.data.age.series,
+            states: {
+                hover: {
+                    filter: {
+                        type: 'none',
+                    },
+                },
+                active: {
+                    filter: {
+                        type: 'none',
+                    },
+                },
             },
             tooltip: {
+                enabled: true,
+                fillSeriesColor: false,
                 theme: 'dark',
-            },
-            xaxis: {
-                type: 'category',
-                categories: this.data.weeklyExpenses.labels,
-            },
-            yaxis: {
-                labels: {
-                    formatter: (val): string => `$${val}`,
-                },
+                custom: ({
+                    seriesIndex,
+                    w,
+                }): string => `<div class="flex items-center h-8 min-h-8 max-h-8 px-3">
+                                                    <div class="w-3 h-3 rounded-full" style="background-color: ${w.config.colors[seriesIndex]};"></div>
+                                                    <div class="ml-2 text-md leading-none">${w.config.labels[seriesIndex]}:</div>
+                                                    <div class="ml-2 text-md font-bold leading-none">${w.config.series[seriesIndex]}%</div>
+                                                </div>`,
             },
         };
 
-        // Monthly expenses
-        this.chartMonthlyExpenses = {
+        // Language
+        this.chartLanguage = {
             chart: {
                 animations: {
-                    enabled: false,
+                    speed: 400,
+                    animateGradually: {
+                        enabled: false,
+                    },
                 },
                 fontFamily: 'inherit',
                 foreColor: 'inherit',
                 height: '100%',
-                type: 'line',
+                type: 'donut',
                 sparkline: {
                     enabled: true,
                 },
             },
-            colors: ['#4ADE80'],
-            series: this.data.monthlyExpenses.series,
-            stroke: {
-                curve: 'smooth',
+            colors: ['#805AD5', '#B794F4'],
+            labels: this.data.language.labels,
+            plotOptions: {
+                pie: {
+                    customScale: 0.9,
+                    expandOnClick: false,
+                    donut: {
+                        size: '70%',
+                    },
+                },
+            },
+            series: this.data.language.series,
+            states: {
+                hover: {
+                    filter: {
+                        type: 'none',
+                    },
+                },
+                active: {
+                    filter: {
+                        type: 'none',
+                    },
+                },
             },
             tooltip: {
+                enabled: true,
+                fillSeriesColor: false,
                 theme: 'dark',
-            },
-            xaxis: {
-                type: 'category',
-                categories: this.data.monthlyExpenses.labels,
-            },
-            yaxis: {
-                labels: {
-                    formatter: (val): string => `$${val}`,
-                },
-            },
-        };
-
-        // Yearly expenses
-        this.chartYearlyExpenses = {
-            chart: {
-                animations: {
-                    enabled: false,
-                },
-                fontFamily: 'inherit',
-                foreColor: 'inherit',
-                height: '100%',
-                type: 'line',
-                sparkline: {
-                    enabled: true,
-                },
-            },
-            colors: ['#FB7185'],
-            series: this.data.yearlyExpenses.series,
-            stroke: {
-                curve: 'smooth',
-            },
-            tooltip: {
-                theme: 'dark',
-            },
-            xaxis: {
-                type: 'category',
-                categories: this.data.yearlyExpenses.labels,
-            },
-            yaxis: {
-                labels: {
-                    formatter: (val): string => `$${val}`,
-                },
+                custom: ({
+                    seriesIndex,
+                    w,
+                }): string => `<div class="flex items-center h-8 min-h-8 max-h-8 px-3">
+                                                    <div class="w-3 h-3 rounded-full" style="background-color: ${w.config.colors[seriesIndex]};"></div>
+                                                    <div class="ml-2 text-md leading-none">${w.config.labels[seriesIndex]}:</div>
+                                                    <div class="ml-2 text-md font-bold leading-none">${w.config.series[seriesIndex]}%</div>
+                                                </div>`,
             },
         };
     }

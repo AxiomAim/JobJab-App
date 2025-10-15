@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import {
     FormsModule,
     NgForm,
@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 import { axiomaimAnimations } from '@axiomaim/animations';
 import { AxiomaimAlertComponent, AxiomaimAlertType } from '@axiomaim/components/alert';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { finalize } from 'rxjs';
 
@@ -34,6 +35,7 @@ import { finalize } from 'rxjs';
     ],
 })
 export class AuthForgotPasswordComponent implements OnInit {
+    private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     @ViewChild('forgotPasswordNgForm') forgotPasswordNgForm: NgForm;
 
     alert: { type: AxiomaimAlertType; message: string } = {
@@ -85,7 +87,7 @@ export class AuthForgotPasswordComponent implements OnInit {
         this.showAlert = false;
 
         // Forgot password
-        this._authService
+        this._firebaseAuthV2Service
             .forgotPassword(this.forgotPasswordForm.get('email').value)
             .pipe(
                 finalize(() => {
@@ -100,22 +102,24 @@ export class AuthForgotPasswordComponent implements OnInit {
                 })
             )
             .subscribe(
-                (response) => {
-                    // Set the alert
+                {
+                next: (value) => {
                     this.alert = {
                         type: 'success',
                         message:
                             "Password reset sent! You'll receive an email if you are registered on our system.",
                     };
                 },
-                (response) => {
-                    // Set the alert
+                error: (error) => {
                     this.alert = {
                         type: 'error',
                         message:
-                            'Email does not found! Are you sure you are already a member?',
+                            "An error occurred while sending the password reset email. Please try again later." + error,
                     };
-                }
-            );
+                },
+                complete: () => {
+                    console.log('Observable completed.');
+                },
+            });
     }
 }

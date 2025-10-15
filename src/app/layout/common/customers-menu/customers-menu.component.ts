@@ -27,7 +27,6 @@ import { take } from 'rxjs';
     imports: [
         MatButtonModule, 
         MatMenuModule, 
-        NgTemplateOutlet,
         MatIconModule,
         RouterLink
     ],
