@@ -12,11 +12,15 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  forwardRef
 } from '@angular/core';
 import {
   FormControl,
   Validators,
-  ReactiveFormsModule
+  ReactiveFormsModule,
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  FormsModule
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -41,16 +45,23 @@ declare var google: any;
     MatInputModule,
     NgIf,
     NgClass,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
+  ],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => AddressLookupComponent),
+      multi: true,
+    },
   ],
 })
-export class AddressLookupComponent implements OnInit, OnChanges, OnDestroy {
+export class AddressLookupComponent implements OnInit, OnChanges, OnDestroy, ControlValueAccessor {
   @Output() selectedOption: EventEmitter<any> = new EventEmitter<any>();
   @Input() id: string = 'address-lookup';
   @Input() label!: string;
   @Input() formFieldAppearence!: string;
   @Input() placeholder!: string;
-  @Input() formControl!: FormControl;
   @Input() readOnly: boolean = false;
   @Input() type: string = 'search';
   @Input() errorText!: string;
@@ -59,9 +70,15 @@ export class AddressLookupComponent implements OnInit, OnChanges, OnDestroy {
 
   @ViewChild('addressInput', { static: true }) addressInput!: ElementRef;
 
+  value: string = '';
+
   private autocomplete: any;
   private mapsLoadedSubscription?: Subscription;
   mapsLoadingError: string | null = null;
+
+  // ControlValueAccessor
+  onChange = (value: any) => {};
+  onTouched = () => {};
 
   constructor(
     private zone: NgZone,
@@ -69,19 +86,13 @@ export class AddressLookupComponent implements OnInit, OnChanges, OnDestroy {
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['disabled'] && this.formControl) {
-      if (this.disabled) {
-        this.formControl.disable();
-      } else {
-        this.formControl.enable();
-      }
+    if (changes['disabled']) {
+      this.setDisabledState(this.disabled);
     }
   }
 
   ngOnInit(): void {
-    if (this.disabled) {
-      this.formControl.disable();
-    }
+    this.setDisabledState(this.disabled);
 
     this.mapsLoadedSubscription = this.googleMapsService
       .loadGoogleMaps()
@@ -98,6 +109,27 @@ export class AddressLookupComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.mapsLoadedSubscription?.unsubscribe();
+  }
+
+  onModelChange(value: string): void {
+    this.onChange(value);
+  }
+
+  // ControlValueAccessor methods
+  writeValue(value: any): void {
+    this.value = value || '';
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
   }
 
   private initializeAutocomplete(): void {
@@ -117,9 +149,10 @@ export class AddressLookupComponent implements OnInit, OnChanges, OnDestroy {
         const place = this.autocomplete.getPlace();
         if (place.geometry) {
           this.selectedOption.emit({ value: place, type: this.type });
-          this.formControl.setValue(place.formatted_address);
+          // Autocomplete already sets the input value, ngModel updates this.value and calls onChange
         } else {
-          this.formControl.setValue('');
+          this.value = '';
+          this.onChange('');
         }
       });
     });
