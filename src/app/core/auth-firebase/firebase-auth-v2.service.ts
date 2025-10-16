@@ -265,6 +265,17 @@ export const FirebaseAuthV2Service = createInjectable(() => {
     });
   };
   
+  const signUpOrg = async (signup: any): Promise<any> => {
+    console.log('Sign up data:', signup);
+    await createUserWithEmailAndPassword(auth, signup.email, signup.password).then(async (userCredential) => {
+      console.log('User credential from Firebase:', userCredential);
+      return userCredential.user;
+    }).catch((error) => {
+      console.error('Error during signUp:', error);
+      throw error;
+    });
+  };
+
   const sendEmailVerificationNew = async (user: FirebaseUser): Promise<any> => {
     console.log('sendEmailVerification:', user);
     return sendEmailVerification(user, actionCodeSettings);
@@ -418,6 +429,7 @@ export const FirebaseAuthV2Service = createInjectable(() => {
     setScheme,
     setTheme,
     setLayout,
-    sendEmailVerification: sendEmailVerificationNew
+    sendEmailVerification: sendEmailVerificationNew,
+    signUpOrg
   };
 });

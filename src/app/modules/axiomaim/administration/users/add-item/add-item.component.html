@@ -22,45 +22,78 @@
             </div>
         </div>
 
+        <!-- Alert -->
+        @if (showAlert) {
+        <axiomaim-alert class="mt-8" [appearance]="'outline'" [showIcon]="false" [type]="alert.type"
+            [@shake]="alert.type === 'error'">
+            {{ alert.message }}
+        </axiomaim-alert>
+        }
+
         <!-- form -->
         <div class="relative flex flex-auto flex-col overflow-y-auto items-center px-6 sm:px-12">
             <div class="w-full max-w-3xl">
-                <form [formGroup]="userForm">
-                    <div class="mt-4">
-                        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                            <mat-label>First Name</mat-label>
-                            <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-                            <input matInput [formControlName]="'firstName'" [placeholder]="'First Name'"
-                                [spellcheck]="false" />
-                        </mat-form-field>
-                    </div>
-                    <div class="mt-4">
-                        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                            <mat-label>Last Name</mat-label>
-                            <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-                            <input matInput [formControlName]="'lastName'" [placeholder]="'Last Name'"
-                                [spellcheck]="false" />
-                        </mat-form-field>
-                    </div>
-                    <div class="mt-4">
-                        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                            <mat-label>Email</mat-label>
-                            <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                [svgIcon]="'mat_solid:mail'"></mat-icon>
-                            <input matInput [formControlName]="'email'"
-                                [placeholder]="'Email Address (also used for login)'" [spellcheck]="false" />
-                        </mat-form-field>
+                <form [formGroup]="userForm" autocomplete="chrome-off">
+                    <!-- Hidden decoy (combine for better results) -->
+                    <input type="text" style="display: none;" autocomplete="chrome-off" />
+                    <div class="flex flex-wrap gap-x-8 gap-y-4">
+                        <div class="flex-auto">
+                            <mat-form-field class="w-full" subscriptSizing="dynamic">
+                                <mat-label>First Name</mat-label>
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    svgIcon="mat_solid:title"></mat-icon>
+                                <input matInput formControlName="firstName" placeholder="First Name" spellcheck="false"
+                                    autocomplete="chrome-off" />
+                            </mat-form-field>
+                        </div>
+                        <div class="flex-auto">
+                            <mat-form-field class="w-full" subscriptSizing="dynamic">
+                                <mat-label>Last Name</mat-label>
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    svgIcon="mat_solid:title"></mat-icon>
+                                <input matInput formControlName="lastName" placeholder="Last Name"
+                                    autocomplete="chrome-off" />
+                            </mat-form-field>
+                        </div>
                     </div>
 
-                    <!-- <div class="mt-2">
-                        <section class="example-section">
-                            <h4>Contact Type:</h4>
-                            <p><mat-checkbox formControlName="lead">Lead</mat-checkbox></p>
-                            <p><mat-checkbox formControlName="customer">Customer</mat-checkbox></p>
-                        </section>
-                    </div> -->
+                    <div class="mt-4">
+                        <mat-form-field class="w-full" subscriptSizing="dynamic">
+                            <mat-label>Email</mat-label>
+                            <mat-icon matPrefix class="hidden icon-size-5 sm:flex" svgIcon="mat_solid:mail"></mat-icon>
+                            <input matInput formControlName="email" placeholder="Email Address (also used for login)"
+                                autocomplete="chrome-off" />
+                        </mat-form-field>
+                    </div>
+                    <div class="mt-4">
+
+                        <!-- Password field -->
+                        <div class="mt-4">
+                            <mat-form-field class="w-full" subscriptSizing="dynamic">
+                                <mat-label>Password</mat-label>
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    svgIcon="mat_solid:vpn_key"></mat-icon>
+                                <input matInput [type]="isPasswordVisible ? 'text' : 'password'"
+                                    formControlName="password" placeholder="Password" autocomplete="chrome-off"
+                                    #formInputs />
+                                <button mat-icon-button type="button" (click)="togglePasswordVisibility()" matSuffix>
+                                    @if (!isPasswordVisible) {
+                                    <mat-icon class="icon-size-5" svgIcon="heroicons_solid:eye"></mat-icon>
+                                    }
+                                    @if (isPasswordVisible) {
+                                    <mat-icon class="icon-size-5" svgIcon="heroicons_solid:eye-slash"></mat-icon>
+                                    }
+                                </button>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <!-- Address -->
+                    <div class="mt-4">
+                        <address-lookup class="w-full" [autocompleteAttribute]="'chrome-off'" [label]="'Address'"
+                            [formControl]="userForm.controls['address']" placeholder="Enter address">
+                        </address-lookup>
+                    </div>
+
                     <!-- Phone numbers -->
                     <div class="mt-4">
                         <div class="space-y-4">
@@ -74,13 +107,13 @@
                             let last = $last
                             ) {
                             <div class="relative flex">
-                                <mat-form-field class="flex-auto" [subscriptSizing]="'dynamic'">
+                                <mat-form-field class="flex-auto" subscriptSizing="dynamic">
                                     @if (first) {
-                                    <mat-label>Phone</mat-label>
+                                    <mat-label>Phone (add a Mobile number to send texts)</mat-label>
                                     }
-                                    <input matInput [formControl]="
+                                    <input matInput autocomplete="chrome-off" [formControl]="
                             phoneNumber.get('phoneNumber')
-                        " [placeholder]="'Phone'" />
+                        " placeholder="Phone" />
                                     <mat-select class="mr-1.5" [formControl]="
                             phoneNumber.get('country')
                         " matPrefix>
@@ -129,12 +162,12 @@
                                     </mat-select>
                                 </mat-form-field>
                                 <mat-form-field class="ml-2 w-full max-w-24 flex-auto sm:ml-4 sm:max-w-40"
-                                    [subscriptSizing]="'dynamic'">
+                                    subscriptSizing="dynamic">
                                     @if (first) {
                                     <mat-label>Label</mat-label>
                                     }
                                     <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                        [svgIcon]="'heroicons_solid:tag'"></mat-icon>
+                                        svgIcon="heroicons_solid:tag"></mat-icon>
                                     <!-- <input matInput [formControl]="
                             phoneNumber.get('label')
                         " [placeholder]="'Label'" /> -->
@@ -142,7 +175,7 @@
                                     <mat-select [formControl]="
                             phoneNumber.get('label')
                         ">
-                                        @for (phoneLabel of phoneLabels; track phoneLabel) {
+                                        @for (phoneLabel of phoneLabels; track trackByFn($index, phoneLabel)) {
                                         <mat-option [value]="phoneLabel.value">{{phoneLabel.name}}</mat-option>
                                         }
                                     </mat-select>
@@ -153,7 +186,7 @@
                                     <button class="h-8 min-h-8 w-8" mat-icon-button (click)="
                                 removePhoneNumberField(i)
                             " matTooltip="Remove">
-                                        <mat-icon class="icon-size-5" [svgIcon]="
+                                        <mat-icon class="icon-size-5" svgIcon="
                                         'heroicons_solid:trash'
                                     "></mat-icon>
                                     </button>
@@ -164,7 +197,7 @@
                         </div>
                         <div class="group -ml-4 mt-2 inline-flex cursor-pointer items-center rounded px-4 py-2"
                             (click)="addPhoneNumberField()">
-                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                            <mat-icon class="icon-size-5" svgIcon="heroicons_solid:plus-circle"></mat-icon>
                             <span class="text-secondary ml-2 font-medium group-hover:underline">Add a phone
                                 number</span>
                         </div>
@@ -185,8 +218,8 @@
                             </mat-chip-grid>
                             <input placeholder="Select User Role..." #userRoleInput [formControl]="currentUserRole"
                                 [matAutocomplete]="auto" [matChipInputFor]="chipGrid"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                                [matChipInputAddOnBlur]="'false'" />
+                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="'false'"
+                                autocomplete="off" />
                             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
                                 @for (suggestion of filteredUserRoles(); track $index) {
                                 <mat-option [value]="suggestion">{{suggestion.name}}</mat-option>
@@ -196,9 +229,6 @@
                     </div>
                     <!-- </div> -->
                     <div class="mt-4">
-                        <address-lookup class="w-full" label="Address" [formControl]="userForm.controls['address']"
-                            placeholder="Enter address">
-                        </address-lookup>
 
                         <!-- Actions -->
                         <div

@@ -12,7 +12,10 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
-  forwardRef
+  forwardRef,
+  ViewChildren,
+  QueryList,
+  AfterViewInit
 } from '@angular/core';
 import {
   FormControl,
@@ -56,10 +59,10 @@ declare var google: any;
     },
   ],
 })
-export class AddressLookupComponent implements OnInit, OnChanges, OnDestroy, ControlValueAccessor {
+export class AddressLookupComponent implements OnInit, OnChanges, OnDestroy, ControlValueAccessor, AfterViewInit {
   @Output() selectedOption: EventEmitter<any> = new EventEmitter<any>();
   @Input() id: string = 'address-lookup';
-  @Input() label!: string;
+  @Input() label: string = 'Address';
   @Input() formFieldAppearence!: string;
   @Input() placeholder!: string;
   @Input() readOnly: boolean = false;
@@ -67,9 +70,8 @@ export class AddressLookupComponent implements OnInit, OnChanges, OnDestroy, Con
   @Input() errorText!: string;
   @Input() autocompleteAttribute: string = 'off';
   @Input() disabled: boolean = false;
-
   @ViewChild('addressInput', { static: true }) addressInput!: ElementRef;
-
+  @ViewChildren('formInputs') formInputs: QueryList<ElementRef<HTMLInputElement>>;
   value: string = '';
 
   private autocomplete: any;
@@ -107,6 +109,17 @@ export class AddressLookupComponent implements OnInit, OnChanges, OnDestroy, Con
       });
   }
 
+  ngAfterViewInit(): void {
+  // ... existing code ...
+  // Set readonly on all inputs after view init
+  this.formInputs?.forEach(input => {
+    input.nativeElement.readOnly = true;
+  });
+}
+
+onInputFocus(event: FocusEvent): void {
+  (event.target as HTMLInputElement).readOnly = false;
+}
   ngOnDestroy(): void {
     this.mapsLoadedSubscription?.unsubscribe();
   }

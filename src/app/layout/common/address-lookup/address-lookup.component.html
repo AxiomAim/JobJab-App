@@ -1,11 +1,12 @@
 <div class="flex">
-  <mat-form-field class="gt-xs:pr-3 flex-auto" [appearance]="formFieldAppearence || 'outline'">
+  <mat-form-field class="gt-xs:pr-3 flex-auto" [subscriptSizing]="'dynamic'"
+    [appearance]="formFieldAppearence || 'fill'">
     <mat-label>{{ label }}</mat-label>
     <mat-icon matPrefix class="hidden icon-size-5 sm:flex" [svgIcon]="'heroicons_solid:map-pin'"></mat-icon>
 
     <input matInput [placeholder]="placeholder" [id]="id" [readonly]="readOnly" [type]="type"
       [autocomplete]="autocompleteAttribute" #addressInput [(ngModel)]="value" (ngModelChange)="onModelChange($event)"
-      (blur)="onTouched()" [disabled]="disabled" />
+      (blur)="onTouched()" [disabled]="disabled" #formInputs />
     <mat-error *ngIf="mapsLoadingError">{{ mapsLoadingError }}</mat-error>
   </mat-form-field>
 </div>

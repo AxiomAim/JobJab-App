@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, OnChanges, inject, OnDestroy, OnInit, signal, effect, ViewChild, ViewEncapsulation, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, Renderer2, ViewContainerRef, Input, ChangeDetectionStrategy, computed } from '@angular/core';
+import { Component, OnChanges, SimpleChanges, inject, OnDestroy, OnInit, signal, effect, ViewChild, ViewEncapsulation, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, Renderer2, ViewContainerRef, Input, ChangeDetectionStrategy, computed, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -34,6 +34,7 @@ import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/ma
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { PhoneLabel } from 'app/core/models/phone-labels.model';
+import { AxiomaimAlertType } from '@axiomaim/components/alert';
 
 @Component({
     selector: 'users-add-item',
@@ -87,7 +88,8 @@ import { PhoneLabel } from 'app/core/models/phone-labels.model';
     ]
 })
 export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
-    // @Input() user: Contact;
+    @Input() send: boolean = false;
+    _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     @Input() btnIcon: string = 'mat_outline:add';
     @Input() btnTitle: string = 'Add User';
     @Output() userCreated: EventEmitter<User> = new EventEmitter<User>();
@@ -97,6 +99,7 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
 
     @ViewChild('newItemDrawer') newItemDrawer: AxiomaimDrawerComponent;
     @Output() drawerStateChanged = new EventEmitter<boolean>();
+  @ViewChildren('formInputs') formInputs: QueryList<ElementRef<HTMLInputElement>>;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     userForm: UntypedFormGroup;
@@ -115,16 +118,24 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
     isLoading = signal<boolean>(false);
     public countries: Country[] = [];
     public newUser: User = UserModel.emptyDto();
+    isPasswordVisible = false;
+
+    alert: { type: AxiomaimAlertType; message: string } = {
+        type: 'success',
+        message: '',
+    };
+    showAlert: boolean = false;
+
 
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     currentUserRole = new FormControl('');
     readonly userRoles = signal<UserRole[]>([]);
-    allUserRoles: UserRole[] = [];
+    readonly allUserRoles = signal<UserRole[]>([]);
     filteredUserRoles = computed(() => {
         const currentValue = (this.currentUserRole.value || '').toLowerCase();
         return currentValue
-            ? this.allUserRoles.filter(role => role.name.toLowerCase().includes(currentValue))
-            : this.allUserRoles.slice();
+            ? this.allUserRoles().filter(role => role.name.toLowerCase().includes(currentValue))
+            : this.allUserRoles().slice();
         });
 
 
@@ -150,6 +161,7 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
             lastName: ["", [Validators.required]],
             address: ["", [Validators.required]],
             email: ["", [Validators.required, Validators.email]],
+            password: ["", [Validators.required]],
             active: [true],
             emails: this._formBuilder.array([]),
             phoneNumbers: this._formBuilder.array([]),
@@ -174,15 +186,7 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
      */
     async ngOnInit() {
         this.phoneLabels = await this._usersV2Service.getPhoneLabels();
-        const getUserRoles = await this._usersV2Service.getUserRoles();
-        this.allUserRoles = await this._usersV2Service.userRoles();
-
-        this.filteredUserRoles = computed(() => {
-        const currentValue = (this.currentUserRole.value || '').toLowerCase();
-        return currentValue
-            ? this.allUserRoles.filter(role => role.name.toLowerCase().includes(currentValue))
-            : this.allUserRoles.slice();
-        });
+        this.allUserRoles.set(await this._usersV2Service.userRoles());
 
         this._usersService.countries$
             .pipe(takeUntil(this._unsubscribeAll))
@@ -193,6 +197,11 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
             });
         this._changeDetectorRef.markForCheck();
     }
+
+
+onInputFocus(event: FocusEvent): void {
+  (event.target as HTMLInputElement).readOnly = false;
+}
 
     /**
      * After view init
@@ -205,6 +214,12 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
             .subscribe((opened: boolean) => {
                 this.drawerStateChanged.emit(opened);
             });
+              // ... existing code ...
+        // Set readonly on all inputs after view init
+        this.formInputs?.forEach(input => {
+            input.nativeElement.readOnly = true;
+        });
+
     }
 
     /**
@@ -216,7 +231,7 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
         this._unsubscribeAll.complete();
     }
 
-    ngOnChanges(): void {        
+    ngOnChanges(changes: SimpleChanges): void {        
         // Handle changes to @Input() user if needed
         this.newUser = this._usersV2Service.user();
         this.updateFormData(this.newUser);
@@ -339,10 +354,7 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
         
         // Set default values for form fields that need them (if any)
         this.userForm.patchValue({
-            active: true,
-            user_roles: [],
-            site_account_id: [],
-            user_delegation_roles: []
+            active: true
         }, { emitEvent: false });
         this._changeDetectorRef.markForCheck();
     }
@@ -385,6 +397,10 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
         event.option.deselect();
     }
 
+    togglePasswordVisibility(): void {
+        this.isPasswordVisible = !this.isPasswordVisible;
+    }
+
     /**
      * Submit and create User
      * Sned email to new user to set up their password
@@ -393,8 +409,12 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
      */
 
     async onSubmit() {
-        let date: any = new Date().toISOString();
-
+        const userCredentials = await this.signUpOrg();
+        if (!userCredentials) {
+            return;
+        }
+        console.log('userCredentials', userCredentials);
+        this.newUser.id = userCredentials.uid;
         this.newUser.orgId = this.loginUser.orgId;
         this.newUser.firstName = this.userForm.get('firstName').value
         this.newUser.lastName = this.userForm.get('lastName').value
@@ -403,15 +423,24 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
         this.newUser.userRoles = this.userRoles();
         this.newUser.phoneNumbers = this.userForm.get('phoneNumbers').value
         this.newUser.address = this.userForm.get('address').value
-        // if(this._usersV2Service.user() === null){
-            await this._usersV2Service.createItem(this.newUser);
-            this.sendContact();
-        // } else {
-        //     await this._usersV2Service.updateItem(this.newUser);
-        //     this.sendContact();
-        // }
-        
-        // this.isLoading.set(true);
+        await this._usersV2Service.createItem(this.newUser).then(() => {
+            if(this.send) {
+                this.sendContact();
+            } else {
+                this.close();
+                this._router.navigateByUrl('/administration/users');
+            }
+            this.userForm.enable();
+        }).catch((err) => {
+            console.error(err);
+            this.userForm.enable();
+            this.alert = {
+                type: 'error',
+                message: 'Failed to create user.',
+            };
+            this.showAlert = true;
+            this._changeDetectorRef.markForCheck();
+        });
     }
               
     /**
@@ -438,4 +467,80 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
         return item.id || index;
     }
     
+    // -----------------------------------------------------------------------------------------------------
+    // @ Private methods
+    // -----------------------------------------------------------------------------------------------------
+    
+    /**
+     * Sign up
+     *
+     * @private
+     */
+    async signUpOrg(): Promise<any> {
+        // Do nothing if the form is invalid
+        if (this.userForm.invalid) {
+            return;
+        }
+        // Disable the form
+        this.userForm.disable();
+
+        // Hide the alert
+        this.showAlert = false;
+
+        const userCredentials = await this._firebaseAuthV2Service.signUpOrg(this.userForm.value).then((userCredentials) => {
+            return userCredentials;
+        }
+        ).catch((err) => {
+            // Re-enable the form
+            this.userForm.enable();
+
+            // Set the alert
+            this.alert = {
+                type: 'error',
+                message: err.message,
+            };
+
+            // Show the alert
+            this.showAlert = true;
+
+            return null;
+        });
+        return userCredentials; 
+    }
+
+    /**
+     * Create User
+     *
+     * @private
+     * @param auth
+     * @param signup
+     */
+
+    async createUser(auth: any, signup: any) {
+        const newUser = UserModel.emptyDto()
+        newUser.id = auth.user.uid;
+        newUser.orgId = this.loginUser.orgId;
+        newUser.firstName = signup.firstName;
+        newUser.lastName = signup.lastName;
+        newUser.displayName = signup.firstName + ' ' + signup.lastName;
+        newUser.emailSignature = signup.firstName + ' ' + signup.lastName + ' ' + signup.email;
+        await this._usersV2Service.createItem(newUser).then((user) => {
+            this._firebaseAuthV2Service.sendEmailVerification(auth);
+            // Navigate to the confirmation required page
+            this._router.navigateByUrl('/confirmation-required');
+        }).catch((err) => {
+            // Re-enable the form
+            this.userForm.enable();
+
+            // Set the alert
+            this.alert = {
+                type: 'error',
+                message: 'Something went wrong, please try again.',
+            };
+
+            // Show the alert
+            this.showAlert = true;  
+        });
+    }
+
 }
