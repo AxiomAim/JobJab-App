@@ -59,8 +59,8 @@
                         </mat-form-field>
                     </div>
                     <div class="mt-8">
-                        <address-lookup class="w-full" label="Address" [control]="quotesRequestForm.controls['address']"
-                            placeholder="Enter address">
+                        <address-lookup class="w-full" label="Address"
+                            [formControl]="quotesRequestForm.controls['address']" placeholder="Enter address">
                         </address-lookup>
                     </div>
                     <div class="mt-8">

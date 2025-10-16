@@ -24,6 +24,8 @@ import { ActivitiesMockApi } from 'app/mock-api/pages/activities/api';
 import { IconsMockApi } from 'app/mock-api/ui/icons/api';
 import { BillingCycleMockApi } from './common/billing-cycle/api';
 import { CRMMockApi } from './dashboards/crm/api';
+import { UserRolesMockApi } from './common/user-roles/api';
+import { PhoneLabelsMockApi } from './common/phone-labels/api';
 
 @Injectable({ providedIn: 'root' })
 export class MockApiService {
@@ -52,6 +54,8 @@ export class MockApiService {
     tasksMockApi = inject(TasksMockApi);
     userMockApi = inject(UserMockApi);
     billingCycleMockApi = inject(BillingCycleMockApi);
+    userRolesMockApi = inject(UserRolesMockApi);
+    phoneLabelsMockApi = inject(PhoneLabelsMockApi);
 
     
 }

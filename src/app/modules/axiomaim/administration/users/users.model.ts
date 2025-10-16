@@ -1,9 +1,9 @@
 import { Scheme, Theme } from '@axiomaim/services/config';
 import { v4 as uuidv4 } from 'uuid';
-import { UserRole } from '../user-roles/user-roles.model';
 import { BaseDto } from 'app/core/models/base-dto.model';
 import * as v from 'valibot';
 import { Organization } from '../organizations/organizations.model';
+import { UserRole } from 'app/core/models/user-roles.model';
 
 
 export class UserModel implements BaseDto {
@@ -30,7 +30,11 @@ export class UserModel implements BaseDto {
         emailSignature: string,
         avatar: string,
         linkedIn: string,
-        phoneNumbers: PhoneNumber[],
+        phoneNumbers: {
+            country: string;
+            phoneNumber: string;
+            label: string;
+        }[],
         mobileCountry?: string,
         mobileNo?: string,
         officeNo?: string,
@@ -121,7 +125,11 @@ export class UserModel implements BaseDto {
     public avatarFile: string;
     public avatarType: string;
     public linkedIn: string;
-    public phoneNumbers: PhoneNumber[];
+    public phoneNumbers?: {
+        country: string;
+        phoneNumber: string;
+        label: string;
+    }[];
     public thumb?: string;
     public mobileCountry?: string;
     public mobileNo?: string;
@@ -166,7 +174,9 @@ export class UserModel implements BaseDto {
             personalEmail: dto.personalEmail ? dto.personalEmail : '',
             avatar: dto.avatar ? dto.avatar : '',
             linkedIn: dto.linkedIn ? dto.linkedIn : '',
-            phoneNumbers: dto.phoneNumbers ? dto.phoneNumbers : [],
+            phoneNumbers: dto.phoneNumbers ? dto.phoneNumbers : [
+                // { country: 'us', phoneNumber: '', label: 'Mobile' }
+            ],
             mobileCountry: dto.mobileCountry ? dto.mobileCountry : '',
             mobileNo: dto.mobileNo ? dto.mobileNo : '',
             officeNo: dto.officeNo ? dto.officeNo : '',
@@ -211,7 +221,9 @@ export class UserModel implements BaseDto {
             personalEmail: '',
             avatar: '',
             linkedIn: '',
-            phoneNumbers: [],
+            phoneNumbers: [
+                // { country: 'us', phoneNumber: '', label: 'Mobile' }
+            ],
             mobileCountry: '',
             mobileNo: '',
             officeNo: '',
@@ -256,7 +268,11 @@ export interface User  extends BaseDto {
     emailSignature: string;
     avatar: string;
     linkedIn: string;
-    phoneNumbers: PhoneNumber[];
+    phoneNumbers: {
+        country: string;
+        phoneNumber: string;
+        label: string;
+    }[];
     mobileCountry?: string;
     mobileNo?: string;
     officeNo?: string;

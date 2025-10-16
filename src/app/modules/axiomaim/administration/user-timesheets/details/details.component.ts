@@ -41,9 +41,9 @@ import { UsersListComponent } from 'app/modules/axiomaim/administration/users/li
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { UserTimesheet } from '../user-timesheets.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
-import { UserRole } from '../../user-roles/user-roles.model';
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
 import { UserTimesheetsV2Service } from '../user-timesheets-v2.service';
+import { UserRole } from 'app/core/models/user-roles.model';
 
 
 interface PhonenumberType {

@@ -41,10 +41,10 @@ import { UsersListComponent } from 'app/modules/axiomaim/administration/users/li
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { Country, User } from '../users.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
-import { UserRole } from '../../user-roles/user-roles.model';
+
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
 import { UsersV2Service } from '../users-v2.service';
-import { UserRolesV2Service } from '../../user-roles/user-roles-v2.service';
+import { UserRole } from 'app/core/models/user-roles.model';
 
 
 interface PhonenumberType {
@@ -78,7 +78,6 @@ interface PhonenumberType {
 })
 export class UsersDetailsComponent implements OnInit, OnDestroy {
     _usersV2Service = inject(UsersV2Service);
-    _userRolesV2Service = inject(UserRolesV2Service);
     _axiomaimLoadingService = inject(AxiomaimLoadingService);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
     @ViewChild('tagsPanel') private _tagsPanel: TemplateRef<any>;
@@ -90,9 +89,6 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
         return this._user.asObservable();
     }
 
-
-    userRoles: UserRole[] = [];
-
     private _countries: BehaviorSubject<Country[] | null> = new BehaviorSubject(
         []
     );
@@ -102,6 +98,15 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
 
     countries: Country[];
     
+    private _userRoles: BehaviorSubject<UserRole[] | null> = new BehaviorSubject(
+        []
+    );
+    get userRoles$(): Observable<UserRole[]> {
+        return this._userRoles.asObservable();
+    }
+
+    userRoles: UserRole[];
+
     phonenumberTypes: PhonenumberType[] = [
         {value: 'mobile', viewValue: 'Mobile'},
         {value: 'work', viewValue: 'Work'},
@@ -148,10 +153,9 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         this.loginUser = this._usersV2Service.loginUser();
-        // this.organization = this._usersV2Service.organization();
         this.users = this._usersV2Service.users();
         this.user = this._usersV2Service.user();
-        // this.userRoles = this._usersV2Service.userRoles();
+        this.userRoles = this._usersV2Service.userRoles();
         // Open the drawer
         this._usersListComponent.matDrawer.open();
         const phonePattern = "^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"; 

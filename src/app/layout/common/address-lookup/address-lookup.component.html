@@ -1,29 +1,10 @@
-<!-- <mat-form-field [appearance]="formFieldAppearence || 'dynamic'" class="w-full">
-  <mat-label>{{ label }}</mat-label>
-  <input matInput type="text" [placeholder]="placeholder" [formControl]="control" [matAutocomplete]="autocompleteAttribute"
-    [readonly]="readOnly" [type]="type" (input)="onInput($event)" [autocomplete]="auto" #addressInput />
-  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event.option.value)">
-    <mat-option *ngIf="!optionData?.length">No results found!</mat-option>
-    <mat-option *ngFor="let data of optionData" [value]="data">
-      {{ data[selectedKey] }}
-    </mat-option>
-  </mat-autocomplete>
-</mat-form-field> -->
-
-<!-- <mat-form-field [appearance]="formFieldAppearence || 'outline'" class="w-full"> -->
 <div class="flex">
-  <mat-form-field [ngClass]="formFieldHelpers" class="gt-xs:pr-3 flex-auto"
-    [appearance]="formFieldAppearence || 'outline'">
+  <mat-form-field class="gt-xs:pr-3 flex-auto" [appearance]="formFieldAppearence || 'outline'">
     <mat-label>{{ label }}</mat-label>
     <mat-icon matPrefix class="hidden icon-size-5 sm:flex" [svgIcon]="'heroicons_solid:map-pin'"></mat-icon>
 
-    <input matInput [placeholder]="placeholder" [id]="id" [formControl]="control" [matAutocomplete]="auto"
-      [readonly]="readOnly" [type]="type" (input)="onInput($event)" [autocomplete]="autocompleteAttribute"
-      [disabled]="disabled" #addressInput />
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event.option.value)">
-      <mat-option *ngFor="let data of optionData" [value]="data">
-        {{ data[selectedKey] }}
-      </mat-option>
-    </mat-autocomplete>
-    <mat-error *ngIf="mapsLoadingError">{{ mapsLoadingError }}</mat-error> </mat-form-field>
+    <input matInput [placeholder]="placeholder" [id]="id" [formControl]="formControl" [readonly]="readOnly"
+      [type]="type" [autocomplete]="autocompleteAttribute" #addressInput />
+    <mat-error *ngIf="mapsLoadingError">{{ mapsLoadingError }}</mat-error>
+  </mat-form-field>
 </div>
