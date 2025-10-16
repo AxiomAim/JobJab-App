@@ -74,8 +74,7 @@
                                 <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
                                     svgIcon="mat_solid:vpn_key"></mat-icon>
                                 <input matInput [type]="isPasswordVisible ? 'text' : 'password'"
-                                    formControlName="password" placeholder="Password" autocomplete="chrome-off"
-                                    #formInputs />
+                                    formControlName="password" placeholder="Password" autocomplete="chrome-off" />
                                 <button mat-icon-button type="button" (click)="togglePasswordVisibility()" matSuffix>
                                     @if (!isPasswordVisible) {
                                     <mat-icon class="icon-size-5" svgIcon="heroicons_solid:eye"></mat-icon>

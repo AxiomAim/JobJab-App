@@ -15,7 +15,7 @@ export class UserModel implements BaseDto {
         domain: string,
         firstTime: boolean,
         staff: boolean, 
-        activeUser: boolean,
+        isActive: boolean,
         email: string,
         emailKey: string,
         personalEmail: string,
@@ -57,7 +57,7 @@ export class UserModel implements BaseDto {
             this.domain = domain;
             this.firstTime = firstTime;
             this.staff = staff;
-            this.activeUser = activeUser;
+            this.isActive = isActive;
             this.displayName = displayName;
             this.userRoles = userRoles;
             this.title = title;
@@ -98,7 +98,7 @@ export class UserModel implements BaseDto {
     public staffId: number;
     public staff: boolean;
     public projectId: string;
-    public activeUser: boolean;
+    public isActive: boolean;
     public userName: string;
     public displayName: string;
     public userRoles: UserRole[];
@@ -159,7 +159,7 @@ export class UserModel implements BaseDto {
             domain: dto.domain ? dto.domain : '',
             firstTime: dto.firstTime ? dto.firstTime : true,
             staff: dto.staff ? dto.staff : false,
-            activeUser: dto.activeUser ? dto.activeUser : false,
+            isActive: dto.isActive ? dto.isActive : false,
             displayName: dto.displayName ? dto.displayName : '',
             userRoles: dto.userRoles ? dto.userRoles : [],
             title: dto.title ? dto.title : '',
@@ -206,7 +206,7 @@ export class UserModel implements BaseDto {
             domain: '',
             firstTime: true,
             staff: false,
-            activeUser: false,
+            isActive: false,
             displayName: '',
             userRoles: [],
             title: '',
@@ -253,7 +253,7 @@ export interface User  extends BaseDto {
     domain: string;
     firstTime: boolean;
     staff: boolean;
-    activeUser: boolean;
+    isActive: boolean;
     email: string;
     emailKey: string;
     personalEmail: string;

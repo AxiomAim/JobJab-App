@@ -6,7 +6,7 @@
 
     <input matInput [placeholder]="placeholder" [id]="id" [readonly]="readOnly" [type]="type"
       [autocomplete]="autocompleteAttribute" #addressInput [(ngModel)]="value" (ngModelChange)="onModelChange($event)"
-      (blur)="onTouched()" [disabled]="disabled" #formInputs />
+      (blur)="onTouched()" [disabled]="disabled" />
     <mat-error *ngIf="mapsLoadingError">{{ mapsLoadingError }}</mat-error>
   </mat-form-field>
 </div>

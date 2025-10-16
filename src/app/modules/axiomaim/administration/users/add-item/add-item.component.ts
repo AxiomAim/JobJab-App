@@ -248,7 +248,6 @@ onInputFocus(event: FocusEvent): void {
             lastName: data.lastName || '',
             address: data.address || '',
             email: data.email || '',
-
         });
 
         // Update phone numbers array
@@ -420,6 +419,7 @@ onInputFocus(event: FocusEvent): void {
         this.newUser.lastName = this.userForm.get('lastName').value
         this.newUser.displayName = this.newUser.firstName + ' ' + this.newUser.lastName;
         this.newUser.email = this.userForm.get('email').value
+        this.newUser.isActive = true;
         this.newUser.userRoles = this.userRoles();
         this.newUser.phoneNumbers = this.userForm.get('phoneNumbers').value
         this.newUser.address = this.userForm.get('address').value
@@ -477,6 +477,7 @@ onInputFocus(event: FocusEvent): void {
      * @private
      */
     async signUpOrg(): Promise<any> {
+        debugger;
         // Do nothing if the form is invalid
         if (this.userForm.invalid) {
             return;
@@ -488,6 +489,7 @@ onInputFocus(event: FocusEvent): void {
         this.showAlert = false;
 
         const userCredentials = await this._firebaseAuthV2Service.signUpOrg(this.userForm.value).then((userCredentials) => {
+            console.log('User credentials', userCredentials);
             return userCredentials;
         }
         ).catch((err) => {
