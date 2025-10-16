@@ -408,12 +408,6 @@ onInputFocus(event: FocusEvent): void {
      */
 
     async onSubmit() {
-        const userCredentials = await this.signUpOrg();
-        if (!userCredentials) {
-            return;
-        }
-        console.log('userCredentials', userCredentials);
-        this.newUser.id = userCredentials.uid;
         this.newUser.orgId = this.loginUser.orgId;
         this.newUser.firstName = this.userForm.get('firstName').value
         this.newUser.lastName = this.userForm.get('lastName').value
@@ -423,24 +417,17 @@ onInputFocus(event: FocusEvent): void {
         this.newUser.userRoles = this.userRoles();
         this.newUser.phoneNumbers = this.userForm.get('phoneNumbers').value
         this.newUser.address = this.userForm.get('address').value
-        await this._usersV2Service.createItem(this.newUser).then(() => {
+
+        await this._firebaseAuthV2Service.signUpOrg(this.userForm.value, this.newUser).then((createdUser) => {
+            console.log('Created User', createdUser);
             if(this.send) {
                 this.sendContact();
             } else {
                 this.close();
                 this._router.navigateByUrl('/administration/users');
             }
-            this.userForm.enable();
-        }).catch((err) => {
-            console.error(err);
-            this.userForm.enable();
-            this.alert = {
-                type: 'error',
-                message: 'Failed to create user.',
-            };
-            this.showAlert = true;
-            this._changeDetectorRef.markForCheck();
         });
+
     }
               
     /**
@@ -471,78 +458,4 @@ onInputFocus(event: FocusEvent): void {
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
     
-    /**
-     * Sign up
-     *
-     * @private
-     */
-    async signUpOrg(): Promise<any> {
-        debugger;
-        // Do nothing if the form is invalid
-        if (this.userForm.invalid) {
-            return;
-        }
-        // Disable the form
-        this.userForm.disable();
-
-        // Hide the alert
-        this.showAlert = false;
-
-        const userCredentials = await this._firebaseAuthV2Service.signUpOrg(this.userForm.value).then((userCredentials) => {
-            console.log('User credentials', userCredentials);
-            return userCredentials;
-        }
-        ).catch((err) => {
-            // Re-enable the form
-            this.userForm.enable();
-
-            // Set the alert
-            this.alert = {
-                type: 'error',
-                message: err.message,
-            };
-
-            // Show the alert
-            this.showAlert = true;
-
-            return null;
-        });
-        return userCredentials; 
-    }
-
-    /**
-     * Create User
-     *
-     * @private
-     * @param auth
-     * @param signup
-     */
-
-    async createUser(auth: any, signup: any) {
-        const newUser = UserModel.emptyDto()
-        newUser.id = auth.user.uid;
-        newUser.orgId = this.loginUser.orgId;
-        newUser.firstName = signup.firstName;
-        newUser.lastName = signup.lastName;
-        newUser.displayName = signup.firstName + ' ' + signup.lastName;
-        newUser.emailSignature = signup.firstName + ' ' + signup.lastName + ' ' + signup.email;
-        await this._usersV2Service.createItem(newUser).then((user) => {
-            this._firebaseAuthV2Service.sendEmailVerification(auth);
-            // Navigate to the confirmation required page
-            this._router.navigateByUrl('/confirmation-required');
-        }).catch((err) => {
-            // Re-enable the form
-            this.userForm.enable();
-
-            // Set the alert
-            this.alert = {
-                type: 'error',
-                message: 'Something went wrong, please try again.',
-            };
-
-            // Show the alert
-            this.showAlert = true;  
-        });
-    }
-
 }

@@ -265,11 +265,14 @@ export const FirebaseAuthV2Service = createInjectable(() => {
     });
   };
   
-  const signUpOrg = async (signup: any): Promise<any> => {
+  const signUpOrg = async (signup: any, newUser: User): Promise<any> => {
     console.log('Sign up data:', signup);
     await createUserWithEmailAndPassword(auth, signup.email, signup.password).then(async (userCredential) => {
       console.log('User credential from Firebase:', userCredential);
-      return userCredential.user;
+      newUser.id = userCredential.user.uid;
+      const createdUser = await firstValueFrom(_usersDataService.createItem(newUser));
+      await sendEmailVerificationNew(userCredential.user);
+      return createdUser;
     }).catch((error) => {
       console.error('Error during signUp:', error);
       throw error;
