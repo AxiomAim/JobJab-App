@@ -234,9 +234,7 @@ export const FirebaseAuthV2Service = createInjectable(() => {
   }
 
   const signUp = async (signup: any): Promise<any> => {
-    console.log('Sign up data:', signup);
     await createUserWithEmailAndPassword(auth, signup.email, signup.password).then(async (userCredential) => {
-      console.log('User credential from Firebase:', userCredential);
       const org = OrganizationModel.emptyDto();
       const user = UserModel.emptyDto();
       user.firstName = signup.firstName;
@@ -244,10 +242,31 @@ export const FirebaseAuthV2Service = createInjectable(() => {
       user.displayName = signup.firstName + ' ' + signup.lastName;
       user.email = signup.email;
       user.emailSignature = signup.firstName + ' ' + signup.lastName + ' ' + signup.email;
+      user.phoneNumbers = signup.phoneNumbers;
       user.agreements = signup.agreements;
       user.id = userCredential.user.uid;
+      user.userRoles = [    
+        {
+              id: '00000001-0002-0000-0000-000000000000',
+              sort: 2,
+              value: 'owner',
+              name: 'Owner',
+              description: '',
+              isVisible: true,
+
+          },
+          {
+              id: '00000001-0003-0000-0000-000000000000',
+              sort: 3,
+              value: 'technician',
+              name: 'Technication',
+              description: '',
+              isVisible: true,
+          },
+      ];
       org.name = signup.company;
       org.userId = user.id;
+
       const createdOrg = await firstValueFrom(_organizationsDataService.createItem(org));
       user.orgId = createdOrg.id;
       const createdUser = await firstValueFrom(_usersDataService.createItem(user));

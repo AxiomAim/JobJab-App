@@ -60,10 +60,10 @@ export const UsersV2Service = createInjectable(() => {
       // const response: any = await _participantsV2ApiService.updateParticipantItem(data);
       let searchResults = allUsers().filter(
         (searchResults: any) =>
-          searchResults.name &&
-        searchResults.name.toLowerCase().includes(query.toLowerCase())
+          searchResults.displayName &&
+        searchResults.displayName.toLowerCase().includes(query.toLowerCase())
       );
-      searchResults.sort((a: any, b: any) => a.name.localeCompare(b.name));
+      searchResults.sort((a: any, b: any) => a.displayName.localeCompare(b.displayName));
       users.set(searchResults);
       return searchResults;
     }

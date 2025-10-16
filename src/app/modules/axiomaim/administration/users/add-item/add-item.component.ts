@@ -99,7 +99,7 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
 
     @ViewChild('newItemDrawer') newItemDrawer: AxiomaimDrawerComponent;
     @Output() drawerStateChanged = new EventEmitter<boolean>();
-  @ViewChildren('formInputs') formInputs: QueryList<ElementRef<HTMLInputElement>>;
+    @ViewChildren('formInputs') formInputs: QueryList<ElementRef<HTMLInputElement>>;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     userForm: UntypedFormGroup;
@@ -148,7 +148,7 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
         private _formBuilder: UntypedFormBuilder,
         private _router: Router,
         private _axiomaimConfigService: AxiomaimConfigService,
-        private _usersService: ContactsService,
+        private _contactsService: ContactsService,
         private _changeDetectorRef: ChangeDetectorRef,
         private _activatedRoute: ActivatedRoute,
         private _renderer2: Renderer2,
@@ -163,7 +163,6 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
             email: ["", [Validators.required, Validators.email]],
             password: ["", [Validators.required]],
             active: [true],
-            emails: this._formBuilder.array([]),
             phoneNumbers: this._formBuilder.array([]),
         });
 
@@ -188,7 +187,7 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
         this.phoneLabels = await this._usersV2Service.getPhoneLabels();
         this.allUserRoles.set(await this._usersV2Service.userRoles());
 
-        this._usersService.countries$
+        this._contactsService.countries$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((codes: Country[]) => {
                 this.countries = codes;
@@ -402,32 +401,66 @@ onInputFocus(event: FocusEvent): void {
 
     /**
      * Submit and create User
-     * Sned email to new user to set up their password
+     * Send email to new user to set up their password
      * refreshes all users in service
      * closes the drawer 
      */
-
     async onSubmit() {
-        this.newUser.orgId = this.loginUser.orgId;
-        this.newUser.firstName = this.userForm.get('firstName').value
-        this.newUser.lastName = this.userForm.get('lastName').value
-        this.newUser.displayName = this.newUser.firstName + ' ' + this.newUser.lastName;
-        this.newUser.email = this.userForm.get('email').value
-        this.newUser.isActive = true;
-        this.newUser.userRoles = this.userRoles();
-        this.newUser.phoneNumbers = this.userForm.get('phoneNumbers').value
-        this.newUser.address = this.userForm.get('address').value
+        if (this.userForm.invalid) {
+            this._changeDetectorRef.markForCheck();
+            return;
+        }
 
-        await this._firebaseAuthV2Service.signUpOrg(this.userForm.value, this.newUser).then((createdUser) => {
+        this.isLoading.set(true);
+        try {
+            this.newUser.orgId = this.loginUser.orgId;
+            this.newUser.firstName = this.userForm.get('firstName')?.value;
+            this.newUser.lastName = this.userForm.get('lastName')?.value;
+            this.newUser.displayName = `${this.newUser.firstName} ${this.newUser.lastName}`.trim();
+            this.newUser.email = this.userForm.get('email')?.value;
+            this.newUser.isActive = true;
+            this.newUser.userRoles = this.userRoles();
+            this.newUser.phoneNumbers = this.userForm.get('phoneNumbers')?.value || [];
+            this.newUser.address = this.userForm.get('address')?.value;
+
+            const createdUser = await this._firebaseAuthV2Service.signUpOrg(this.userForm.value, this.newUser);
             console.log('Created User', createdUser);
-            if(this.send) {
-                this.sendContact();
-            } else {
-                this.close();
-                this._router.navigateByUrl('/administration/users');
-            }
-        });
 
+            await this._usersV2Service.getAll();
+
+            if (this.send) {
+                this.sendContact();
+                this.close();
+            } else if (createdUser && createdUser.id) {
+                // Safe navigation only if createdUser has id
+                await this._router.navigate(['../', createdUser.id], { relativeTo: this._activatedRoute });
+                this.close();
+            } else {
+                // Fallback: User created but no ID returned (e.g., service issue); just refresh and close
+                console.warn('User created successfully, but no ID returned for navigation.');
+                this.showAlertMessage('success', 'User created successfully!');
+                this.close();
+            }
+        } catch (error) {
+            console.error('Error creating user:', error);
+            this.showAlertMessage('error', 'Failed to create user. Please try again.');
+        } finally {
+            this.isLoading.set(false);
+            this._changeDetectorRef.markForCheck();
+        }
+    }
+
+    /**
+     * Helper to show alert messages
+     */
+    private showAlertMessage(type: AxiomaimAlertType, message: string): void {
+        this.alert = { type, message };
+        this.showAlert = true;
+        // Auto-hide after 5 seconds (optional)
+        setTimeout(() => {
+            this.showAlert = false;
+            this._changeDetectorRef.markForCheck();
+        }, 5000);
     }
               
     /**

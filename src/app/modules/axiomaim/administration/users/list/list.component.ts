@@ -40,10 +40,23 @@ import { User } from '../users.model';
 import { MatDialog } from '@angular/material/dialog';
 import { UsersV2Service } from '../users-v2.service';
 import { UsersAddItemComponent } from '../add-item/add-item.component';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
     selector: 'users-list',
     templateUrl: './list.component.html',
+        styles: [
+        `
+        .example-box {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+        }
+
+        .example-chip {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+        `,
+    ],
+
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
@@ -60,29 +73,14 @@ import { UsersAddItemComponent } from '../add-item/add-item.component';
         RouterLink,
         AsyncPipe,
         I18nPluralPipe,
-        UsersAddItemComponent
+        UsersAddItemComponent,
+        MatChipsModule
     ],
 })
 export class UsersListComponent implements OnInit, OnDestroy {
     _usersV2Service = inject(UsersV2Service);
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
-
-    private _users: BehaviorSubject<User[] | null> = new BehaviorSubject(
-        null
-    );
-    get users$(): Observable<User[]> {
-        return this._users.asObservable();
-    }
-
-    private _user: BehaviorSubject<User | null> = new BehaviorSubject(
-        null
-    );
-    get user$(): Observable<User> {
-        return this._user.asObservable();
-    }
-
     userCount: number = 0;
-    usersTableColumns: string[] = ['name', 'email', 'phoneNumber', 'job'];
     drawerMode: 'side' | 'over';
     searchInputControl: UntypedFormControl = new UntypedFormControl();
     selectedUser: User;
@@ -110,28 +108,13 @@ export class UsersListComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         // Get the users
-        this._users.next(this._usersV2Service.users());
-        this.users$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((users: User[]) => {
-                // Update the counts
-                this.userCount = users.length;
+        this.userCount = this._usersV2Service.users().length;
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        // Update the selected user
+        this.selectedUser = this._usersV2Service.user();
 
-        // Get the user
-        this._user.next(this._usersV2Service.user());
-        this.user$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((user: User) => {
-                // Update the selected user
-                this.selectedUser = user;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
 
         // Subscribe to search input field value changes
         this.searchInputControl.valueChanges
@@ -143,7 +126,8 @@ export class UsersListComponent implements OnInit, OnDestroy {
                 )
             )
             .subscribe((resUsers) => {
-                this._users.next(resUsers);
+                console.log('searchUsers', this._usersV2Service.users());
+                // this._users.next(resUsers);
             });
 
         // Subscribe to MatDrawer opened change

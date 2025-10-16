@@ -31,7 +31,7 @@
                 <mat-form-field class="w-full">
                     <mat-label>First name</mat-label>
                     <input id="firstName" matInput [formControlName]="'firstName'" />
-                    @if (signUpForm.get('firstName').hasError('required')) {
+                    @if (signUpForm.get('firstName')?.hasError('required') && signUpForm.get('firstName')?.touched) {
                     <mat-error> First name is required </mat-error>
                     }
                 </mat-form-field>
@@ -39,7 +39,7 @@
                 <mat-form-field class="w-full">
                     <mat-label>Last name</mat-label>
                     <input id="lastName" matInput [formControlName]="'lastName'" />
-                    @if (signUpForm.get('lastName').hasError('required')) {
+                    @if (signUpForm.get('lastName')?.hasError('required') && signUpForm.get('lastName')?.touched) {
                     <mat-error> Last name is required </mat-error>
                     }
                 </mat-form-field>
@@ -48,10 +48,10 @@
                 <mat-form-field class="w-full">
                     <mat-label>Email address</mat-label>
                     <input id="email" matInput [formControlName]="'email'" />
-                    @if (signUpForm.get('email').hasError('required')) {
+                    @if (signUpForm.get('email')?.hasError('required') && signUpForm.get('email')?.touched) {
                     <mat-error> Email address is required </mat-error>
                     }
-                    @if (signUpForm.get('email').hasError('email')) {
+                    @if (signUpForm.get('email')?.hasError('email') && signUpForm.get('email')?.touched) {
                     <mat-error>
                         Please enter a valid email address
                     </mat-error>
@@ -68,36 +68,149 @@
                                 : (passwordField.type = 'password')
                         " matSuffix>
                         @if (passwordField.type === 'password') {
-                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                        <mat-icon class="icon-size-5 text-black" svgIcon="heroicons_solid:eye"></mat-icon>
                         }
                         @if (passwordField.type === 'text') {
-                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                        <mat-icon class="icon-size-5 text-black" svgIcon="heroicons_solid:eye-slash"></mat-icon>
                         }
                     </button>
+                    @if (signUpForm.get('password')?.hasError('required') && signUpForm.get('password')?.touched) {
                     <mat-error> Password is required </mat-error>
+                    }
                 </mat-form-field>
 
                 <!-- Company field -->
                 <mat-form-field class="w-full">
                     <mat-label>Company</mat-label>
                     <input id="company-confirm" matInput [formControlName]="'company'" />
+                    @if (signUpForm.get('company')?.hasError('required') && signUpForm.get('company')?.touched) {
+                    <mat-error> Company is required </mat-error>
+                    }
                 </mat-form-field>
+
+                <address-lookup class="w-full" [autocompleteAttribute]="'chrome-off'" [label]="'Address'"
+                    [formControl]="signUpForm.controls['address']" placeholder="Enter address">
+                </address-lookup>
+                <!-- Phone numbers -->
+                <div class="mt-4">
+                    <div class="space-y-4">
+                        @for (
+                        phoneNumber of signUpForm.get('phoneNumbers')?.['controls'] || [];
+                        track trackByFn($index, phoneNumber);
+                        let i = $index;
+                        let first = $first;
+                        let last = $last
+                        ) {
+                        <div class="relative flex flex-wrap">
+                            <mat-form-field class="flex-auto" subscriptSizing="dynamic">
+                                @if (first) {
+                                <mat-label>Phone (add a Mobile number to send texts)</mat-label>
+                                }
+                                <input matInput autocomplete="chrome-off" [formControl]="
+                            phoneNumber.get('phoneNumber')
+                        " placeholder="Phone" />
+                                <mat-select class="mr-1.5" [formControl]="
+                            phoneNumber.get('country')
+                        " matPrefix>
+                                    <mat-select-trigger>
+                                        <span class="flex items-center">
+                                            <span class="mr-1 hidden h-4 w-6 overflow-hidden sm:flex"
+                                                [style.background]="
+                                        'url(\'/images/apps/contacts/flags.png\') no-repeat 0 0'
+                                    " [style.backgroundSize]="
+                                        '24px 3876px'
+                                    " [style.backgroundPosition]="
+                                    phoneNumber.get('country').value ?
+                                        getCountryByIso(phoneNumber.get('country').value || 'us')?.flagImagePos || '-1px -69px'
+                                        : '-1px -69px'
+                                    "></span>
+                                            <span class="text-default font-medium sm:mx-0.5">{{
+                                                phoneNumber.get('country').value ?
+                                                getCountryByIso(phoneNumber.get('country').value || 'us')?.code ||
+                                                '+1'
+                                                : '+1'
+                                                }}</span>
+                                        </span>
+                                    </mat-select-trigger>
+                                    @for (
+                                    country of countries;
+                                    track trackByFn($index, country)
+                                    ) {
+                                    <mat-option [value]="country.iso">
+                                        <span class="flex items-center">
+                                            <span class="h-4 w-6 overflow-hidden" [style.background]="
+                                            'url(\'/images/apps/contacts/flags.png\') no-repeat 0 0'
+                                        " [style.backgroundSize]="
+                                            '24px 3876px'
+                                        " [style.backgroundPosition]="
+                                            country.flagImagePos
+                                        "></span>
+                                            <span class="ml-2">{{
+                                                country.name
+                                                }}</span>
+                                            <span class="ml-2 font-medium">{{
+                                                country.code
+                                                }}</span>
+                                        </span>
+                                    </mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field class="ml-2 w-full max-w-24 flex-auto sm:ml-4 sm:max-w-40"
+                                subscriptSizing="dynamic">
+                                @if (first) {
+                                <mat-label>Label</mat-label>
+                                }
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex text-black"
+                                    svgIcon="heroicons_solid:tag"></mat-icon>
+                                <mat-select [formControl]="
+                            phoneNumber.get('label')
+                        ">
+                                    @for (phoneLabel of phoneLabels; track trackByFn($index, phoneLabel)) {
+                                    <mat-option [value]="phoneLabel.value">{{phoneLabel.name}}</mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+                            <!-- Remove phone number -->
+                            @if (!(first && last)) {
+                            <div class="flex w-10 items-center pl-2" [ngClass]="{ 'mt-6': first }">
+                                <button class="h-8 min-h-8 w-8" mat-icon-button (click)="
+                                removePhoneNumberField(i)
+                            " matTooltip="Remove">
+                                    <mat-icon class="icon-size-5 text-black" svgIcon="heroicons_solid:trash"></mat-icon>
+                                </button>
+                            </div>
+                            }
+                        </div>
+                        }
+                    </div>
+                    <div class="group -ml-4 mt-2 inline-flex cursor-pointer items-center rounded px-4 py-2"
+                        (click)="addPhoneNumberField()">
+                        <mat-icon class="icon-size-5 text-black" svgIcon="heroicons_solid:plus-circle"></mat-icon>
+                        <span class="text-secondary ml-2 font-medium group-hover:underline">Add a phone
+                            number</span>
+                    </div>
+                </div>
+
 
                 <!-- ToS and PP -->
                 <div class="mt-1.5 inline-flex w-full items-end">
                     <mat-checkbox class="-ml-2" [color]="'primary'" [formControlName]="'agreements'">
                         <span>I agree with</span>
-                        <a class="ml-1 text-primary-500 hover:underline" [routerLink]="['./']">Terms
+                        <a class="ml-1 text-primary-500 hover:underline" href="/terms">Terms
                         </a>
                         <span>and</span>
-                        <a class="ml-1 text-primary-500 hover:underline" [routerLink]="['./']">Privacy Policy
+                        <a class="ml-1 text-primary-500 hover:underline" href="/privacy">Privacy Policy
                         </a>
                     </mat-checkbox>
+                    @if (signUpForm.get('agreements')?.hasError('required') && signUpForm.get('agreements')?.touched) {
+                    <mat-error class="ml-2">You must agree to the terms and privacy policy</mat-error>
+                    }
                 </div>
 
                 <!-- Submit button -->
                 <button class="axiomaim-mat-button-large mt-6 w-full" mat-flat-button [color]="'primary'"
-                    [disabled]="signUpForm.disabled" (click)="signUp()">
+                    [disabled]="signUpForm.invalid || signUpForm.disabled" (click)="signUp()">
                     @if (!signUpForm.disabled) {
                     <span> Create your account </span>
                     }
