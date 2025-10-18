@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, OnChanges, SimpleChanges, inject, OnDestroy, OnInit, signal, effect, ViewChild, ViewEncapsulation, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, Renderer2, ViewContainerRef, Input, ChangeDetectionStrategy, computed, ViewChildren, QueryList, ElementRef } from '@angular/core';
+import { Component, OnChanges, SimpleChanges, inject, OnDestroy, OnInit, signal, effect, ViewChild, ViewEncapsulation, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, Renderer2, ViewContainerRef, Input, ChangeDetectionStrategy, computed } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -9,7 +9,7 @@ import {
     AxiomaimConfigService,
 } from '@axiomaim/services/config';
 import { Subject, takeUntil } from 'rxjs';
-import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -99,7 +99,6 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
 
     @ViewChild('newItemDrawer') newItemDrawer: AxiomaimDrawerComponent;
     @Output() drawerStateChanged = new EventEmitter<boolean>();
-    @ViewChildren('formInputs') formInputs: QueryList<ElementRef<HTMLInputElement>>;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     userForm: UntypedFormGroup;
@@ -142,6 +141,19 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
     readonly announcer = inject(LiveAnnouncer);
 
     /**
+     * Custom validator for address (string or place object)
+     */
+    private createAddressValidator(): ValidatorFn {
+        return (control: AbstractControl): { [key: string]: any } | null => {
+            const value = control.value;
+            if (!value) return { required: true };
+            if (typeof value === 'string' && !value.trim()) return { required: true };
+            if (typeof value === 'object' && !value.geometry) return { invalidAddress: true };
+            return null;
+        };
+    }
+
+    /**
      * Constructor
      */
     constructor(
@@ -159,10 +171,10 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
         this.userForm = this._formBuilder.group({
             firstName: ["", [Validators.required]],
             lastName: ["", [Validators.required]],
-            address: ["", [Validators.required]],
+            address: ["", [this.createAddressValidator()]],  // Custom validator for string/place
             email: ["", [Validators.required, Validators.email]],
             password: ["", [Validators.required]],
-            active: [true],
+            isActive: [true],
             phoneNumbers: this._formBuilder.array([]),
         });
 
@@ -197,11 +209,6 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
         this._changeDetectorRef.markForCheck();
     }
 
-
-onInputFocus(event: FocusEvent): void {
-  (event.target as HTMLInputElement).readOnly = false;
-}
-
     /**
      * After view init
      */
@@ -213,12 +220,8 @@ onInputFocus(event: FocusEvent): void {
             .subscribe((opened: boolean) => {
                 this.drawerStateChanged.emit(opened);
             });
-              // ... existing code ...
-        // Set readonly on all inputs after view init
-        this.formInputs?.forEach(input => {
-            input.nativeElement.readOnly = true;
-        });
 
+        this._changeDetectorRef.markForCheck();
     }
 
     /**
@@ -245,7 +248,7 @@ onInputFocus(event: FocusEvent): void {
         this.userForm.patchValue({
             firstName: data.firstName || '',
             lastName: data.lastName || '',
-            address: data.address || '',
+            address: data.address || '',  // Handles string or place object
             email: data.email || '',
         });
 
@@ -407,6 +410,7 @@ onInputFocus(event: FocusEvent): void {
      */
     async onSubmit() {
         if (this.userForm.invalid) {
+            console.log('Form invalid:', this.userForm.errors);  // Debug: Check if address validation fails
             this._changeDetectorRef.markForCheck();
             return;
         }
@@ -421,7 +425,9 @@ onInputFocus(event: FocusEvent): void {
             this.newUser.isActive = true;
             this.newUser.userRoles = this.userRoles();
             this.newUser.phoneNumbers = this.userForm.get('phoneNumbers')?.value || [];
-            this.newUser.address = this.userForm.get('address')?.value;
+            this.newUser.address = this.userForm.get('address')?.value;  // Now full place object or string
+
+            console.log('Saving user with address:', this.newUser.address);  // Debug: Verify full place
 
             const createdUser = await this._firebaseAuthV2Service.signUpOrg(this.userForm.value, this.newUser);
             console.log('Created User', createdUser);
@@ -472,6 +478,7 @@ onInputFocus(event: FocusEvent): void {
         const response = this.countries.find((country) => country.iso === iso);
         return response;
     }
+
     sendContact() {
         this.userCreated.emit(this.newUser);
         this.close();

@@ -6,17 +6,21 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    computed,
+    effect,
     ElementRef,
     inject,
     OnDestroy,
     OnInit,
     Renderer2,
+    signal,
     TemplateRef,
     ViewChild,
     ViewContainerRef,
     ViewEncapsulation,
 } from '@angular/core';
 import {
+    FormControl,
     FormsModule,
     ReactiveFormsModule,
     UntypedFormArray,
@@ -39,12 +43,21 @@ import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
 import { Tag } from 'app/core/models/tag.model';
 import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
-import { Country, User } from '../users.model';
+import { Country, User, UserModel } from '../users.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
 import { UsersV2Service } from '../users-v2.service';
 import { UserRole } from 'app/core/models/user-roles.model';
+import { MatChipsModule } from '@angular/material/chips';
+import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-messages.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { ContactsService } from 'app/modules/axiomaim/apps/contacts/contacts.service';
+import { PhoneLabel } from 'app/core/models/phone-labels.model';
 
 
 interface PhonenumberType {
@@ -74,6 +87,14 @@ interface PhonenumberType {
         MatDatepickerModule,
         TextFieldModule,
         SelectMultiComponent,
+        MatChipsModule,
+        AlertMessagesComponent,
+        MatSlideToggleModule,
+        AddressLookupComponent,
+        RouterLink,
+        NgClass,
+        MatAutocompleteModule
+
     ],
 })
 export class UsersDetailsComponent implements OnInit, OnDestroy {
@@ -105,8 +126,6 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
         return this._userRoles.asObservable();
     }
 
-    userRoles: UserRole[];
-
     phonenumberTypes: PhonenumberType[] = [
         {value: 'mobile', viewValue: 'Mobile'},
         {value: 'work', viewValue: 'Work'},
@@ -125,9 +144,23 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
     users: User[];
     private _tagsPanelOverlayRef: OverlayRef;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    phoneLabels: PhoneLabel[] = [];
 
     loginUser: User;
     showRole: string[] = ["admin"];
+
+    readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+    currentUserRole = new FormControl('');
+    readonly userRoles = signal<UserRole[]>([]);
+    readonly allUserRoles = signal<UserRole[]>([]);
+    filteredUserRoles = computed(() => {
+        const currentValue = (this.currentUserRole.value || '').toLowerCase();
+        return currentValue
+            ? this.allUserRoles().filter(role => role.name.toLowerCase().includes(currentValue))
+            : this.allUserRoles().slice();
+        });
+    readonly announcer = inject(LiveAnnouncer);
+
 
     /**
      * Constructor
@@ -141,8 +174,30 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
         private _renderer2: Renderer2,
         private _router: Router,
         private _overlay: Overlay,
-        private _viewContainerRef: ViewContainerRef
-    ) {}
+        private _viewContainerRef: ViewContainerRef,
+        private _contactsService: ContactsService,
+        
+    ) {
+
+        // Create the basic form structure early
+        this.userForm = this._formBuilder.group({
+            firstName: ["", [Validators.required]],
+            lastName: ["", [Validators.required]],
+            address: [""],
+            isActive: [true],
+            phoneNumbers: this._formBuilder.array([]),
+        });
+
+        // Effect to watch for changes in the service signal
+        effect(() => {
+            const user = this._usersV2Service.user();
+            const data = user || UserModel.emptyDto();
+            this.user = data;
+            this.updateFormData(data);
+            this._changeDetectorRef.markForCheck();
+        });
+
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
@@ -151,42 +206,34 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
     /**
      * On init
      */
-    ngOnInit(): void {
+    async ngOnInit() {
+        this.phoneLabels = await this._usersV2Service.getPhoneLabels();
+
         this.loginUser = this._usersV2Service.loginUser();
         this.users = this._usersV2Service.users();
         this.user = this._usersV2Service.user();
-        this.userRoles = this._usersV2Service.userRoles();
         // Open the drawer
         this._usersListComponent.matDrawer.open();
         const phonePattern = "^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"; 
-
-        // Create the user form
-        this.userForm = this._formBuilder.group({
-            id: [''],
-            avatar: [null],
-            firstName: ['', [Validators.required]],
-            lastName: ['', [Validators.required]],
-            phoneNumbers: this._formBuilder.array([]),
-            address: [null],
-            activeUser:  [true, [Validators.required]],
-        });
-
         this._changeDetectorRef.markForCheck();
 
         this._usersListComponent.matDrawer.open();
         this.userForm.patchValue(this.user);
-        // this._countries.next(this._usersV2Service.countries());
 
-        // Get the country telephone codes
-        this.countries$
+        this.allUserRoles.set(await this._usersV2Service.userRoles());
+        this.userRoles.set(this.user.userRoles || []);
+        this._contactsService.countries$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((codes: Country[]) => {
                 this.countries = codes;
-
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
+        this._changeDetectorRef.markForCheck();
+
     }
+
+    
 
     /**
      * On destroy
@@ -233,11 +280,14 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
      * Update the user
      */
     updateItem(): void {        
-        this.user = {...this._user.getValue(), ...this.userForm.getRawValue()};
-        console.log('user', this.user);
         // Get the user object
-        // const user = this.userForm.getRawValue();
-
+        this.user.firstName = this.userForm.get('firstName').value;
+        this.user.lastName = this.userForm.get('lastName').value;
+        this.user.address = this.userForm.get('address').value;
+        this.user.isActive = this.userForm.get('isActive').value;
+        this.user.phoneNumbers = this.userForm.get('phoneNumbers').value;
+        this._user.next(this.user);
+        console.log('user', this.user);
         // Update the user on the server
         this._usersV2Service
             .updateItem(this.user)
@@ -247,72 +297,72 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
             });
     }
 
-    /**
-     * Delete the user
-     */
-    deleteUser(): void {
-        // Open the confirmation dialog
-        const confirmation = this._axiomaimConfirmationService.open({
-            title: 'Delete user',
-            message:
-                'Are you sure you want to delete this user? This action cannot be undone!',
-            actions: {
-                confirm: {
-                    label: 'Delete',
-                },
-            },
-        });
+    // /**
+    //  * Delete the user
+    //  */
+    // deleteUser(): void {
+    //     // Open the confirmation dialog
+    //     const confirmation = this._axiomaimConfirmationService.open({
+    //         title: 'Delete user',
+    //         message:
+    //             'Are you sure you want to delete this user? This action cannot be undone!',
+    //         actions: {
+    //             confirm: {
+    //                 label: 'Delete',
+    //             },
+    //         },
+    //     });
 
-        // Subscribe to the confirmation dialog closed action
-        confirmation.afterClosed().subscribe((result) => {
-            // If the confirm button pressed...
-            if (result === 'confirmed') {
-                // Get the current user's id
-                const id = this.user.id;
+    //     // Subscribe to the confirmation dialog closed action
+    //     confirmation.afterClosed().subscribe((result) => {
+    //         // If the confirm button pressed...
+    //         if (result === 'confirmed') {
+    //             // Get the current user's id
+    //             const id = this.user.id;
 
-                // Get the next/previous user's id
-                const currentUserIndex = this.users.findIndex(
-                    (item) => item.id === id
-                );
-                const nextUserIndex =
-                    currentUserIndex +
-                    (currentUserIndex === this.users.length - 1 ? -1 : 1);
-                const nextUserId =
-                    this.users.length === 1 && this.users[0].id === id
-                        ? null
-                        : this.users[nextUserIndex].id;
+    //             // Get the next/previous user's id
+    //             const currentUserIndex = this.users.findIndex(
+    //                 (item) => item.id === id
+    //             );
+    //             const nextUserIndex =
+    //                 currentUserIndex +
+    //                 (currentUserIndex === this.users.length - 1 ? -1 : 1);
+    //             const nextUserId =
+    //                 this.users.length === 1 && this.users[0].id === id
+    //                     ? null
+    //                     : this.users[nextUserIndex].id;
 
-                // Delete the user
-                this._usersV2Service
-                    .deleteItem(id)
-                    .then((isDeleted) => {
-                        // Return if the user wasn't deleted...
-                        if (!isDeleted) {
-                            return;
-                        }
+    //             // Delete the user
+    //             this._usersV2Service
+    //                 .deleteItem(id)
+    //                 .then((isDeleted) => {
+    //                     // Return if the user wasn't deleted...
+    //                     if (!isDeleted) {
+    //                         return;
+    //                     }
 
-                        // Navigate to the next user if available
-                        if (nextUserId) {
-                            this._router.navigate(['../', nextUserId], {
-                                relativeTo: this._activatedRoute,
-                            });
-                        }
-                        // Otherwise, navigate to the parent
-                        else {
-                            this._router.navigate(['../'], {
-                                relativeTo: this._activatedRoute,
-                            });
-                        }
+    //                     // Navigate to the next user if available
+    //                     if (nextUserId) {
+    //                         this._router.navigate(['../', nextUserId], {
+    //                             relativeTo: this._activatedRoute,
+    //                         });
+    //                     }
+    //                     // Otherwise, navigate to the parent
+    //                     else {
+    //                         this._router.navigate(['../'], {
+    //                             relativeTo: this._activatedRoute,
+    //                         });
+    //                     }
 
-                        // Toggle the edit mode off
-                        this.toggleEditMode(false);
-                    });
+    //                     // Toggle the edit mode off
+    //                     this.toggleEditMode(false);
+    //                 });
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            }
-        });
-    }
+    //             // Mark for check
+    //             this._changeDetectorRef.markForCheck();
+    //         }
+    //     });
+    // }
 
     /**
      * Upload avatar
@@ -519,6 +569,45 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
             }
         }
 
+        /**
+     * Update form data without recreating the form
+     */
+    updateFormData(data: User): void {
+        // Patch simple values
+        this.userForm.patchValue({
+            firstName: data.firstName || '',
+            lastName: data.lastName || '',
+            address: data.address || '',
+            email: data.email || '',
+        });
+
+        // Update phone numbers array
+        const phoneNumbersArray = this.userForm.get('phoneNumbers') as UntypedFormArray;
+        phoneNumbersArray.clear();
+        const phoneNumbersFormGroups = data.phoneNumbers && data.phoneNumbers.length > 0 
+            ? data.phoneNumbers.map((phoneNumber) => this._formBuilder.group({ 
+                country: [phoneNumber.country || 'us'], 
+                phoneNumber: [phoneNumber.phoneNumber || ''], 
+                label: [phoneNumber.label || ''] 
+            }))
+            : [this._formBuilder.group({ country: ['us'], phoneNumber: [''], label: [''] })];
+
+        phoneNumbersFormGroups.forEach((phoneNumbersFormGroup) => {
+            phoneNumbersArray.push(phoneNumbersFormGroup);
+        });
+    }
+
+    /**
+     * Capture Address
+     *
+     * @param event
+     */
+    onAddressSelected(event: any) {
+        const place = event.value;
+        this.userForm.patchValue({
+            address: place.formatted_address || ''
+        });
+    }
         
     /**
      * Track by function for ngFor loops

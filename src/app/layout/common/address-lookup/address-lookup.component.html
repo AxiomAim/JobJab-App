@@ -1,12 +1,14 @@
 <div class="flex">
-  <mat-form-field class="gt-xs:pr-3 flex-auto" [subscriptSizing]="'dynamic'"
-    [appearance]="formFieldAppearence || 'fill'">
+  <mat-form-field [ngClass]="formFieldHelpers" class="gt-xs:pr-3 flex-auto"
+    [appearance]="formFieldAppearence || 'outline'">
     <mat-label>{{ label }}</mat-label>
-    <mat-icon matPrefix class="hidden icon-size-5 sm:flex" [svgIcon]="'heroicons_solid:map-pin'"></mat-icon>
-
-    <input matInput [placeholder]="placeholder" [id]="id" [readonly]="readOnly" [type]="type"
-      [autocomplete]="autocompleteAttribute" #addressInput [(ngModel)]="value" (ngModelChange)="onModelChange($event)"
-      (blur)="onTouched()" [disabled]="disabled" />
-    <mat-error *ngIf="mapsLoadingError">{{ mapsLoadingError }}</mat-error>
-  </mat-form-field>
+    <input matInput [placeholder]="placeholder" [id]="id" [formControl]="control" [matAutocomplete]="auto"
+      [readonly]="readOnly" [type]="type" (input)="onInput($event)" [autocomplete]="autocompleteAttribute"
+      [disabled]="disabled" #addressInput />
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event.option.value)">
+      <mat-option *ngFor="let data of optionData" [value]="data">
+        {{ data[selectedKey] }}
+      </mat-option>
+    </mat-autocomplete>
+    <mat-error *ngIf="mapsLoadingError">{{ mapsLoadingError }}</mat-error> </mat-form-field>
 </div>

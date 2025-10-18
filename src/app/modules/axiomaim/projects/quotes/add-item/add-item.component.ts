@@ -25,9 +25,9 @@ import { GridAllModule } from '@syncfusion/ej2-angular-grids';
 import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-messages.component';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
-import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
 import { QuotesV2Service } from '../quotes-v2.service';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
+import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
 
 @Component({
     selector: 'quotes-add-item',
@@ -71,7 +71,6 @@ import { User } from 'app/modules/axiomaim/administration/users/users.model';
         MatChipsModule,
         MatSidenavModule,
         GridAllModule,
-        AddressLookupComponent
 
     ]
 })

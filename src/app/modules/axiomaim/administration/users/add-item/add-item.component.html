@@ -88,8 +88,8 @@
                     </div>
                     <!-- Address -->
                     <div class="mt-4">
-                        <address-lookup class="w-full" [autocompleteAttribute]="'chrome-off'" [label]="'Address'"
-                            [formControl]="userForm.controls['address']" placeholder="Enter address">
+                        <address-lookup class="w-full" label="Address" [control]="userForm.controls['address']"
+                            placeholder="Enter address">
                         </address-lookup>
                     </div>
 
@@ -167,10 +167,6 @@
                                     }
                                     <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
                                         svgIcon="heroicons_solid:tag"></mat-icon>
-                                    <!-- <input matInput [formControl]="
-                            phoneNumber.get('label')
-                        " [placeholder]="'Label'" /> -->
-
                                     <mat-select [formControl]="
                             phoneNumber.get('label')
                         ">

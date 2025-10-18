@@ -88,9 +88,13 @@
                     }
                 </mat-form-field>
 
-                <address-lookup class="w-full" [autocompleteAttribute]="'chrome-off'" [label]="'Address'"
-                    [formControl]="signUpForm.controls['address']" placeholder="Enter address">
-                </address-lookup>
+                <!-- Address -->
+                <div class="mt-4">
+                    <address-lookup class="w-full" label="Address" [control]="signUpForm.controls['address']"
+                        placeholder="Enter address">
+                    </address-lookup>
+                </div>
+
                 <!-- Phone numbers -->
                 <div class="mt-4">
                     <div class="space-y-4">

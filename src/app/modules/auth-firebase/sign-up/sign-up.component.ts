@@ -7,6 +7,8 @@ import {
     UntypedFormBuilder,
     UntypedFormGroup,
     Validators,
+    AbstractControl,
+    ValidatorFn,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -87,6 +89,22 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     public newUser: User = UserModel.emptyDto();
 
     /**
+     * Custom validator for address (string or place object) - optional; make required by adding to form
+     */
+    private createAddressValidator(required: boolean = false): ValidatorFn {
+        return (control: AbstractControl): { [key: string]: any } | null => {
+            const value = control.value;
+            if (required && (!value || (typeof value === 'string' && !value.trim()))) {
+                return { required: true };
+            }
+            if (typeof value === 'object' && !value.geometry) {
+                return { invalidAddress: true };
+            }
+            return null;
+        };
+    }
+
+    /**
      * Constructor
      */
     constructor(
@@ -102,7 +120,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
             email: ['', [Validators.required, Validators.email]],
             password: ['', Validators.required],
             company: ['', Validators.required],
-            address: [''],
+            address: ['', [this.createAddressValidator()]],  // Optional; set true for required
             agreements: [false, Validators.requiredTrue],
             phoneNumbers: this._formBuilder.array([
                 this._formBuilder.group({
@@ -206,6 +224,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         this.showAlert = false;
 
         console.log('signUpForm', this.signUpForm.value);
+        console.log('Address:', this.signUpForm.value.address);  // Debug: Verify full place object
         try {
             // firebase-auth v2 sign up
             const newAuth = await this._firebaseAuthV2Service.signUp(this.signUpForm.value);
