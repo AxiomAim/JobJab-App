@@ -292,7 +292,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
         this._usersV2Service
             .updateItem(this.user)
             .then(() => {
-                // Toggle the edit mode off
+                // Toggle the edit mode off 
                 this.toggleEditMode(false);
             });
     }
