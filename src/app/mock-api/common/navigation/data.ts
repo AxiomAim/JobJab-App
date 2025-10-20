@@ -401,6 +401,20 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 ],
             },
             {
+                id: 'apps.offers',
+                title: 'Offers',
+                type: 'collapsable',
+                icon: 'heroicons_outline:shopping-cart',
+                children: [
+                    {
+                        id: 'apps.offers.inventory',
+                        title: 'Inventory',
+                        type: 'basic',
+                        link: '/apps/offers/items',
+                    },
+                ],
+            },
+            {
                 id: 'apps.file-manager',
                 title: 'File Manager',
                 type: 'basic',

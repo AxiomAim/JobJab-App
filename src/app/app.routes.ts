@@ -146,6 +146,7 @@ export const appRoutes: Route[] = [
                 {path: 'chat', loadChildren: () => import('app/modules/axiomaim/apps/chat/chat.routes')},
                 {path: 'contacts', loadChildren: () => import('app/modules/axiomaim/apps/contacts/contacts.routes')},
                 {path: 'ecommerce', loadChildren: () => import('app/modules/axiomaim/apps/ecommerce/ecommerce.routes')},
+                {path: 'offers', loadChildren: () => import('app/modules/axiomaim/apps/offers/offers.routes')},
                 {path: 'file-manager', loadChildren: () => import('app/modules/axiomaim/apps/file-manager/file-manager.routes')},
                 {path: 'help-center', loadChildren: () => import('app/modules/axiomaim/apps/help-center/help-center.routes')},
                 {path: 'mailbox', loadChildren: () => import('app/modules/axiomaim/apps/mailbox/mailbox.routes')},
