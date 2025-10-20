@@ -1,17 +1,28 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import {
+    ItemsPagination,
+} from 'app/modules/axiomaim/apps/offers/items/items-data/items-pagination.model';
+import {
+    ItemsOffer,
+} from 'app/modules/axiomaim/apps/offers/items/items-data/items-offers.model';
 import {
     ItemsBrand,
+} from 'app/modules/axiomaim/apps/offers/items/items-data/items-brands.model';
+import {
     ItemsCategory,
-    ItemsPagination,
-    ItemsProduct,
+} from 'app/modules/axiomaim/apps/offers/items/items-data/items-categories.model';
+import {
     ItemsTag,
+} from 'app/modules/axiomaim/apps/offers/items/items-data/items-tags.model';
+import {
     ItemsVendor,
-} from 'app/modules/axiomaim/apps/offers/items/items.types';
+} from 'app/modules/axiomaim/apps/offers/items/items-data/items-vendors.model';
 import {
     BehaviorSubject,
     Observable,
     filter,
+    from,
     map,
     of,
     switchMap,
@@ -19,19 +30,30 @@ import {
     tap,
     throwError,
 } from 'rxjs';
+import { ItemsBrandsV2Service } from './items-data/items-brands-v2.service';
+import { ItemsOffersV2Service } from './items-data/items-offers-v2.service';
+import { ItemsCategoriesV2Service } from './items-data/items-categories-v2.service';
+import { ItemsVendorsV2Service } from './items-data/items-vendors-v2.service';
+import { ItemsTagsV2Service } from './items-data/items-tags-v2.service';
 
 @Injectable({ providedIn: 'root' })
 export class ItemsService {
-    // Private
+  _itemsOffersV2Service = inject(ItemsOffersV2Service);
+  _itemsBrandsV2Service = inject(ItemsBrandsV2Service);
+  _itemsCategoriesV2Service = inject(ItemsCategoriesV2Service);
+  _itemsVendorsV2Service = inject(ItemsVendorsV2Service);
+  _itemsTagsV2Service = inject(ItemsTagsV2Service);
+
+  // Private
     private _brands: BehaviorSubject<ItemsBrand[] | null> =
         new BehaviorSubject(null);
     private _categories: BehaviorSubject<ItemsCategory[] | null> =
         new BehaviorSubject(null);
     private _pagination: BehaviorSubject<ItemsPagination | null> =
         new BehaviorSubject(null);
-    private _product: BehaviorSubject<ItemsProduct | null> =
+    private _offer: BehaviorSubject<ItemsOffer | null> =
         new BehaviorSubject(null);
-    private _products: BehaviorSubject<ItemsProduct[] | null> =
+    private _offers: BehaviorSubject<ItemsOffer[] | null> =
         new BehaviorSubject(null);
     private _tags: BehaviorSubject<ItemsTag[] | null> = new BehaviorSubject(
         null
@@ -70,17 +92,17 @@ export class ItemsService {
     }
 
     /**
-     * Getter for product
+     * Getter for offer
      */
-    get product$(): Observable<ItemsProduct> {
-        return this._product.asObservable();
+    get offer$(): Observable<ItemsOffer> {
+        return this._offer.asObservable();
     }
 
     /**
-     * Getter for products
+     * Getter for offers
      */
-    get products$(): Observable<ItemsProduct[]> {
-        return this._products.asObservable();
+    get offers$(): Observable<ItemsOffer[]> {
+        return this._offers.asObservable();
     }
 
     /**
@@ -104,31 +126,110 @@ export class ItemsService {
     /**
      * Get brands
      */
+
     getBrands(): Observable<ItemsBrand[]> {
-        return this._httpClient
-            .get<ItemsBrand[]>('api/apps/ecommerce/inventory/brands')
-            .pipe(
-                tap((brands) => {
-                    this._brands.next(brands);
-                })
-            );
+        return from(this._itemsBrandsV2Service.getAll()).pipe(
+            tap((brands) => {
+            this._brands.next(brands);
+            })
+        );
+    }
+    /**
+     * Get categories
+     */
+    getCategories(): Observable<ItemsCategory[]> {
+        return from(this._itemsCategoriesV2Service.getAll()).pipe(
+            tap((categories) => {
+                this._categories.next(categories);
+            })
+        );
     }
 
     /**
      * Get categories
      */
-    getCategories(): Observable<ItemsCategory[]> {
-        return this._httpClient
-            .get<ItemsCategory[]>('api/apps/ecommerce/inventory/categories')
-            .pipe(
-                tap((categories) => {
-                    this._categories.next(categories);
-                })
-            );
+    getOffers(): Observable<ItemsOffer[]> {
+        return from(this._itemsOffersV2Service.getAll()).pipe(
+            tap((offers) => {
+                this._offers.next(offers);
+            })
+        );
     }
 
     /**
-     * Get products
+     * Get offer by id
+     */
+    getOffersById(id: string): Observable<ItemsOffer> {
+        return from(this._itemsOffersV2Service.getItem(id)).pipe(
+            tap((offer) => {
+                this._offer.next(offer);
+            })
+        );
+
+    }
+
+    /**
+     * Create offer
+     *
+     * @param offer
+     */
+    createOffer(offer: ItemsOffer): Observable<ItemsOffer> {
+        return from(this._itemsOffersV2Service.createItem(offer)).pipe(
+            tap((newOffer: ItemsOffer) => {
+            this._offers.next([...this._offers.value, newOffer]);
+            })
+        );
+    }
+
+    /**
+     * Update the offer
+     *
+     * @param id
+     * @param offer
+     */
+    updateOffer(id: string, offer: ItemsOffer): Observable<ItemsOffer> {
+        return from(this._itemsOffersV2Service.updateItem(offer)).pipe(
+            tap((newOffer: ItemsOffer) => {
+            const currentOffers = this._offers.value;
+            const index = currentOffers.findIndex((item) => item.id === id);
+            if (index !== -1) {
+                const updatedOffers = [
+                ...currentOffers.slice(0, index),
+                newOffer,
+                ...currentOffers.slice(index + 1)
+                ];
+                this._offers.next(updatedOffers);
+            }
+            })
+        );
+    }
+
+    /**
+     * Delete the offer
+     *
+     * @param id
+     */
+    deleteOffer(id: string): Observable<boolean> {
+        return from(this._itemsOffersV2Service.deleteItem(id)).pipe(
+            tap((success: boolean) => {
+            if (success) {
+                // Update offers: remove the offer ID from each offer's tags array
+                const currentOffers = this._offers.value;
+                currentOffers.forEach((offer) => {
+                const offerTagIndex = offer.tags.findIndex((tag) => tag === id);
+                if (offerTagIndex > -1) {
+                    offer.tags.splice(offerTagIndex, 1);
+                }
+                });
+                this._offers.next(currentOffers);
+            }
+            })
+        );
+    }
+
+
+    /**
+     * Get offers
      *
      *
      * @param page
@@ -145,13 +246,14 @@ export class ItemsService {
         search: string = ''
     ): Observable<{
         pagination: ItemsPagination;
-        products: ItemsProduct[];
+        offers: ItemsOffer[];
     }> {
+        
         return this._httpClient
             .get<{
                 pagination: ItemsPagination;
-                products: ItemsProduct[];
-            }>('api/apps/ecommerce/inventory/products', {
+                offers: ItemsOffer[];
+            }>('api/apps/ecommerce/inventory/offers', {
                 params: {
                     page: '' + page,
                     size: '' + size,
@@ -163,57 +265,57 @@ export class ItemsService {
             .pipe(
                 tap((response) => {
                     this._pagination.next(response.pagination);
-                    this._products.next(response.products);
+                    this._offers.next(response.offers);
                 })
             );
     }
 
     /**
-     * Get product by id
+     * Get offer by id
      */
-    getProductById(id: string): Observable<ItemsProduct> {
-        return this._products.pipe(
+    getProductById(id: string): Observable<ItemsOffer> {
+        return this._offers.pipe(
             take(1),
-            map((products) => {
-                // Find the product
-                const product = products.find((item) => item.id === id) || null;
+            map((offers) => {
+                // Find the offer
+                const offer = offers.find((item) => item.id === id) || null;
 
-                // Update the product
-                this._product.next(product);
+                // Update the offer
+                this._offer.next(offer);
 
-                // Return the product
-                return product;
+                // Return the offer
+                return offer;
             }),
-            switchMap((product) => {
-                if (!product) {
+            switchMap((offer) => {
+                if (!offer) {
                     return throwError(
-                        'Could not found product with id of ' + id + '!'
+                        'Could not found offer with id of ' + id + '!'
                     );
                 }
 
-                return of(product);
+                return of(offer);
             })
         );
     }
 
     /**
-     * Create product
+     * Create offer
      */
-    createProduct(): Observable<ItemsProduct> {
-        return this.products$.pipe(
+    createProduct(): Observable<ItemsOffer> {
+        return this.offers$.pipe(
             take(1),
-            switchMap((products) =>
+            switchMap((offers) =>
                 this._httpClient
-                    .post<ItemsProduct>(
-                        'api/apps/ecommerce/inventory/product',
+                    .post<ItemsOffer>(
+                        'api/apps/ecommerce/inventory/offer',
                         {}
                     )
                     .pipe(
                         map((newProduct) => {
-                            // Update the products with the new product
-                            this._products.next([newProduct, ...products]);
+                            // Update the offers with the new offer
+                            this._offers.next([newProduct, ...offers]);
 
-                            // Return the new product
+                            // Return the new offer
                             return newProduct;
                         })
                     )
@@ -222,51 +324,51 @@ export class ItemsService {
     }
 
     /**
-     * Update product
+     * Update offer
      *
      * @param id
-     * @param product
+     * @param offer
      */
     updateProduct(
         id: string,
-        product: ItemsProduct
-    ): Observable<ItemsProduct> {
-        return this.products$.pipe(
+        offer: ItemsOffer
+    ): Observable<ItemsOffer> {
+        return this.offers$.pipe(
             take(1),
-            switchMap((products) =>
+            switchMap((offers) =>
                 this._httpClient
-                    .patch<ItemsProduct>(
-                        'api/apps/ecommerce/inventory/product',
+                    .patch<ItemsOffer>(
+                        'api/apps/ecommerce/inventory/offer',
                         {
                             id,
-                            product,
+                            offer,
                         }
                     )
                     .pipe(
                         map((updatedProduct) => {
-                            // Find the index of the updated product
-                            const index = products.findIndex(
+                            // Find the index of the updated offer
+                            const index = offers.findIndex(
                                 (item) => item.id === id
                             );
 
-                            // Update the product
-                            products[index] = updatedProduct;
+                            // Update the offer
+                            offers[index] = updatedProduct;
 
-                            // Update the products
-                            this._products.next(products);
+                            // Update the offers
+                            this._offers.next(offers);
 
-                            // Return the updated product
+                            // Return the updated offer
                             return updatedProduct;
                         }),
                         switchMap((updatedProduct) =>
-                            this.product$.pipe(
+                            this.offer$.pipe(
                                 take(1),
                                 filter((item) => item && item.id === id),
                                 tap(() => {
-                                    // Update the product if it's selected
-                                    this._product.next(updatedProduct);
+                                    // Update the offer if it's selected
+                                    this._offer.next(updatedProduct);
 
-                                    // Return the updated product
+                                    // Return the updated offer
                                     return updatedProduct;
                                 })
                             )
@@ -277,30 +379,30 @@ export class ItemsService {
     }
 
     /**
-     * Delete the product
+     * Delete the offer
      *
      * @param id
      */
     deleteProduct(id: string): Observable<boolean> {
-        return this.products$.pipe(
+        return this.offers$.pipe(
             take(1),
-            switchMap((products) =>
+            switchMap((offers) =>
                 this._httpClient
-                    .delete('api/apps/ecommerce/inventory/product', {
+                    .delete('api/apps/ecommerce/inventory/offer', {
                         params: { id },
                     })
                     .pipe(
                         map((isDeleted: boolean) => {
-                            // Find the index of the deleted product
-                            const index = products.findIndex(
+                            // Find the index of the deleted offer
+                            const index = offers.findIndex(
                                 (item) => item.id === id
                             );
 
-                            // Delete the product
-                            products.splice(index, 1);
+                            // Delete the offer
+                            offers.splice(index, 1);
 
-                            // Update the products
-                            this._products.next(products);
+                            // Update the offers
+                            this._offers.next(offers);
 
                             // Return the deleted status
                             return isDeleted;
@@ -314,13 +416,11 @@ export class ItemsService {
      * Get tags
      */
     getTags(): Observable<ItemsTag[]> {
-        return this._httpClient
-            .get<ItemsTag[]>('api/apps/ecommerce/inventory/tags')
-            .pipe(
-                tap((tags) => {
-                    this._tags.next(tags);
-                })
-            );
+        return from(this._itemsTagsV2Service.getAll()).pipe(
+            tap((tags) => {
+                this._tags.next(tags);
+            })
+        );
     }
 
     /**
@@ -329,23 +429,10 @@ export class ItemsService {
      * @param tag
      */
     createTag(tag: ItemsTag): Observable<ItemsTag> {
-        return this.tags$.pipe(
-            take(1),
-            switchMap((tags) =>
-                this._httpClient
-                    .post<ItemsTag>('api/apps/ecommerce/inventory/tag', {
-                        tag,
-                    })
-                    .pipe(
-                        map((newTag) => {
-                            // Update the tags with the new tag
-                            this._tags.next([...tags, newTag]);
-
-                            // Return new tag from observable
-                            return newTag;
-                        })
-                    )
-            )
+        return from(this._itemsTagsV2Service.createItem(tag)).pipe(
+            tap((newTag: ItemsTag) => {
+            this._tags.next([...this._tags.value, newTag]);
+            })
         );
     }
 
@@ -356,32 +443,19 @@ export class ItemsService {
      * @param tag
      */
     updateTag(id: string, tag: ItemsTag): Observable<ItemsTag> {
-        return this.tags$.pipe(
-            take(1),
-            switchMap((tags) =>
-                this._httpClient
-                    .patch<ItemsTag>('api/apps/ecommerce/inventory/tag', {
-                        id,
-                        tag,
-                    })
-                    .pipe(
-                        map((updatedTag) => {
-                            // Find the index of the updated tag
-                            const index = tags.findIndex(
-                                (item) => item.id === id
-                            );
-
-                            // Update the tag
-                            tags[index] = updatedTag;
-
-                            // Update the tags
-                            this._tags.next(tags);
-
-                            // Return the updated tag
-                            return updatedTag;
-                        })
-                    )
-            )
+        return from(this._itemsTagsV2Service.updateItem(tag)).pipe(
+            tap((newTag: ItemsTag) => {
+            const currentTags = this._tags.value;
+            const index = currentTags.findIndex((item) => item.id === id);
+            if (index !== -1) {
+                const updatedTags = [
+                ...currentTags.slice(0, index),
+                newTag,
+                ...currentTags.slice(index + 1)
+                ];
+                this._tags.next(updatedTags);
+            }
+            })
         );
     }
 
@@ -391,53 +465,31 @@ export class ItemsService {
      * @param id
      */
     deleteTag(id: string): Observable<boolean> {
-        return this.tags$.pipe(
-            take(1),
-            switchMap((tags) =>
-                this._httpClient
-                    .delete('api/apps/ecommerce/inventory/tag', {
-                        params: { id },
-                    })
-                    .pipe(
-                        map((isDeleted: boolean) => {
-                            // Find the index of the deleted tag
-                            const index = tags.findIndex(
-                                (item) => item.id === id
-                            );
+        return from(this._itemsTagsV2Service.deleteItem(id)).pipe(
+            tap((success: boolean) => {
+            if (success) {
+                // Update tags: remove the deleted tag
+                const currentTags = this._tags.value;
+                const tagIndex = currentTags.findIndex((item) => item.id === id);
+                if (tagIndex !== -1) {
+                const updatedTags = [
+                    ...currentTags.slice(0, tagIndex),
+                    ...currentTags.slice(tagIndex + 1)
+                ];
+                this._tags.next(updatedTags);
+                }
 
-                            // Delete the tag
-                            tags.splice(index, 1);
-
-                            // Update the tags
-                            this._tags.next(tags);
-
-                            // Return the deleted status
-                            return isDeleted;
-                        }),
-                        filter((isDeleted) => isDeleted),
-                        switchMap((isDeleted) =>
-                            this.products$.pipe(
-                                take(1),
-                                map((products) => {
-                                    // Iterate through the contacts
-                                    products.forEach((product) => {
-                                        const tagIndex = product.tags.findIndex(
-                                            (tag) => tag === id
-                                        );
-
-                                        // If the contact has the tag, remove it
-                                        if (tagIndex > -1) {
-                                            product.tags.splice(tagIndex, 1);
-                                        }
-                                    });
-
-                                    // Return the deleted status
-                                    return isDeleted;
-                                })
-                            )
-                        )
-                    )
-            )
+                // Update offers: remove the tag ID from each offer's tags array
+                const currentOffers = this._offers.value;
+                currentOffers.forEach((offer) => {
+                const offerTagIndex = offer.tags.findIndex((tag) => tag === id);
+                if (offerTagIndex > -1) {
+                    offer.tags.splice(offerTagIndex, 1);
+                }
+                });
+                this._offers.next(currentOffers);
+            }
+            })
         );
     }
 
@@ -445,12 +497,10 @@ export class ItemsService {
      * Get vendors
      */
     getVendors(): Observable<ItemsVendor[]> {
-        return this._httpClient
-            .get<ItemsVendor[]>('api/apps/ecommerce/inventory/vendors')
-            .pipe(
-                tap((vendors) => {
-                    this._vendors.next(vendors);
-                })
-            );
+        return from(this._itemsVendorsV2Service.getAll()).pipe(
+            tap((vendors) => {
+                this._vendors.next(vendors);
+            })
+        );
     }
 }

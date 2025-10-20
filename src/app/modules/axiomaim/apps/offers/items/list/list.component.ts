@@ -110,7 +110,7 @@ export class ItemsListComponent
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
 
-    products$: Observable<ItemsProduct[]>;
+    offers$: Observable<ItemsProduct[]>;
 
     brands: ItemsBrand[];
     categories: ItemsCategory[];
@@ -144,7 +144,7 @@ export class ItemsListComponent
      * On init
      */
     ngOnInit(): void {
-        // Create the selected product form
+        // Create the selected offer form
         this.selectedProductForm = this._formBuilder.group({
             id: [''],
             category: [''],
@@ -201,8 +201,8 @@ export class ItemsListComponent
                 this._changeDetectorRef.markForCheck();
             });
 
-        // Get the products
-        this.products$ = this._itemsService.products$;
+        // Get the offers
+        this.offers$ = this._itemsService.offers$;
 
         // Get the tags
         this._itemsService.tags$
@@ -235,7 +235,7 @@ export class ItemsListComponent
                 switchMap((query) => {
                     this.closeDetails();
                     this.isLoading = true;
-                    return this._itemsService.getProducts(
+                    return this._itemsService.getOffers(
                         0,
                         10,
                         'name',
@@ -276,13 +276,13 @@ export class ItemsListComponent
                     this.closeDetails();
                 });
 
-            // Get products if sort or page changes
+            // Get offers if sort or page changes
             merge(this._sort.sortChange, this._paginator.page)
                 .pipe(
                     switchMap(() => {
                         this.closeDetails();
                         this.isLoading = true;
-                        return this._itemsService.getProducts(
+                        return this._itemsService.getOffers(
                             this._paginator.pageIndex,
                             this._paginator.pageSize,
                             this._sort.active,
@@ -311,27 +311,27 @@ export class ItemsListComponent
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * Toggle product details
+     * Toggle offer details
      *
-     * @param productId
+     * @param offerId
      */
-    toggleDetails(productId: string): void {
-        // If the product is already selected...
-        if (this.selectedProduct && this.selectedProduct.id === productId) {
+    toggleDetails(offerId: string): void {
+        // If the offer is already selected...
+        if (this.selectedProduct && this.selectedProduct.id === offerId) {
             // Close the details
             this.closeDetails();
             return;
         }
 
-        // Get the product by id
+        // Get the offer by id
         this._itemsService
-            .getProductById(productId)
-            .subscribe((product) => {
-                // Set the selected product
-                this.selectedProduct = product;
+            .getProductById(offerId)
+            .subscribe((offer) => {
+                // Set the selected offer
+                this.selectedProduct = offer;
 
                 // Fill the form
-                this.selectedProductForm.patchValue(product);
+                this.selectedProductForm.patchValue(offer);
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -346,7 +346,7 @@ export class ItemsListComponent
     }
 
     /**
-     * Cycle through images of selected product
+     * Cycle through images of selected offer
      */
     cycleImages(forward: boolean = true): void {
         // Get the image count and current image index
@@ -423,12 +423,12 @@ export class ItemsListComponent
             (id) => id === tag.id
         );
 
-        // If the found tag is already applied to the product...
+        // If the found tag is already applied to the offer...
         if (isTagApplied) {
-            // Remove the tag from the product
+            // Remove the tag from the offer
             this.removeTagFromProduct(tag);
         } else {
-            // Otherwise add the tag to the product
+            // Otherwise add the tag to the offer
             this.addTagToProduct(tag);
         }
     }
@@ -445,7 +445,7 @@ export class ItemsListComponent
 
         // Create tag on the server
         this._itemsService.createTag(tag).subscribe((response) => {
-            // Add the tag to the product
+            // Add the tag to the offer
             this.addTagToProduct(response);
         });
     }
@@ -484,7 +484,7 @@ export class ItemsListComponent
     }
 
     /**
-     * Add tag to the product
+     * Add tag to the offer
      *
      * @param tag
      */
@@ -492,7 +492,7 @@ export class ItemsListComponent
         // Add the tag
         this.selectedProduct.tags.unshift(tag.id);
 
-        // Update the selected product form
+        // Update the selected offer form
         this.selectedProductForm
             .get('tags')
             .patchValue(this.selectedProduct.tags);
@@ -502,7 +502,7 @@ export class ItemsListComponent
     }
 
     /**
-     * Remove tag from the product
+     * Remove tag from the offer
      *
      * @param tag
      */
@@ -513,7 +513,7 @@ export class ItemsListComponent
             1
         );
 
-        // Update the selected product form
+        // Update the selected offer form
         this.selectedProductForm
             .get('tags')
             .patchValue(this.selectedProduct.tags);
@@ -523,7 +523,7 @@ export class ItemsListComponent
     }
 
     /**
-     * Toggle product tag
+     * Toggle offer tag
      *
      * @param tag
      * @param change
@@ -551,12 +551,12 @@ export class ItemsListComponent
     }
 
     /**
-     * Create product
+     * Create offer
      */
     createProduct(): void {
-        // Create the product
+        // Create the offer
         this._itemsService.createProduct().subscribe((newProduct) => {
-            // Go to new product
+            // Go to new offer
             this.selectedProduct = newProduct;
 
             // Fill the form
@@ -568,18 +568,18 @@ export class ItemsListComponent
     }
 
     /**
-     * Update the selected product using the form data
+     * Update the selected offer using the form data
      */
     updateSelectedProduct(): void {
-        // Get the product object
-        const product = this.selectedProductForm.getRawValue();
+        // Get the offer object
+        const offer = this.selectedProductForm.getRawValue();
 
         // Remove the currentImageIndex field
-        delete product.currentImageIndex;
+        delete offer.currentImageIndex;
 
-        // Update the product on the server
+        // Update the offer on the server
         this._itemsService
-            .updateProduct(product.id, product)
+            .updateProduct(offer.id, offer)
             .subscribe(() => {
                 // Show a success message
                 this.showFlashMessage('success');
@@ -587,14 +587,14 @@ export class ItemsListComponent
     }
 
     /**
-     * Delete the selected product using the form data
+     * Delete the selected offer using the form data
      */
     deleteSelectedProduct(): void {
         // Open the confirmation dialog
         const confirmation = this._axiomaimConfirmationService.open({
-            title: 'Delete product',
+            title: 'Delete offer',
             message:
-                'Are you sure you want to remove this product? This action cannot be undone!',
+                'Are you sure you want to remove this offer? This action cannot be undone!',
             actions: {
                 confirm: {
                     label: 'Delete',
@@ -606,12 +606,12 @@ export class ItemsListComponent
         confirmation.afterClosed().subscribe((result) => {
             // If the confirm button pressed...
             if (result === 'confirmed') {
-                // Get the product object
-                const product = this.selectedProductForm.getRawValue();
+                // Get the offer object
+                const offer = this.selectedProductForm.getRawValue();
 
-                // Delete the product on the server
+                // Delete the offer on the server
                 this._itemsService
-                    .deleteProduct(product.id)
+                    .deleteProduct(offer.id)
                     .subscribe(() => {
                         // Close the details
                         this.closeDetails();

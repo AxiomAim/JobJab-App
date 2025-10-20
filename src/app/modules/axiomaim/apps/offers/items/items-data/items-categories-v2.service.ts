@@ -1,47 +1,42 @@
 import { createInjectable } from "ngxtension/create-injectable";
 import { signal, computed, inject } from "@angular/core";
 import { Router } from "@angular/router";
-import { ItemsOffersV2ApiService } from "./items-offers-v2-api.service";
-import { ItemsOffer } from "./items-offers.model";
-
-const ALL_QUOTES = "allQuotes";
-const QUOTES = "quotes";
-const QUOTE = "quote";
-
+import { ItemsCategoriesV2ApiService } from "./items-categories-v2-api.service";
+import { ItemsCategory } from "./items-categories.model";
 
 export const ItemsCategoriesV2Service = createInjectable(() => {
   const _router = inject(Router);
-  const _itemsOffersV2ApiService = inject(ItemsOffersV2ApiService);
-  const allItems = signal<ItemsOffer[] | null>(null);
-  const items = signal<ItemsOffer[] | null>(null);
-  const item = signal<ItemsOffer | null>(null);
+  const _itemsCategoriesV2ApiService = inject(ItemsCategoriesV2ApiService);
+  const allItems = signal<ItemsCategory[] | null>(null);
+  const items = signal<ItemsCategory[] | null>(null);
+  const item = signal<ItemsCategory | null>(null);
 
-  const getAll = async ():Promise<ItemsOffer[]> => {
-    const response = await _itemsOffersV2ApiService.getAll();
+  const getAll = async ():Promise<ItemsCategory[]> => {
+    const response = await _itemsCategoriesV2ApiService.getAll();
     allItems.set(response);
     items.set(response);
     return response;
   };
 
-  const getItem = async (oid: string): Promise<ItemsOffer> => {
-    const response = await _itemsOffersV2ApiService.getItem(oid);
+  const getItem = async (oid: string): Promise<ItemsCategory> => {
+    const response = await _itemsCategoriesV2ApiService.getItem(oid);
     item.set(response);
     return response;
   };
 
-  const createItem = async (data: ItemsOffer): Promise<ItemsOffer> => {
-    const response = await _itemsOffersV2ApiService.createItem(data);
+  const createItem = async (data: ItemsCategory): Promise<ItemsCategory> => {
+    const response = await _itemsCategoriesV2ApiService.createItem(data);
     item.set(response);
     return response;
   };
 
-  const updateItem = async (data: ItemsOffer): Promise<ItemsOffer> => {
-    const response = await _itemsOffersV2ApiService.updateItem(data);
+  const updateItem = async (data: ItemsCategory): Promise<ItemsCategory> => {
+    const response = await _itemsCategoriesV2ApiService.updateItem(data);
     return response;
   };
 
   const deleteItem = async (oid: string): Promise<any> => {
-    const response = await _itemsOffersV2ApiService.deleteItem(oid);
+    const response = await _itemsCategoriesV2ApiService.deleteItem(oid);
     item.set(null);
     return response;
   };
