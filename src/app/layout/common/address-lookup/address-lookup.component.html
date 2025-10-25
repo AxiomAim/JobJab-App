@@ -2,13 +2,14 @@
   <mat-form-field [ngClass]="formFieldHelpers" class="gt-xs:pr-3 flex-auto"
     [appearance]="formFieldAppearence || 'outline'">
     <mat-label>{{ label }}</mat-label>
-    <input matInput [placeholder]="placeholder" [id]="id" [formControl]="formControl" [matAutocomplete]="auto"
-      [readonly]="readOnly" [type]="type" (input)="onInput($event)" [autocomplete]="autocompleteAttribute"
-      #addressInput />
+    <input matInput [placeholder]="placeholder" [id]="id" [formControl]="internalControl" [matAutocomplete]="auto"
+      [readonly]="readOnly" [type]="type" (input)="onInput($event)" [autocomplete]="autocompleteAttribute" #addressInput
+      (blur)="onTouchedCallback()" />
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event.option.value)">
       <mat-option *ngFor="let data of optionData" [value]="data">
         {{ data[selectedKey] }}
       </mat-option>
     </mat-autocomplete>
-    <mat-error *ngIf="mapsLoadingError">{{ mapsLoadingError }}</mat-error> </mat-form-field>
+    <mat-error *ngIf="mapsLoadingError">{{ mapsLoadingError }}</mat-error>
+  </mat-form-field>
 </div>

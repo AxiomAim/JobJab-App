@@ -69,7 +69,7 @@ export class LoginUserDashboardComponent implements OnInit, OnDestroy {
     constructor(
         private _router: Router
     ) {
-        this._firebaseAuthV2Service.loadFromStorage();
+        // this._firebaseAuthV2Service.loadFromStorage();
         this.loginUser = this._firebaseAuthV2Service.loginUser();
 
     }

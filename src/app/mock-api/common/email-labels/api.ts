@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AxiomaimMockApiService, AxiomaimMockApiUtils } from '@axiomaim/lib/mock-api';
-import { EmailLabel } from 'app/core/models/email-labels.model ';
+import { EmailLabel } from 'app/core/models/email-labels.model';
 import { UserRole } from 'app/core/models/user-roles.model';
 import { emailLabels as emailLabelsData } from 'app/mock-api/common/email-labels/data';
 import { assign, cloneDeep } from 'lodash-es';

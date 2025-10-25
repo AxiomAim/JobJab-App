@@ -1,5 +1,6 @@
 <!-- Settings toggle -->
-<button class="ml-4" mat-flat-button [matTooltip]="'New Customer'" [color]="'primary'" (click)="openDrawer()">
+<button class="ml-4" mat-flat-button [matTooltip]="'New Customer'" [color]="'primary'" (click)="openDrawer()"
+    aria-label="Add new contact">
     <mat-icon [svgIcon]="btnIcon"></mat-icon>
     <span class="ml-2 mr-1">{{ btnTitle }}</span>
 </button>
@@ -16,7 +17,7 @@
                 <div class="ml-3 text-2xl font-semibold tracking-tight">
                     Add Contact
                 </div>
-                <button class="ml-auto mr-12" mat-icon-button (click)="close()">
+                <button class="ml-auto mr-12" mat-icon-button (click)="close()" aria-label="Close drawer">
                     <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
                 </button>
             </div>
@@ -32,7 +33,7 @@
                                 <mat-label>First Name</mat-label>
                                 <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
                                     [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-                                <input matInput [formControlName]="'firstName'" [placeholder]="'First Name'"
+                                <input matInput formControlName="firstName" [placeholder]="'First Name'"
                                     [spellcheck]="false" />
                             </mat-form-field>
                         </div>
@@ -41,7 +42,7 @@
                                 <mat-label>Last Name</mat-label>
                                 <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
                                     [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-                                <input matInput [formControlName]="'lastName'" [placeholder]="'Last Name'"
+                                <input matInput formControlName="lastName" [placeholder]="'Last Name'"
                                     [spellcheck]="false" />
                             </mat-form-field>
                         </div>
@@ -52,27 +53,37 @@
                             <mat-label>Company</mat-label>
                             <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
                                 [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-                            <input matInput [formControlName]="'company'" [placeholder]="'Company'"
-                                [spellcheck]="false" />
+                            <input matInput formControlName="company" [placeholder]="'Company'" [spellcheck]="false" />
                         </mat-form-field>
                     </div>
 
                     <div class="mt-2">
                         <section class="example-section">
                             <h4>Contact Type:</h4>
-                            <p><mat-checkbox [(ngModel)]="lead" (clickAction)="setAtDate('lead')">Lead</mat-checkbox>
+                            <p>
+                                <mat-checkbox [(ngModel)]="lead" (change)="setAtDate('lead')"
+                                    [ngModelOptions]="{standalone: true}">
+                                    Lead
+                                </mat-checkbox>
                             </p>
-                            <p><mat-checkbox [(ngModel)]="customer"
-                                    (clickAction)="setAtDate('customer')">Customer</mat-checkbox></p>
-                            <p><mat-checkbox [(ngModel)]="cancel"
-                                    (clickAction)="setAtDate('cancel')">Cancel</mat-checkbox>
+                            <p>
+                                <mat-checkbox [(ngModel)]="customer" (change)="setAtDate('customer')"
+                                    [ngModelOptions]="{standalone: true}">
+                                    Customer
+                                </mat-checkbox>
+                            </p>
+                            <p>
+                                <mat-checkbox [(ngModel)]="cancel" (change)="setAtDate('cancel')"
+                                    [ngModelOptions]="{standalone: true}">
+                                    Cancel
+                                </mat-checkbox>
                             </p>
                         </section>
                     </div>
                     <mat-form-field class="w-full mt-2" [subscriptSizing]="'dynamic'">
                         <mat-label>Lead Source</mat-label>
-                        <mat-select [formControlName]="'source'" name="source">
-                            @for (source of this._sourcesV2Service.sources(); track source) {
+                        <mat-select formControlName="source">
+                            @for (source of _sourcesV2Service.sources(); track source) {
                             <mat-option [value]="source.id">{{source.name}}</mat-option>
                             }
                         </mat-select>
@@ -170,31 +181,14 @@
                                                         " [style.backgroundSize]="
                                                             '24px 3876px'
                                                         " [style.backgroundPosition]="
-                                                        phoneNumber.get(
-                                                                    'country'
-                                                                ).value ?
-                                                            getCountryByIso(
-                                                                phoneNumber.get(
-                                                                    'country'
-                                                                ).value ?
-                                                                phoneNumber.get(
-                                                                    'country'
-                                                                ).value : 'us'
-                                                            ).flagImagePos
-                                                            : '-1px -69px'
+                                                        (getCountryByIso(
+                                                                    phoneNumber.get('country').value || 'us'
+                                                                )?.flagImagePos ?? '-1px -69px')
                                                         "></span>
                                                 <span class="text-default font-medium sm:mx-0.5">{{
-                                                    phoneNumber.get(
-                                                    'country'
-                                                    ).value ? getCountryByIso(
-                                                    phoneNumber.get(
-                                                    'country'
-                                                    ).value ?
-                                                    phoneNumber.get(
-                                                    'country'
-                                                    ).value : 'us'
-                                                    ).code
-                                                    : '+1'
+                                                    getCountryByIso(
+                                                    phoneNumber.get('country').value || 'us'
+                                                    )?.code ?? '+1'
                                                     }}</span>
                                             </span>
                                         </mat-select-trigger>
@@ -262,7 +256,7 @@
 
                     <!-- </div> -->
                     <div class="mt-2">
-                        <address-lookup class="w-full" label="Address" [formControl]="address"
+                        <address-lookup class="w-full" label="Address" formControlName="address"
                             placeholder="Enter address">
                         </address-lookup>
 

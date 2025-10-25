@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, OnChanges, inject, OnDestroy, OnInit, signal, effect, ViewChild, ViewEncapsulation, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, Renderer2, ViewContainerRef, Input } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal, effect, ViewChild, ViewEncapsulation, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, Input, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -9,7 +9,7 @@ import {
     AxiomaimConfigService,
 } from '@axiomaim/services/config';
 import { Subject, takeUntil } from 'rxjs';
-import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, FormArray, FormBuilder, Validators } from '@angular/forms';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -32,7 +32,7 @@ import { Country, Contact, ContactModel } from '../contacts.model';
 import { Overlay } from '@angular/cdk/overlay';
 import { SourcesV2Service } from '../../sources/sources-v2.service';
 import { PhoneLabel } from 'app/core/models/phone-labels.model';
-import { EmailLabel } from 'app/core/models/email-labels.model ';
+import { EmailLabel } from 'app/core/models/email-labels.model';
 
 @Component({
     selector: 'contacts-add-item',
@@ -81,8 +81,7 @@ import { EmailLabel } from 'app/core/models/email-labels.model ';
         NgClass,
     ]
 })
-export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
-    // @Input() contact: Contact;
+export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() btnIcon: string = 'mat_outline:add';
     @Input() btnTitle: string = 'Add Contact';
     @Input() external: boolean = false;
@@ -96,21 +95,11 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
     @Output() drawerStateChanged = new EventEmitter<boolean>();
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-    contactForm: UntypedFormGroup;
-    showRole: string[] = ["admin"];
-    user_roles: any[] = [];
-    reLoad: boolean = true;
-    sitePermission: boolean = false;
-    complinePermission: boolean = false;
-    specializePermission: boolean = false;
-    isSiteMultiple: boolean = false;
-    user_delegation_roles: any[] = [];
-    sitesDropDownData: any[] = [];
-    site_account_id: any[] = [];
+    contactForm: FormGroup;  // Typed for safety
     isLoading = signal<boolean>(false);
     public countries: Country[] = [];
     public newContact: Contact = ContactModel.emptyDto();
-    public address: FormControl = new FormControl('');
+    public address = new FormControl('');  // Standalone, but tied via formControlName in HTML
     phoneLabels: PhoneLabel[] = [];
     emailLabels: EmailLabel[] = [];
     
@@ -125,20 +114,20 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
      * Constructor
      */
     constructor(
-        private _formBuilder: UntypedFormBuilder,
+        private _formBuilder: FormBuilder,
         private _router: Router,
         private _axiomaimConfigService: AxiomaimConfigService,
         private _contactsService: ContactsService,
         private _changeDetectorRef: ChangeDetectorRef,
         private _activatedRoute: ActivatedRoute,
-        
     ) {
-        // Create the basic form structure early
+        // Create the basic form structure early (typed)
         this.contactForm = this._formBuilder.group({
-            firstName: ["", [Validators.required]],
-            lastName: ["", [Validators.required]],
-            company: ["", [Validators.required]],
+            firstName: ['', [Validators.required]],
+            lastName: ['', [Validators.required]],
+            company: ['', [Validators.required]],
             source: [null, [Validators.required]],
+            address: [''],  // Added for address-lookup integration
             emails: this._formBuilder.array([]),
             phoneNumbers: this._formBuilder.array([]),
         });
@@ -149,6 +138,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
             const data = contact || ContactModel.emptyDto();
             this.newContact = data;
             this.updateFormData(data);
+            this._changeDetectorRef.detectChanges();  // Force detection after effect to avoid NG0100
         });
     }
 
@@ -160,23 +150,26 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
      * On init
      */
     async ngOnInit() {
-        this.emailLabels = await this._contactsV2Service.getEmailLabels();
-        this.phoneLabels = await this._contactsV2Service.getPhoneLabels();
+        // Defer async loads to avoid expression change errors
+        setTimeout(async () => {
+            this.emailLabels = await this._contactsV2Service.getEmailLabels();
+            this.phoneLabels = await this._contactsV2Service.getPhoneLabels();
 
-        await this._contactsService.getCountries();
-        await this._contactsService.countries$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((codes: Country[]) => {
-                this.countries = codes;
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+            // Load sources if not already (assuming service has loadSources())
+            await this._sourcesV2Service.getAll();  // Add if needed; adjust based on service
 
-        this.resetForm();
-        this.setuoForm();
+            await this._contactsService.getCountries();
+            await this._contactsService.countries$
+                .pipe(takeUntil(this._unsubscribeAll))
+                .subscribe((codes: Country[]) => {
+                    this.countries = codes;
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
+                });
 
+            this.resetForm();
+        }, 0);
     }
-
 
     /**
      * After view init
@@ -191,12 +184,10 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
             });
     }
 
-
-        setuoForm() {
+    setupForm() {
         this.newContact = ContactModel.emptyDto();
-        console.log('setuoForm - newContact', this.newContact);
+        console.log('setupForm - newContact', this.newContact);
     }
-
 
     /**
      * On destroy
@@ -205,17 +196,6 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
-    }
-
-    ngOnChanges(): void {        
-        // Handle changes to @Input() contact if needed
-        // if(this.newItemDrawer.open) {
-        //     console.log('ngOnChanges - ngAfterViewInit.open');
-        //     this.ngOnInit();
-        //     this.ngAfterViewInit();
-        // }
-        this.newContact = this._contactsV2Service.contact();
-        this.updateFormData(this.newContact);
     }
 
     /**
@@ -227,15 +207,12 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
             firstName: data.firstName || '',
             lastName: data.lastName || '',
             company: data.company || '',
-            address: data.address || '',
-            lead: data.lead || false,
-            leadAt: data.leadAt || '',
-            customer: data.customer || false,
-            customerAt: data.customerAt || ''
+            source: data.source || null,  // Added
+            // Removed address/lead (handled separately)
         });
 
         // Update emails array
-        const emailsArray = this.contactForm.get('emails') as UntypedFormArray;
+        const emailsArray = this.contactForm.get('emails') as FormArray;
         emailsArray.clear();
         const emailFormGroups = data.emails && data.emails.length > 0 
             ? data.emails.map((email) => this._formBuilder.group({ email: [email.email || ''], label: [email.label || ''] }))
@@ -246,7 +223,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         });
 
         // Update phone numbers array
-        const phoneNumbersArray = this.contactForm.get('phoneNumbers') as UntypedFormArray;
+        const phoneNumbersArray = this.contactForm.get('phoneNumbers') as FormArray;
         phoneNumbersArray.clear();
         const phoneNumbersFormGroups = data.phoneNumbers && data.phoneNumbers.length > 0 
             ? data.phoneNumbers.map((phoneNumber) => this._formBuilder.group({ 
@@ -261,12 +238,11 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         });
     }
 
-
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
     
-          /**
+    /**
      * Add the email field
      */
     addEmailField(): void {
@@ -277,7 +253,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         });
 
         // Add the email form group to the emails form array
-        (this.contactForm.get('emails') as UntypedFormArray).push(
+        (this.contactForm.get('emails') as FormArray).push(
             emailFormGroup
         );
 
@@ -294,7 +270,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         // Get form array for emails
         const emailsFormArray = this.contactForm.get(
             'emails'
-        ) as UntypedFormArray;
+        ) as FormArray;
 
         // Remove the email field
         emailsFormArray.removeAt(index);
@@ -315,7 +291,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         });
 
         // Add the phone number form group to the phoneNumbers form array
-        (this.contactForm.get('phoneNumbers') as UntypedFormArray).push(
+        (this.contactForm.get('phoneNumbers') as FormArray).push(
             phoneNumberFormGroup
         );
 
@@ -332,7 +308,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         // Get form array for phone numbers
         const phoneNumbersFormArray = this.contactForm.get(
             'phoneNumbers'
-        ) as UntypedFormArray;
+        ) as FormArray;
 
         // Remove the phone number field
         phoneNumbersFormArray.removeAt(index);
@@ -341,11 +317,10 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         this._changeDetectorRef.markForCheck();
     }
 
-
     openDrawer(): void {
         // Reset form to ensure clean state when opening
         console.log('openDrawer - resetting form');
-        this.ngOnInit();
+        this.resetForm();
         
         // Open the drawer
         this.newItemDrawer.open();
@@ -357,9 +332,6 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
     close(): void {
         // Comprehensive form reset to prevent validation errors on reopen
         this.resetForm();
-        
-        // Reset additional form-related properties
-        this.resetAdditionalProperties();
         
         // Close the drawer
         this.newItemDrawer.close();
@@ -385,33 +357,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
                 control.markAsPristine();
             }
         });
-        
-        // Set default values for form fields that need them (if any)
-        this.contactForm.patchValue({
-            active: true,
-            user_roles: [],
-            site_account_id: [],
-            user_delegation_roles: []
-        }, { emitEvent: false });
     }
-
-    /**
-     * Reset additional component properties
-     */
-    private resetAdditionalProperties(): void {
-        // Reset component-specific properties
-        this.user_roles = [];
-        this.site_account_id = [];
-        this.user_delegation_roles = [];
-        this.reLoad = true;
-        this.sitePermission = false;
-        this.complinePermission = false;
-        this.specializePermission = false;
-        this.isSiteMultiple = false;
-    }
-
-
-
 
     /**
      * Submit and create User
@@ -421,45 +367,55 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
      */
 
     async onSubmit() {
-        let date: any = new Date().toISOString();
+        this.isLoading.set(true);
+        try {
+            let date: any = new Date().toISOString();
 
-        this.newContact.orgId = this.loginUser.orgId;
-        this.newContact.lead = this.lead;
-        this.newContact.leadAt = this.leadAt;
-        this.newContact.customer = this.customer;
-        this.newContact.customerAt = this.customerAt;
-        this.newContact.cancel = this.cancel;
-        this.newContact.cancelAt = this.cancelAt;
-        this.newContact.firstName = this.contactForm.get('firstName').value
-        this.newContact.lastName = this.contactForm.get('lastName').value
-        this.newContact.company = this.contactForm.get('company').value
-        this.newContact.displayName = this.newContact.firstName + ' ' + this.newContact.lastName;
-        this.newContact.emails = this.contactForm.get('emails').value
-        this.newContact.phoneNumbers = this.contactForm.get('phoneNumbers').value
-        this.newContact.address = this.contactForm.get('address').value
-        await this._contactsV2Service.createItem(this.newContact);
-        await this._contactsV2Service.getAll();
+            this.newContact.orgId = this.loginUser.orgId;
+            this.newContact.lead = this.lead;
+            this.newContact.leadAt = this.leadAt;
+            this.newContact.customer = this.customer;
+            this.newContact.customerAt = this.customerAt;
+            this.newContact.cancel = this.cancel;
+            this.newContact.cancelAt = this.cancelAt;
+            this.newContact.firstName = this.contactForm.get('firstName').value
+            this.newContact.lastName = this.contactForm.get('lastName').value
+            this.newContact.company = this.contactForm.get('company').value
+            this.newContact.source = this.contactForm.get('source').value;  // Added
+            this.newContact.displayName = this.newContact.firstName + ' ' + this.newContact.lastName;
+            this.newContact.emails = this.contactForm.get('emails').value
+            this.newContact.phoneNumbers = this.contactForm.get('phoneNumbers').value
+            this.newContact.address = this.contactForm.get('address').value;  // Now from formGroup
+            
+            await this._contactsV2Service.createItem(this.newContact);
+            await this._contactsV2Service.getAll();
                     
-        if(this.external){
-            this.sendContact();
-            this.close();
-        } else {
-            this.close();
-            // this._router.navigate(['/crm/contacts']);
+            if(this.external){
+                this.sendContact();
+                this.close();
+            } else {
+                this.close();
+                // this._router.navigate(['/crm/contacts']);
+            }
+        } finally {
+            this.isLoading.set(false);
         }
-        
-        // this.isLoading.set(true);
     }
               
 
     /**
-     * Get country info by iso code
+     * Get country info by iso code (with safe default)
      *
      * @param iso
      */
-    getCountryByIso(iso: string): Country {
+    getCountryByIso(iso: string): Country | null {
+        if (!iso) return null;
         const response = this.countries.find((country) => country.iso === iso);
-        return response;
+        // Return default for 'us' or invalid
+        if (!response && iso === 'us') {
+            return { iso: 'us', code: '+1', name: 'United States', flagImagePos: '-1px -69px' } as Country;
+        }
+        return response || null;
     }
 
     sendContact() {
@@ -467,7 +423,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         this.close();
     }
 
-        setAtDate(control: string) {
+    setAtDate(control: string) {
         switch(control) {
             case 'lead':
                 if(this.lead === true){
@@ -492,7 +448,6 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
                 break;
         }
     }
-
 
     /**
      * Track by function for ngFor loops

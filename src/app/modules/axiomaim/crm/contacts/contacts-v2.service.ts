@@ -6,7 +6,7 @@ import { Country, Contact } from "./contacts.model";
 import { firstValueFrom, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { PhoneLabel } from "app/core/models/phone-labels.model";
-import { EmailLabel } from "app/core/models/email-labels.model ";
+import { EmailLabel } from "app/core/models/email-labels.model";
 
 export const ContactsV2Service = createInjectable(() => {
   const _router = inject(Router);

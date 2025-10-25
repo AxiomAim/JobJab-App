@@ -20,6 +20,7 @@ import { User } from 'app/modules/axiomaim/administration/users/users.model';
 // import { User } from 'app/core/user/user.types';
 import { Subject, takeUntil } from 'rxjs';
 import { Organization } from '../../../modules/axiomaim/administration/organizations/organizations.model';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 
 @Component({
     selector: 'organization',
@@ -37,14 +38,14 @@ import { Organization } from '../../../modules/axiomaim/administration/organizat
 })
 export class OrganizationComponent implements OnInit, OnDestroy {
     private _loginUserService = inject(LoginUserService);
-
+    public _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
 
     /* eslint-disable @typescript-eslint/naming-convention */
     static ngAcceptInputType_showAvatar: BooleanInput;
     /* eslint-enable @typescript-eslint/naming-convention */
 
     @Input() showAvatar: boolean = true;
-    loginUser: User;
+    loginUser: User = inject(FirebaseAuthV2Service).loginUser()
     organization: Organization;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -67,22 +68,26 @@ export class OrganizationComponent implements OnInit, OnDestroy {
      * On init
      */
     async ngOnInit()  {
+        // await this._loginUserService.initialize();
+        this.organization = this.loginUser.organization;
+        this._changeDetectorRef.markForCheck();
 
         // Subscribe to user changes
-        this._loginUserService.loginUser$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((loginUser: User) => {
-                if(!loginUser) {
-                    console.log('!loginUser', loginUser);
-                    this._router.navigateByUrl('/sign-out');
-                    this._router.navigate(['/sign-out']);
-                }
-                this.loginUser = loginUser;
-                this.organization = loginUser.organization;
+        // this._loginUserService.loginUser$
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((loginUser: User) => {
+        //         if(!loginUser) {
+        //             console.log('!loginUser', loginUser);
+        //             this._router.navigateByUrl('/sign-out');
+        //             this._router.navigate(['/sign-out']);
+        //         }
+        //         this.loginUser = loginUser;
+        //         console.log('loginUser Org', this.loginUser)
+        //         this.organization = loginUser.organization;
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        //         // Mark for check
+        //         this._changeDetectorRef.markForCheck();
+        //     });
     }
 
     /**
