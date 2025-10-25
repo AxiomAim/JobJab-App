@@ -58,7 +58,7 @@ import { SourcesAddItemComponent } from '../add-item/add-item.component';
         MatButtonModule,
         NgClass,
         RouterLink,
-        AsyncPipe,
+        // AsyncPipe,
         I18nPluralPipe,
         SourcesAddItemComponent
     ],

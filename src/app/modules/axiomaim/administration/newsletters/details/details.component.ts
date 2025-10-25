@@ -66,7 +66,7 @@ import { NewslettersListComponent } from '../list/list.component';
         MatOptionModule,
         MatDatepickerModule,
         TextFieldModule,
-        SelectMultiComponent,
+        // SelectMultiComponent,
     ],
 })
 export class NewslettersDetailsComponent implements OnInit, OnDestroy {

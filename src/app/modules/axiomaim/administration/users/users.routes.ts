@@ -94,7 +94,7 @@ export default [
                     users: () => inject(UsersV2Service).getAll(),
                     countries: () => inject(ContactsService).getCountries(),
                     userRoles: () => inject(UsersV2Service).getUserRoles(),
-
+                    phoneLabels: () => inject(UsersV2Service).getPhoneLabels(),
                 },
                 children: [
                     {
@@ -103,6 +103,7 @@ export default [
                         resolve: {
                             user: userResolver,
                             userRoles: () => inject(UsersV2Service).getUserRoles(),
+                            phoneLabels: () => inject(UsersV2Service).getPhoneLabels(),
                         },
                         canDeactivate: [canDeactivateUsersDetails],
                     },

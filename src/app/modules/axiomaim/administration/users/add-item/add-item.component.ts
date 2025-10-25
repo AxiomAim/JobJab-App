@@ -82,7 +82,7 @@ import { AxiomaimAlertType } from '@axiomaim/components/alert';
         MatSidenavModule,
         GridAllModule,
         AddressLookupComponent,
-        RouterLink,
+        // RouterLink,
         NgClass,
         MatAutocompleteModule
     ]
@@ -196,7 +196,7 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
      * On init
      */
     async ngOnInit() {
-        this.phoneLabels = await this._usersV2Service.getPhoneLabels();
+        this.phoneLabels = await this._usersV2Service.phoneLabels();
         this.allUserRoles.set(await this._usersV2Service.userRoles());
 
         this._contactsService.countries$

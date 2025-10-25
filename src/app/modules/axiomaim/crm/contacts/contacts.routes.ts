@@ -95,7 +95,8 @@ export default [
                     contacts: () => inject(ContactsV2Service).getAll(),
                     countries: () => inject(ContactsService).getCountries(),
                     sources: () => inject(SourcesV2Service).getAll(),
-
+                    emailLabels: () => inject(ContactsV2Service).getEmailLabels(),
+                    phoneLabels: () => inject(ContactsV2Service).getPhoneLabels(),
                 },
                 children: [
                     {
@@ -104,6 +105,8 @@ export default [
                         resolve: {
                             contact: contactResolver,
                             sources: () => inject(SourcesV2Service).getAll(),
+                            emailLabels: () => inject(ContactsV2Service).getEmailLabels(),
+                            phoneLabels: () => inject(ContactsV2Service).getPhoneLabels(),
                         },
                         canDeactivate: [canDeactivateUsersDetails],
                     },

@@ -73,9 +73,9 @@ import { SelectUserComponent } from 'app/layout/common/select-user/select-user.c
         MatChipsModule,
         MatSidenavModule,
         GridAllModule,
-        AddressLookupComponent,
-        RouterLink,
-        NgClass,
+        // AddressLookupComponent,
+        // RouterLink,
+        // NgClass,
         SelectUserComponent
     ]
 })

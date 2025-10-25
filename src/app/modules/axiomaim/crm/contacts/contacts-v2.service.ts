@@ -16,6 +16,8 @@ export const ContactsV2Service = createInjectable(() => {
   const contacts = signal<Contact[] | null>(null);
   const contact = signal<Contact | null>(null);
   const countries = signal<Country | null>(null);
+  const emailLabels = signal<EmailLabel[] | null>(null);
+  const phoneLabels = signal<PhoneLabel[] | null>(null);
 
   
   const getAll = async ():Promise<Contact[]> => {
@@ -94,6 +96,7 @@ export const ContactsV2Service = createInjectable(() => {
           .pipe(
               tap((emailLabelsRes: EmailLabel[]) => {
                 console.log('emailLabelsRes', emailLabelsRes);
+                emailLabels.set(emailLabelsRes);
                 return emailLabelsRes;
               })
           );
@@ -109,6 +112,7 @@ export const ContactsV2Service = createInjectable(() => {
           .get<PhoneLabel[]>('api/common/phone-labels')
           .pipe(
               tap((phoneLabelsRes: PhoneLabel[]) => {
+                phoneLabels.set(phoneLabelsRes);
                 return phoneLabelsRes;
               })
           );
@@ -122,6 +126,8 @@ export const ContactsV2Service = createInjectable(() => {
     allContacts: computed(() => allContacts()),
     contact: computed(() => contact()),
     countries: computed(() => countries()),
+    emailLabels: computed(() => emailLabels()),
+    phoneLabels: computed(() => phoneLabels()),
     getAll,
     getItem,
     search,

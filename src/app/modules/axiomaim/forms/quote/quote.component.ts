@@ -16,7 +16,7 @@ import { SelectContactComponent } from 'app/layout/common/select-contact/select-
     encapsulation: ViewEncapsulation.None,
     imports: [
         MatIconModule, 
-        RouterLink, 
+        // RouterLink, 
         MatButtonModule, 
         CdkScrollable,
         SelectContactComponent,

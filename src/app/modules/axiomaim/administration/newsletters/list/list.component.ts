@@ -60,7 +60,7 @@ import { NewslettersAddItemComponent } from '../add-item/add-item.component';
         RouterLink,
         AsyncPipe,
         I18nPluralPipe,
-        NewslettersAddItemComponent
+        // NewslettersAddItemComponent
     ],
 })
 export class NewslettersListComponent implements OnInit, OnDestroy {

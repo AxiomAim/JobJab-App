@@ -60,6 +60,7 @@ import { PhoneLabel } from 'app/core/models/phone-labels.model';
 import { ContactsListComponent } from '../../contacts/list/list.component';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
+import { EmailLabel } from 'app/core/models/email-labels.model';
 
 
 interface PhonenumberType {
@@ -88,9 +89,9 @@ interface PhonenumberType {
         MatOptionModule,
         MatDatepickerModule,
         TextFieldModule,
-        SelectMultiComponent,
+        // SelectMultiComponent,
         MatChipsModule,
-        AlertMessagesComponent,
+        // AlertMessagesComponent,
         MatSlideToggleModule,
         AddressLookupComponent,
         RouterLink,
@@ -140,6 +141,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     contacts: Contact[];
     private _tagsPanelOverlayRef: OverlayRef;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    emailLabels: EmailLabel[] = [];
     phoneLabels: PhoneLabel[] = [];
 
     loginUser: User;
@@ -196,11 +198,12 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
      * On init
      */
     async ngOnInit() {
-        this.phoneLabels = await this._contactsV2Service.getPhoneLabels();
+        this.emailLabels = await this._contactsV2Service.emailLabels();
+        this.phoneLabels = await this._contactsV2Service.phoneLabels();
 
-        this.loginUser = this._firebaseAuthV2Service.loginUser();
-        this.contacts = this._contactsV2Service.contacts();
-        this.contact = this._contactsV2Service.contact();
+        this.loginUser = await this._firebaseAuthV2Service.loginUser();
+        this.contacts = await this._contactsV2Service.contacts();
+        this.contact = await this._contactsV2Service.contact();
         // Open the drawer
         this._contactsListComponent.matDrawer.open();
         const phonePattern = "^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"; 

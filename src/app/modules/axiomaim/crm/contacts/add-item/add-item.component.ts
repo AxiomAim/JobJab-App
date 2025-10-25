@@ -33,6 +33,7 @@ import { Overlay } from '@angular/cdk/overlay';
 import { SourcesV2Service } from '../../sources/sources-v2.service';
 import { PhoneLabel } from 'app/core/models/phone-labels.model';
 import { EmailLabel } from 'app/core/models/email-labels.model';
+import { emailLabels } from '../../../../../mock-api/common/email-labels/data';
 
 @Component({
     selector: 'contacts-add-item',
@@ -77,7 +78,7 @@ import { EmailLabel } from 'app/core/models/email-labels.model';
         MatSidenavModule,
         GridAllModule,
         AddressLookupComponent,
-        RouterLink,
+        // RouterLink,
         NgClass,
     ]
 })
@@ -100,8 +101,8 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
     public countries: Country[] = [];
     public newContact: Contact = ContactModel.emptyDto();
     public address = new FormControl('');  // Standalone, but tied via formControlName in HTML
-    phoneLabels: PhoneLabel[] = [];
     emailLabels: EmailLabel[] = [];
+    phoneLabels: PhoneLabel[] = [];
     
     lead: boolean = false;
     leadAt: string = null;
@@ -152,8 +153,8 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
     async ngOnInit() {
         // Defer async loads to avoid expression change errors
         setTimeout(async () => {
-            this.emailLabels = await this._contactsV2Service.getEmailLabels();
-            this.phoneLabels = await this._contactsV2Service.getPhoneLabels();
+            this.emailLabels = await this._contactsV2Service.emailLabels();
+            this.phoneLabels = await this._contactsV2Service.phoneLabels();
 
             // Load sources if not already (assuming service has loadSources())
             await this._sourcesV2Service.getAll();  // Add if needed; adjust based on service
@@ -446,6 +447,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
                     this.cancelAt = null;
                 }
                 break;
+
         }
     }
 

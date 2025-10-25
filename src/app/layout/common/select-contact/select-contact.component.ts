@@ -53,7 +53,7 @@ import {
     standalone: true,
     imports: [
         MatSidenavModule,
-        RouterOutlet,
+        // RouterOutlet,
         MatFormFieldModule,
         MatIconModule,
         MatInputModule,
@@ -61,10 +61,10 @@ import {
         ReactiveFormsModule,
         MatButtonModule,
         NgClass,
-        RouterLink,
+        // RouterLink,
         AsyncPipe,
         I18nPluralPipe,
-        ContactsAddItemComponent,
+        // ContactsAddItemComponent,
         AxiomaimDrawerComponent,
         MatTooltipModule
         

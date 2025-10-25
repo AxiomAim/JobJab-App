@@ -71,7 +71,7 @@ import { MatChipsModule } from '@angular/material/chips';
         MatButtonModule,
         NgClass,
         RouterLink,
-        AsyncPipe,
+        // AsyncPipe,
         I18nPluralPipe,
         ContactsAddItemComponent,
         MatChipsModule

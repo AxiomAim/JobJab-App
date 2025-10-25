@@ -72,9 +72,9 @@ import { Overlay } from '@angular/cdk/overlay';
         MatChipsModule,
         MatSidenavModule,
         GridAllModule,
-        AddressLookupComponent,
-        RouterLink,
-        NgClass,
+        // AddressLookupComponent,
+        // RouterLink,
+        // NgClass,
     ]
 })
 export class SourcesAddItemComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {

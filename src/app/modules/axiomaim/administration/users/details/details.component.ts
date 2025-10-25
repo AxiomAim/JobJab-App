@@ -86,9 +86,9 @@ interface PhonenumberType {
         MatOptionModule,
         MatDatepickerModule,
         TextFieldModule,
-        SelectMultiComponent,
+        // SelectMultiComponent,
         MatChipsModule,
-        AlertMessagesComponent,
+        // AlertMessagesComponent,
         MatSlideToggleModule,
         AddressLookupComponent,
         RouterLink,
@@ -184,7 +184,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
             firstName: ["", [Validators.required]],
             lastName: ["", [Validators.required]],
             address: [""],
-            isActive: [true],
+            isActive: [true, [Validators.required]],
             phoneNumbers: this._formBuilder.array([]),
         });
 
@@ -207,7 +207,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
      * On init
      */
     async ngOnInit() {
-        this.phoneLabels = await this._usersV2Service.getPhoneLabels();
+        this.phoneLabels = await this._usersV2Service.phoneLabels();
 
         this.loginUser = this._usersV2Service.loginUser();
         this.users = this._usersV2Service.users();
