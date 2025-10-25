@@ -1,9 +1,9 @@
 import { Scheme, Theme } from '@axiomaim/services/config';
 import { v4 as uuidv4 } from 'uuid';
-import { UserRole } from '../user-roles/user-roles.model';
 import { BaseDto } from 'app/core/models/base-dto.model';
 import * as v from 'valibot';
 import { Organization } from '../organizations/organizations.model';
+import { UserRole } from 'app/core/models/user-roles.model';
 
 
 export class UserModel implements BaseDto {
@@ -15,7 +15,7 @@ export class UserModel implements BaseDto {
         domain: string,
         firstTime: boolean,
         staff: boolean, 
-        activeUser: boolean,
+        isActive: boolean,
         email: string,
         emailKey: string,
         personalEmail: string,
@@ -30,7 +30,11 @@ export class UserModel implements BaseDto {
         emailSignature: string,
         avatar: string,
         linkedIn: string,
-        phoneNumbers: PhoneNumber[],
+        phoneNumbers: {
+            country: string;
+            phoneNumber: string;
+            label: string;
+        }[],
         mobileCountry?: string,
         mobileNo?: string,
         officeNo?: string,
@@ -53,7 +57,7 @@ export class UserModel implements BaseDto {
             this.domain = domain;
             this.firstTime = firstTime;
             this.staff = staff;
-            this.activeUser = activeUser;
+            this.isActive = isActive;
             this.displayName = displayName;
             this.userRoles = userRoles;
             this.title = title;
@@ -94,7 +98,7 @@ export class UserModel implements BaseDto {
     public staffId: number;
     public staff: boolean;
     public projectId: string;
-    public activeUser: boolean;
+    public isActive: boolean;
     public userName: string;
     public displayName: string;
     public userRoles: UserRole[];
@@ -121,7 +125,11 @@ export class UserModel implements BaseDto {
     public avatarFile: string;
     public avatarType: string;
     public linkedIn: string;
-    public phoneNumbers: PhoneNumber[];
+    public phoneNumbers?: {
+        country: string;
+        phoneNumber: string;
+        label: string;
+    }[];
     public thumb?: string;
     public mobileCountry?: string;
     public mobileNo?: string;
@@ -151,7 +159,7 @@ export class UserModel implements BaseDto {
             domain: dto.domain ? dto.domain : '',
             firstTime: dto.firstTime ? dto.firstTime : true,
             staff: dto.staff ? dto.staff : false,
-            activeUser: dto.activeUser ? dto.activeUser : false,
+            isActive: dto.isActive ? dto.isActive : true,
             displayName: dto.displayName ? dto.displayName : '',
             userRoles: dto.userRoles ? dto.userRoles : [],
             title: dto.title ? dto.title : '',
@@ -166,7 +174,9 @@ export class UserModel implements BaseDto {
             personalEmail: dto.personalEmail ? dto.personalEmail : '',
             avatar: dto.avatar ? dto.avatar : '',
             linkedIn: dto.linkedIn ? dto.linkedIn : '',
-            phoneNumbers: dto.phoneNumbers ? dto.phoneNumbers : [],
+            phoneNumbers: dto.phoneNumbers ? dto.phoneNumbers : [
+                // { country: 'us', phoneNumber: '', label: 'Mobile' }
+            ],
             mobileCountry: dto.mobileCountry ? dto.mobileCountry : '',
             mobileNo: dto.mobileNo ? dto.mobileNo : '',
             officeNo: dto.officeNo ? dto.officeNo : '',
@@ -196,7 +206,7 @@ export class UserModel implements BaseDto {
             domain: '',
             firstTime: true,
             staff: false,
-            activeUser: false,
+            isActive: true,
             displayName: '',
             userRoles: [],
             title: '',
@@ -211,7 +221,9 @@ export class UserModel implements BaseDto {
             personalEmail: '',
             avatar: '',
             linkedIn: '',
-            phoneNumbers: [],
+            phoneNumbers: [
+                { country: 'us', phoneNumber: '', label: 'Mobile' }
+            ],
             mobileCountry: '',
             mobileNo: '',
             officeNo: '',
@@ -241,7 +253,7 @@ export interface User  extends BaseDto {
     domain: string;
     firstTime: boolean;
     staff: boolean;
-    activeUser: boolean;
+    isActive: boolean;
     email: string;
     emailKey: string;
     personalEmail: string;
@@ -256,7 +268,11 @@ export interface User  extends BaseDto {
     emailSignature: string;
     avatar: string;
     linkedIn: string;
-    phoneNumbers: PhoneNumber[];
+    phoneNumbers: {
+        country: string;
+        phoneNumber: string;
+        label: string;
+    }[];
     mobileCountry?: string;
     mobileNo?: string;
     officeNo?: string;

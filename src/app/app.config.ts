@@ -75,7 +75,6 @@ export const appConfig: ApplicationConfig = {
             const translocoService = inject(TranslocoService);
             const defaultLang = translocoService.getDefaultLang();
             translocoService.setActiveLang(defaultLang);
-
             return firstValueFrom(translocoService.load(defaultLang));
         }),
 

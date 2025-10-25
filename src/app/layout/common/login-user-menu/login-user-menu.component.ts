@@ -36,7 +36,8 @@ import { Subject, takeUntil } from 'rxjs';
     ],
 })
 export class LoginUserMenuComponent implements OnInit, OnDestroy {
-    private _loginUserService = inject(LoginUserService);
+    // private _loginUserService = inject(LoginUserService);
+    // private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     public loginUser: User = inject(FirebaseAuthV2Service).loginUser();
 
     /* eslint-disable @typescript-eslint/naming-convention */
@@ -65,21 +66,20 @@ export class LoginUserMenuComponent implements OnInit, OnDestroy {
      * On init
      */
     async ngOnInit()  {
-
         // Subscribe to user changes
-        this._loginUserService.loginUser$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((loginUser: User) => {
-                if(!loginUser) {
-                    console.log('!loginUser', loginUser);
-                    this._router.navigateByUrl('/sign-out');
-                    this._router.navigate(['/sign-out']);
-                }
-                this.loginUser = loginUser;
+        // this._loginUserService.loginUser$
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((loginUser: User) => {
+        //         if(!loginUser) {
+        //             console.log('!loginUser', loginUser);
+        //             this._router.navigateByUrl('/sign-out');
+        //             this._router.navigate(['/sign-out']);
+        //         }
+        //         this.loginUser = loginUser;
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        //         // Mark for check
+        //         this._changeDetectorRef.markForCheck();
+        //     });
     }
 
     /**

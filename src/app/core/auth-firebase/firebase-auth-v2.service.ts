@@ -1,5 +1,5 @@
 import { createInjectable } from 'ngxtension/create-injectable';
-import { EncryptStorage } from 'encrypt-storage';
+import { Storage } from '@capacitor/storage';
 import { signal, computed, inject, effect } from '@angular/core';
 import { environment } from 'environments/environment';
 import { 
@@ -38,10 +38,6 @@ import { Router } from '@angular/router';
 import { Organization, OrganizationModel } from 'app/modules/axiomaim/administration/organizations/organizations.model';
 import { OrganizationsDataService } from 'app/modules/axiomaim/administration/organizations/organizations-data.service';
 import { AxiomaimConfigService, Scheme, Theme } from '@axiomaim/services/config';
-
-export const encryptStorage = new EncryptStorage(environment.LOCAL_STORAGE_KEY, {
-  storageType: 'sessionStorage',
-});
 
 const LOGIN_USER = "loginUser";
 const AUTH_LOGIN_USER = "authUser";
@@ -83,7 +79,6 @@ export const FirebaseAuthV2Service = createInjectable(() => {
 
   const initiate = async (): Promise<boolean> => {
     try {
-      console.log('Initiating FirebaseAuthV2Service');
       loadFromStorage();          
       return true;
     } catch (error) {
@@ -99,34 +94,34 @@ export const FirebaseAuthV2Service = createInjectable(() => {
     setToStorage()
   }
 
-  const loadFromStorage = () => {
+  const loadFromStorage = async () => {
     try {
-      const jsonUser = encryptStorage.getItem(LOGIN_USER);
-      loginUser.set(jsonUser)
-      const jsonAuthUser = encryptStorage.getItem(AUTH_LOGIN_USER);
-      authUser.set(jsonAuthUser)
-      const jsonOrganization = encryptStorage.getItem(ORGANIZATION);
-      organization.set(jsonOrganization)
+      const jsonUser = await Storage.get({ key: LOGIN_USER });
+      loginUser.set(jsonUser.value ? JSON.parse(jsonUser.value) : null)
+      const jsonAuthUser = await Storage.get({ key: AUTH_LOGIN_USER });
+      authUser.set(jsonAuthUser.value ? JSON.parse(jsonAuthUser.value) : null)
+      const jsonOrganization = await Storage.get({ key: ORGANIZATION });
+      organization.set(jsonOrganization.value ? JSON.parse(jsonOrganization.value) : null);
     } catch(err) {
       console.error('Error loading from storage:', err);
     }
   }
 
-  const setToStorage = () => {
+  const setToStorage = async () => {
     try {
-      encryptStorage.setItem(LOGIN_USER, JSON.stringify(loginUser()));
-      encryptStorage.setItem(AUTH_LOGIN_USER, JSON.stringify(authUser()));
-      encryptStorage.setItem(ORGANIZATION, JSON.stringify(organization()));
+      await Storage.set({key: LOGIN_USER, value: JSON.stringify(loginUser()),});
+      await Storage.set({key: AUTH_LOGIN_USER, value: JSON.stringify(authUser()),});
+      await Storage.set({key: ORGANIZATION, value: JSON.stringify(organization()),});
     } catch(err) {
       console.error('Error setting user to storage:', err);
     }
   }
 
-  const removeFromStorage = () => {
+  const removeFromStorage = async () => {
     try {
-      encryptStorage.removeItem(LOGIN_USER);
-      encryptStorage.removeItem(AUTH_LOGIN_USER);
-      encryptStorage.removeItem(ORGANIZATION);
+      await Storage.remove({ key: LOGIN_USER });
+      await Storage.remove({ key: AUTH_LOGIN_USER });
+      await Storage.remove({ key: ORGANIZATION });
     } catch(err) {
       console.error('Error removing Login User from storage:', err);
     }
@@ -234,9 +229,7 @@ export const FirebaseAuthV2Service = createInjectable(() => {
   }
 
   const signUp = async (signup: any): Promise<any> => {
-    console.log('Sign up data:', signup);
     await createUserWithEmailAndPassword(auth, signup.email, signup.password).then(async (userCredential) => {
-      console.log('User credential from Firebase:', userCredential);
       const org = OrganizationModel.emptyDto();
       const user = UserModel.emptyDto();
       user.firstName = signup.firstName;
@@ -244,10 +237,31 @@ export const FirebaseAuthV2Service = createInjectable(() => {
       user.displayName = signup.firstName + ' ' + signup.lastName;
       user.email = signup.email;
       user.emailSignature = signup.firstName + ' ' + signup.lastName + ' ' + signup.email;
+      user.phoneNumbers = signup.phoneNumbers;
       user.agreements = signup.agreements;
       user.id = userCredential.user.uid;
+      user.userRoles = [    
+        {
+              id: '00000001-0002-0000-0000-000000000000',
+              sort: 2,
+              value: 'owner',
+              name: 'Owner',
+              description: '',
+              isVisible: true,
+
+          },
+          {
+              id: '00000001-0003-0000-0000-000000000000',
+              sort: 3,
+              value: 'technician',
+              name: 'Technication',
+              description: '',
+              isVisible: true,
+          },
+      ];
       org.name = signup.company;
       org.userId = user.id;
+
       const createdOrg = await firstValueFrom(_organizationsDataService.createItem(org));
       user.orgId = createdOrg.id;
       const createdUser = await firstValueFrom(_usersDataService.createItem(user));
@@ -265,8 +279,19 @@ export const FirebaseAuthV2Service = createInjectable(() => {
     });
   };
   
+  const signUpOrg = async (signup: any, newUser: User): Promise<any> => {
+    await createUserWithEmailAndPassword(auth, signup.email, signup.password).then(async (userCredential) => {
+      newUser.id = userCredential.user.uid;
+      const createdUser = await firstValueFrom(_usersDataService.createItem(newUser));
+      await sendEmailVerificationNew(userCredential.user);
+      return createdUser;
+    }).catch((error) => {
+      console.error('Error during signUp:', error);
+      throw error;
+    });
+  };
+
   const sendEmailVerificationNew = async (user: FirebaseUser): Promise<any> => {
-    console.log('sendEmailVerification:', user);
     return sendEmailVerification(user, actionCodeSettings);
   };
 
@@ -418,6 +443,7 @@ export const FirebaseAuthV2Service = createInjectable(() => {
     setScheme,
     setTheme,
     setLayout,
-    sendEmailVerification: sendEmailVerificationNew
+    sendEmailVerification: sendEmailVerificationNew,
+    signUpOrg
   };
 });

@@ -108,7 +108,6 @@ export class UsersEditItemComponent implements OnInit, AfterViewInit, OnDestroy 
     ) {
         // this._firebaseAuthV2Service.loadFromStorage();
         this.loginUser.set(this._firebaseAuthV2Service.loginUser());
-        console.log('*****Edit User*****', this.loginUser());
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -157,7 +156,6 @@ export class UsersEditItemComponent implements OnInit, AfterViewInit, OnDestroy 
             mobileCountry: [this.loginUser().mobileCountry],
             mobileNo: [this.loginUser().mobileNo],
           });
-          console.log('Edit User Form', this.userForm.value);
 
     }
 

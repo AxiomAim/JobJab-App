@@ -85,7 +85,7 @@ export class OrganizationsListComponent implements OnInit, OnDestroy {
     organizationCount: number = 0;
     drawerMode: 'side' | 'over';
     searchInputControl: UntypedFormControl = new UntypedFormControl();
-    selectedProduct: Organization;
+    selectedOrganization: Organization;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -127,7 +127,7 @@ export class OrganizationsListComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((product: Organization) => {
                 // Update the selected product
-                this.selectedProduct = product;
+                this.selectedOrganization = product;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -150,7 +150,7 @@ export class OrganizationsListComponent implements OnInit, OnDestroy {
         this.matDrawer.openedChange.subscribe((opened) => {
             if (!opened) {
                 // Remove the selected product when drawer closed
-                this.selectedProduct = null;
+                this.selectedOrganization = null;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();

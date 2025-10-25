@@ -1,14 +1,9 @@
 import { createInjectable } from 'ngxtension/create-injectable';
-import { EncryptStorage } from 'encrypt-storage';
+import { Storage } from '@capacitor/storage';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from 'environments/environment';
-
-export const encryptStorage = new EncryptStorage(environment.LOCAL_STORAGE_KEY, {
-  storageType: 'sessionStorage',
-});
-
 
 const APP_DOMAIN = "appDomain";
 const USERNAME = "usename";
@@ -55,20 +50,20 @@ export const LocalV2Service = createInjectable(() => {
   }
 
 
-  const loadFromStorage = () => {
+  const loadFromStorage = async () => {
     loading.set(true);
     error.set(null);  
     try {
-      const jsonDomain = encryptStorage.getItem(APP_DOMAIN);
-      appDomain.set(jsonDomain)
-      const jsonUsername = encryptStorage.getItem(USERNAME);
-      username.set(jsonUsername)
-      const jsonPassword = encryptStorage.getItem(PASSWORD);
-      password.set(jsonPassword)
-      const jsonViewTable = encryptStorage.getItem(VIEW_TABLE);
-      viewTable.set(jsonViewTable)
-      const jsonViewBacklog = encryptStorage.getItem(VIEW_BACKLOG);
-      viewBacklog.set(jsonViewBacklog)
+      const jsonDomain = await Storage.get({ key: APP_DOMAIN });
+      appDomain.set(jsonDomain.value ? JSON.parse(jsonDomain.value) : null)
+      const jsonUsername = await Storage.get({ key: USERNAME });
+      username.set(jsonUsername.value ? JSON.parse(jsonUsername.value) : null)
+      const jsonPassword = await Storage.get({ key: PASSWORD });
+      password.set(jsonPassword.value ? JSON.parse(jsonPassword.value) : null)
+      const jsonViewTable = await Storage.get({ key: VIEW_TABLE });
+      viewTable.set(jsonViewTable.value ? JSON.parse(jsonViewTable.value) : null)
+      const jsonViewBacklog = await Storage.get({ key: VIEW_BACKLOG });
+      viewBacklog.set(jsonViewBacklog.value ? JSON.parse(jsonViewBacklog.value) : null)
 
     } catch(err) {
       error.set(err)
@@ -78,15 +73,15 @@ export const LocalV2Service = createInjectable(() => {
 
   }
 
-  const setToStorage = () => {
+  const setToStorage = async () => {
     loading.set(true);
     error.set(null);  
     try {
-      encryptStorage.setItem(APP_DOMAIN, JSON.stringify(appDomain()));
-      encryptStorage.setItem(USERNAME, JSON.stringify(username()));
-      encryptStorage.setItem(PASSWORD, JSON.stringify(password()));
-      encryptStorage.setItem(VIEW_TABLE, JSON.stringify(viewTable()));
-      encryptStorage.setItem(VIEW_BACKLOG, JSON.stringify(viewBacklog()));
+      await Storage.set({key: APP_DOMAIN, value: JSON.stringify(appDomain()),});
+      await Storage.set({key: USERNAME, value: JSON.stringify(username()),});
+      await Storage.set({key: PASSWORD, value: JSON.stringify(password()),});
+      await Storage.set({key: VIEW_TABLE, value: JSON.stringify(viewTable()),});
+      await Storage.set({key: VIEW_BACKLOG, value: JSON.stringify(viewBacklog()),});
     } catch(err) {
       error.set(err)
       console.error('Error setting user to storage:', err);
@@ -95,15 +90,15 @@ export const LocalV2Service = createInjectable(() => {
 
   }
 
-  const removeFromStorage = () => {
+  const removeFromStorage = async () => {
     loading.set(true);
     error.set(null);  
     try {
-      encryptStorage.removeItem(APP_DOMAIN);
-      encryptStorage.removeItem(USERNAME);
-      encryptStorage.removeItem(PASSWORD);
-      encryptStorage.removeItem(VIEW_TABLE);
-      encryptStorage.removeItem(VIEW_BACKLOG);
+      await Storage.remove({ key: APP_DOMAIN });
+      await Storage.remove({ key: USERNAME });
+      await Storage.remove({ key: PASSWORD });
+      await Storage.remove({ key: VIEW_TABLE });
+      await Storage.remove({ key: VIEW_BACKLOG });
     } catch(err) {
       error.set(err)
       console.error('Error removing user from storage:', err);

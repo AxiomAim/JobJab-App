@@ -109,7 +109,6 @@ export const appRoutes: Route[] = [
             {path: 'administration', children: [
                 {path: 'messages', loadChildren: () => import('app/modules/axiomaim/administration/messages/messages.routes')},
                 {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
-                {path: 'user-roles', loadChildren: () => import('app/modules/axiomaim/administration/user-roles/user-roles.routes')},
                 {path: 'users', loadChildren: () => import('app/modules/axiomaim/administration/users/users.routes')},
                 {path: 'user-timesheets', loadChildren: () => import('app/modules/axiomaim/administration/user-timesheets/user-timesheets.routes')},
                 {path: 'products', loadChildren: () => import('app/modules/axiomaim/administration/products/products.routes')},
@@ -147,6 +146,7 @@ export const appRoutes: Route[] = [
                 {path: 'chat', loadChildren: () => import('app/modules/axiomaim/apps/chat/chat.routes')},
                 {path: 'contacts', loadChildren: () => import('app/modules/axiomaim/apps/contacts/contacts.routes')},
                 {path: 'ecommerce', loadChildren: () => import('app/modules/axiomaim/apps/ecommerce/ecommerce.routes')},
+                {path: 'offers', loadChildren: () => import('app/modules/axiomaim/apps/offers/offers.routes')},
                 {path: 'file-manager', loadChildren: () => import('app/modules/axiomaim/apps/file-manager/file-manager.routes')},
                 {path: 'help-center', loadChildren: () => import('app/modules/axiomaim/apps/help-center/help-center.routes')},
                 {path: 'mailbox', loadChildren: () => import('app/modules/axiomaim/apps/mailbox/mailbox.routes')},

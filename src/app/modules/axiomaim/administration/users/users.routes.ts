@@ -10,6 +10,7 @@ import { UsersDetailsComponent } from 'app/modules/axiomaim/administration/users
 import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
 import { of } from 'rxjs';
 import { UsersV2Service } from './users-v2.service';
+import { ContactsService } from '../../apps/contacts/contacts.service';
 
 
 /**
@@ -91,14 +92,17 @@ export default [
                 component: UsersListComponent,
                 resolve: {
                     users: () => inject(UsersV2Service).getAll(),
+                    countries: () => inject(ContactsService).getCountries(),
+                    userRoles: () => inject(UsersV2Service).getUserRoles(),
+
                 },
                 children: [
                     {
                         path: ':id',
                         component: UsersDetailsComponent,
                         resolve: {
-                            // userRoles: () => inject(UsersV2Service).getUserRoles(),
                             user: userResolver,
+                            userRoles: () => inject(UsersV2Service).getUserRoles(),
                         },
                         canDeactivate: [canDeactivateUsersDetails],
                     },

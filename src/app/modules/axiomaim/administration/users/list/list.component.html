@@ -62,10 +62,9 @@
 
                 <!-- Users list -->
                 <div class="relative">
-                    @if (users$ | async; as users) {
-                    @if (users.length) {
+                    @if (userCount > 0) {
                     @for (
-                    user of users;
+                    user of this._usersV2Service.users();
                     track trackByFn(i, user);
                     let i = $index
                     ) {
@@ -100,12 +99,23 @@
                             </div>
                             }
                         </div>
-                        <div class="ml-4 min-w-0">
-                            <div class="truncate font-medium leading-5">
-                                {{ user.displayName }}
+                        <div class="flex flex-wrap">
+                            <div class="ml-4 min-w-0">
+                                <div class="truncate font-medium leading-5">
+                                    {{ user.displayName }}
+                                </div>
+                                <div class="text-secondary truncate leading-5">
+                                    {{ user.email }}
+                                </div>
                             </div>
-                            <div class="text-secondary truncate leading-5">
-                                {{ user.email }}
+                            <div class="ml-4 min-w-0">
+                                <div class="truncate font-medium leading-5">
+                                    <mat-chip-set class="example-chip">
+                                        @for (userRole of user.userRoles; track userRole.name) {
+                                        <mat-chip class="example-box">{{userRole.name}}</mat-chip>
+                                        }
+                                    </mat-chip-set>
+                                </div>
                             </div>
                         </div>
                     </a>
@@ -114,7 +124,6 @@
                     <div class="border-t p-8 text-center text-4xl font-semibold tracking-tight sm:p-16">
                         There are no users!
                     </div>
-                    }
                     }
 
                     <!-- No users -->

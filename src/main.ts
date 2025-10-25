@@ -3,7 +3,8 @@ import { AppComponent } from 'app/app.component';
 import { appConfig } from 'app/app.config';
 import { registerLicense } from '@syncfusion/ej2-base';
 import { setLicenseKey } from "survey-core";
-import { catchError, from, Observable, of, throwError } from 'rxjs';
+import { catchError, Observable, of, Subject, throwError } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { Inject, Injectable, NgZone } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
@@ -28,6 +29,7 @@ registerLicense(
 export class GoogleMapsService {
   private mapsLoaded = false;
   private scriptLoading = false;
+  private loadObservable: Observable<void> | null = null;
   
   // private apiKey: string = 'AIzaSyCHOl5pEV3Lk-vCE0OJqHDcDWYNFRajpEA';  //  <------------------------  Replace with your API key
   private apiKey: string = 'AIzaSyAwefNH09xGlIqzY8j6xuBprX7m1VBil5k';  //  <------------------------  Replace with your API key
@@ -41,43 +43,57 @@ export class GoogleMapsService {
     if (this.mapsLoaded) {
       return of(void 0);
     }
-    if (this.scriptLoading) {
-      return new Observable(observer => {
-        const interval = setInterval(() => {
-          if (this.mapsLoaded) {
-            clearInterval(interval);
-            observer.next(void 0);
-            observer.complete();
-          }
-        }, 100);
-      });
+
+    if (this.loadObservable) {
+      return this.loadObservable;
     }
 
+    this.loadObservable = this.createScriptLoad();
+    return this.loadObservable;
+  }
+
+  private createScriptLoad(): Observable<void> {
     this.scriptLoading = true;
+
+    const subject = new Subject<void>();
+    const callbackName = `onGoogleMapsLoad_${Date.now()}_${Math.random().toString(36).substr(2,9)}`;
+
+    (window as any)[callbackName] = () => {
+      delete (window as any)[callbackName];
+      this.zone.run(() => {
+        this.mapsLoaded = true;
+        subject.next(void 0);
+        subject.complete();
+      });
+    };
+
     const script = this.document.createElement('script');
     script.type = 'text/javascript';
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKey}&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKey}&libraries=places&loading=async&callback=${callbackName}`;
     script.async = true;
     script.defer = true;
-    this.document.body.appendChild(script);
+    this.document.head.appendChild(script);
 
-    return from(new Promise<void>((resolve, reject) => {
-      script.onload = () => {
-        this.zone.run(() => {
-          this.mapsLoaded = true;
-          this.scriptLoading = false;
-          resolve();
-        });
-      };
-      script.onerror = (error) => {
+    const timeout = setTimeout(() => {
+      if (!subject.closed) {
+        delete (window as any)[callbackName];
         this.zone.run(() => {
           this.scriptLoading = false;
-          reject(error);
+          subject.error(new Error('Failed to load Google Maps: Timeout'));
         });
-      };
-    })).pipe(
+      }
+    }, 10000);
+
+    return subject.asObservable().pipe(
+      finalize(() => {
+        clearTimeout(timeout);
+        this.zone.run(() => {
+          this.scriptLoading = false;
+        });
+      }),
       catchError(err => {
         console.error('Failed to load Google Maps API script', err);
+        this.loadObservable = null;
         return throwError(() => err);
       })
     );
@@ -87,6 +103,3 @@ export class GoogleMapsService {
     return this.mapsLoaded;
   }
 }
-
-
-

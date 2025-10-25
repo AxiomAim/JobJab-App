@@ -28,6 +28,7 @@ import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-mes
 import { UserTimesheet } from '../user-timesheets.model';
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
 import { UserTimesheetsV2Service } from '../user-timesheets-v2.service';
+import { User } from '../../users/users.model';
 
 @Component({
     selector: 'users-edit-item',
@@ -79,7 +80,7 @@ export class UsersEditItemComponent implements OnInit, AfterViewInit, OnDestroy 
     _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     _alertMessagesService = inject(AlertMessagesService);
     _usersV2Service = inject(UserTimesheetsV2Service);
-    loginUser = signal<UserTimesheet | null>(null);
+    loginUser = signal<User | null>(null);
 
     @ViewChild('editItemDrawer') editItemDrawer: AxiomaimDrawerComponent;
     @Output() drawerStateChanged = new EventEmitter<boolean>();
@@ -108,7 +109,6 @@ export class UsersEditItemComponent implements OnInit, AfterViewInit, OnDestroy 
     ) {
         // this._firebaseAuthV2Service.loadFromStorage();
         this.loginUser.set(this._firebaseAuthV2Service.loginUser());
-        console.log('*****Edit User*****', this.loginUser());
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -157,7 +157,6 @@ export class UsersEditItemComponent implements OnInit, AfterViewInit, OnDestroy 
             mobileCountry: [this.loginUser().mobileCountry],
             mobileNo: [this.loginUser().mobileNo],
           });
-          console.log('Edit User Form', this.userForm.value);
 
     }
 

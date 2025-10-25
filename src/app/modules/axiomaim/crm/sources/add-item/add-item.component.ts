@@ -296,15 +296,12 @@ export class SourcesAddItemComponent implements OnInit, AfterViewInit, OnDestroy
         this.newSource.orgId = this.loginUser.orgId;
         this.newSource.name = this.sourceForm.get('name').value
         this.newSource.description = this.sourceForm.get('description').value
-        if(this._sourcesV2Service.source() === null){
-            await this._sourcesV2Service.createItem(this.newSource);
-            await this._sourcesV2Service.getAll();
+        await this._sourcesV2Service.createItem(this.newSource);
+        await this._sourcesV2Service.getAll();
+        if(this.external){
             this.sendSource();
         } else {
-            await this._sourcesV2Service.updateItem(this.newSource);
-            await this._sourcesV2Service.getAll();
-            this.sendSource();
-            this.external ? null : this._router.navigate(['/crm/sources']);
+            this._router.navigate(['/crm/sources']);
         }
         
         // this.isLoading.set(true);

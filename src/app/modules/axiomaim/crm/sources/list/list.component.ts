@@ -109,6 +109,7 @@ export class SourcesListComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         // Get the sources
+        this.sourceCount = this._sourcesV2Service.sources().length;
         this._sources.next(this._sourcesV2Service.sources());
         this.sources$
             .pipe(takeUntil(this._unsubscribeAll))

@@ -26,7 +26,6 @@ import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-m
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
-import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
 import { ServiceOfferingsV2Service } from '../../data-services/service-offerings-v2.service';
 import { ServiceOffering, ServiceOfferingModel } from '../../data-services/service-offerings.model';
 
@@ -72,7 +71,6 @@ import { ServiceOffering, ServiceOfferingModel } from '../../data-services/servi
         MatChipsModule,
         MatSidenavModule,
         GridAllModule,
-        AddressLookupComponent
 
     ]
 })

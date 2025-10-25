@@ -1,21 +1,20 @@
-import { NgClass, NgFor, NgForOf, NgIf } from '@angular/common';
-import { Component, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild, ViewEncapsulation, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import { NgClass } from '@angular/common';
+import { Component, OnChanges, SimpleChanges, inject, OnDestroy, OnInit, signal, effect, ViewChild, ViewEncapsulation, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, Renderer2, ViewContainerRef, Input, ChangeDetectionStrategy, computed } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AxiomaimDrawerComponent } from '@axiomaim/components/drawer';
 import {
-    AxiomaimConfig,
     AxiomaimConfigService,
 } from '@axiomaim/services/config';
-import { debounceTime, Subject, takeUntil } from 'rxjs';
-import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
+import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { TextFieldModule } from '@angular/cdk/text-field';
@@ -25,8 +24,17 @@ import { GridAllModule } from '@syncfusion/ej2-angular-grids';
 import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-messages.component';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
-import { User } from '../users.model';
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
+import { Country, User, UserModel } from 'app/modules/axiomaim/administration/users/users.model';
+import { Overlay } from '@angular/cdk/overlay';
+import { UsersV2Service } from '../users-v2.service';
+import { ContactsService } from 'app/modules/axiomaim/apps/contacts/contacts.service';
+import { UserRole } from 'app/core/models/user-roles.model';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { PhoneLabel } from 'app/core/models/phone-labels.model';
+import { AxiomaimAlertType } from '@axiomaim/components/alert';
 
 @Component({
     selector: 'users-add-item',
@@ -39,7 +47,9 @@ import { AddressLookupComponent } from 'app/layout/common/address-lookup/address
                 flex: none;
                 width: auto;
             }
-
+            .user-roles {
+                width: 100%;
+            }
             @media (screen and min-width: 1280px) {
                 empty-layout + settings .settings-cog {
                     right: 0 !important;
@@ -48,6 +58,7 @@ import { AddressLookupComponent } from 'app/layout/common/address-lookup/address
         `,
     ],
     encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [
         MatIconModule,
@@ -70,28 +81,21 @@ import { AddressLookupComponent } from 'app/layout/common/address-lookup/address
         MatChipsModule,
         MatSidenavModule,
         GridAllModule,
-        AddressLookupComponent
-
+        AddressLookupComponent,
+        RouterLink,
+        NgClass,
+        MatAutocompleteModule
     ]
 })
-export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
+export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+    @Input() send: boolean = false;
     _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
+    @Input() btnIcon: string = 'mat_outline:add';
+    @Input() btnTitle: string = 'Add User';
+    @Output() userCreated: EventEmitter<User> = new EventEmitter<User>();
+    loginUser = inject(FirebaseAuthV2Service).loginUser();
     _alertMessagesService = inject(AlertMessagesService);
-
-    formFieldHelpers: string[] = [''];
-    fixedSubscriptInput: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    dynamicSubscriptInput: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    fixedSubscriptInputWithHint: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-    dynamicSubscriptInputWithHint: FormControl = new FormControl('', [
-        Validators.required,
-    ]);
-
+    _usersV2Service = inject(UsersV2Service);
 
     @ViewChild('newItemDrawer') newItemDrawer: AxiomaimDrawerComponent;
     @Output() drawerStateChanged = new EventEmitter<boolean>();
@@ -100,7 +104,8 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     userForm: UntypedFormGroup;
     #loginUser = signal<User | null>(null);
     showRole: string[] = ["admin"];
-    user_roles: any[] = [];
+    // userRoles: UserRole[] = [];
+    phoneLabels: PhoneLabel[] = [];
     reLoad: boolean = true;
     sitePermission: boolean = false;
     complinePermission: boolean = false;
@@ -110,6 +115,43 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     sitesDropDownData: any[] = [];
     site_account_id: any[] = [];
     isLoading = signal<boolean>(false);
+    public countries: Country[] = [];
+    public newUser: User = UserModel.emptyDto();
+    isPasswordVisible = false;
+
+    alert: { type: AxiomaimAlertType; message: string } = {
+        type: 'success',
+        message: '',
+    };
+    showAlert: boolean = false;
+
+
+    readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+    currentUserRole = new FormControl('');
+    readonly userRoles = signal<UserRole[]>([]);
+    readonly allUserRoles = signal<UserRole[]>([]);
+    filteredUserRoles = computed(() => {
+        const currentValue = (this.currentUserRole.value || '').toLowerCase();
+        return currentValue
+            ? this.allUserRoles().filter(role => role.name.toLowerCase().includes(currentValue))
+            : this.allUserRoles().slice();
+        });
+
+
+    readonly announcer = inject(LiveAnnouncer);
+
+    /**
+     * Custom validator for address (string or place object)
+     */
+    private createAddressValidator(): ValidatorFn {
+        return (control: AbstractControl): { [key: string]: any } | null => {
+            const value = control.value;
+            if (!value) return { required: true };
+            if (typeof value === 'string' && !value.trim()) return { required: true };
+            if (typeof value === 'object' && !value.geometry) return { invalidAddress: true };
+            return null;
+        };
+    }
 
     /**
      * Constructor
@@ -117,10 +159,33 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     constructor(
         private _formBuilder: UntypedFormBuilder,
         private _router: Router,
-        private _axiomaimConfigService: AxiomaimConfigService
+        private _axiomaimConfigService: AxiomaimConfigService,
+        private _contactsService: ContactsService,
+        private _changeDetectorRef: ChangeDetectorRef,
+        private _activatedRoute: ActivatedRoute,
+        private _renderer2: Renderer2,
+        private _overlay: Overlay,
+        private _viewContainerRef: ViewContainerRef
     ) {
-        this.#loginUser.set(this._firebaseAuthV2Service.loginUser());
-        console.log('#loginUser', this.#loginUser());
+        // Create the basic form structure early
+        this.userForm = this._formBuilder.group({
+            firstName: ["", [Validators.required]],
+            lastName: ["", [Validators.required]],
+            address: ["", [this.createAddressValidator()]],  // Custom validator for string/place
+            email: ["", [Validators.required, Validators.email]],
+            password: ["", [Validators.required]],
+            isActive: [true],
+            phoneNumbers: this._formBuilder.array([]),
+        });
+
+        // Effect to watch for changes in the service signal
+        effect(() => {
+            const user = this._usersV2Service.user();
+            const data = user || UserModel.emptyDto();
+            this.newUser = data;
+            this.updateFormData(data);
+            this._changeDetectorRef.markForCheck();
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -130,8 +195,18 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     /**
      * On init
      */
-    ngOnInit(): void {
-        this.setFormGroup();
+    async ngOnInit() {
+        this.phoneLabels = await this._usersV2Service.getPhoneLabels();
+        this.allUserRoles.set(await this._usersV2Service.userRoles());
+
+        this._contactsService.countries$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((codes: Country[]) => {
+                this.countries = codes;
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+        this._changeDetectorRef.markForCheck();
     }
 
     /**
@@ -145,6 +220,8 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
             .subscribe((opened: boolean) => {
                 this.drawerStateChanged.emit(opened);
             });
+
+        this._changeDetectorRef.markForCheck();
     }
 
     /**
@@ -156,27 +233,83 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
         this._unsubscribeAll.complete();
     }
 
-
-    /**
-     * Set Form Group 
-     */
-    setFormGroup() {
-        this.userForm = this._formBuilder.group({
-            email: ["", [Validators.required, Validators.email]],
-            firstName: ["", [Validators.required]],
-            lastName: ["", [Validators.required]],
-            company: ["", [Validators.required]],
-            address: ["", [Validators.required]],
-            mobileCountry: [""],
-            mobileNo: [""],
-          });
+    ngOnChanges(changes: SimpleChanges): void {        
+        // Handle changes to @Input() user if needed
+        this.newUser = this._usersV2Service.user();
+        this.updateFormData(this.newUser);
+        this._changeDetectorRef.markForCheck();
     }
 
+    /**
+     * Update form data without recreating the form
+     */
+    updateFormData(data: User): void {
+        // Patch simple values
+        this.userForm.patchValue({
+            firstName: data.firstName || '',
+            lastName: data.lastName || '',
+            address: data.address || '',  // Handles string or place object
+            email: data.email || '',
+        });
+
+        // Update phone numbers array
+        const phoneNumbersArray = this.userForm.get('phoneNumbers') as UntypedFormArray;
+        phoneNumbersArray.clear();
+        const phoneNumbersFormGroups = data.phoneNumbers && data.phoneNumbers.length > 0 
+            ? data.phoneNumbers.map((phoneNumber) => this._formBuilder.group({ 
+                country: [phoneNumber.country || 'us'], 
+                phoneNumber: [phoneNumber.phoneNumber || ''], 
+                label: [phoneNumber.label || ''] 
+            }))
+            : [this._formBuilder.group({ country: ['us'], phoneNumber: [''], label: [''] })];
+
+        phoneNumbersFormGroups.forEach((phoneNumbersFormGroup) => {
+            phoneNumbersArray.push(phoneNumbersFormGroup);
+        });
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
     
+    /**
+     * Add an empty phone number field
+     */
+    addPhoneNumberField(): void {
+        // Create an empty phone number form group
+        const phoneNumberFormGroup = this._formBuilder.group({
+            country: ['us'],
+            phoneNumber: [''],
+            label: [''],
+        });
+
+        // Add the phone number form group to the phoneNumbers form array
+        (this.userForm.get('phoneNumbers') as UntypedFormArray).push(
+            phoneNumberFormGroup
+        );
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+    }
+
+    /**
+     * Remove the phone number field
+     *
+     * @param index
+     */
+    removePhoneNumberField(index: number): void {
+        // Get form array for phone numbers
+        const phoneNumbersFormArray = this.userForm.get(
+            'phoneNumbers'
+        ) as UntypedFormArray;
+
+        // Remove the phone number field
+        phoneNumbersFormArray.removeAt(index);
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+    }
+
     openDrawer(): void {
         // Reset form to ensure clean state when opening
         this.resetForm();
@@ -203,8 +336,8 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
      * Comprehensive form reset method
      */
     private resetForm(): void {
-        // Reset form values
-        this.userForm.reset();
+        // Update to empty data
+        this.updateFormData(UserModel.emptyDto());
         
         // Clear all validation states
         this.userForm.markAsUntouched();
@@ -220,13 +353,11 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         });
         
-        // Set default values for form fields that need them
+        // Set default values for form fields that need them (if any)
         this.userForm.patchValue({
-            active: true,
-            user_roles: [],
-            site_account_id: [],
-            user_delegation_roles: []
+            active: true
         }, { emitEvent: false });
+        this._changeDetectorRef.markForCheck();
     }
 
     /**
@@ -234,7 +365,7 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     private resetAdditionalProperties(): void {
         // Reset component-specific properties
-        this.user_roles = [];
+        this.userRoles.set([]);
         this.site_account_id = [];
         this.user_delegation_roles = [];
         this.reLoad = true;
@@ -244,38 +375,127 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isSiteMultiple = false;
     }
 
+    remove(userRole: UserRole): void {
+        this.userRoles.update(currentRoles => {
+            const index = currentRoles.indexOf(userRole);
+            if (index < 0) {
+                return currentRoles;
+            }
 
+            currentRoles.splice(index, 1);
+            this.announcer.announce(`Removed ${userRole.name}`);
+            return [...currentRoles];
+        });
+    }
 
+    selected(event: MatAutocompleteSelectedEvent): void {
+        const selectedRole = event.option.value as UserRole;
+        // Avoid duplicates
+        if (!this.userRoles().some(role => role.name === selectedRole.name)) {
+            this.userRoles.update(currentRoles => [...currentRoles, selectedRole]);
+        }
+        this.currentUserRole.setValue('');
+        event.option.deselect();
+    }
+
+    togglePasswordVisibility(): void {
+        this.isPasswordVisible = !this.isPasswordVisible;
+    }
 
     /**
      * Submit and create User
-     * Sned email to new user to set up their password
+     * Send email to new user to set up their password
      * refreshes all users in service
      * closes the drawer 
      */
-
     async onSubmit() {
+        if (this.userForm.invalid) {
+            console.log('Form invalid:', this.userForm.errors);  // Debug: Check if address validation fails
+            this._changeDetectorRef.markForCheck();
+            return;
+        }
 
+        this.isLoading.set(true);
+        try {
+            this.newUser.orgId = this.loginUser.orgId;
+            this.newUser.firstName = this.userForm.get('firstName')?.value;
+            this.newUser.lastName = this.userForm.get('lastName')?.value;
+            this.newUser.displayName = `${this.newUser.firstName} ${this.newUser.lastName}`.trim();
+            this.newUser.email = this.userForm.get('email')?.value;
+            this.newUser.isActive = true;
+            this.newUser.userRoles = this.userRoles();
+            this.newUser.phoneNumbers = this.userForm.get('phoneNumbers')?.value || [];
+            this.newUser.address = this.userForm.get('address')?.value;  // Now full place object or string
 
+            console.log('Saving user with address:', this.newUser.address);  // Debug: Verify full place
+
+            const createdUser = await this._firebaseAuthV2Service.signUpOrg(this.userForm.value, this.newUser);
+            console.log('Created User', createdUser);
+
+            await this._usersV2Service.getAll();
+
+            if (this.send) {
+                this.sendContact();
+                this.close();
+            } else if (createdUser && createdUser.id) {
+                // Safe navigation only if createdUser has id
+                await this._router.navigate(['../', createdUser.id], { relativeTo: this._activatedRoute });
+                this.close();
+            } else {
+                // Fallback: User created but no ID returned (e.g., service issue); just refresh and close
+                console.warn('User created successfully, but no ID returned for navigation.');
+                this.showAlertMessage('success', 'User created successfully!');
+                this.close();
+            }
+        } catch (error) {
+            console.error('Error creating user:', error);
+            this.showAlertMessage('error', 'Failed to create user. Please try again.');
+        } finally {
+            this.isLoading.set(false);
+            this._changeDetectorRef.markForCheck();
+        }
+    }
+
+    /**
+     * Helper to show alert messages
+     */
+    private showAlertMessage(type: AxiomaimAlertType, message: string): void {
+        this.alert = { type, message };
+        this.showAlert = true;
+        // Auto-hide after 5 seconds (optional)
+        setTimeout(() => {
+            this.showAlert = false;
+            this._changeDetectorRef.markForCheck();
+        }, 5000);
     }
               
+    /**
+     * Get country info by iso code
+     *
+     * @param iso
+     */
+    getCountryByIso(iso: string): Country | undefined {
+        const response = this.countries.find((country) => country.iso === iso);
+        return response;
+    }
 
-  /**
-   * Track by function for ngFor loops
-   *
-   * @param index
-   * @param item
-   */
-  trackByFn(index: number, item: any): any {
-      return item.id || index;
-  }
+    sendContact() {
+        this.userCreated.emit(this.newUser);
+        this.close();
+    }
+
+    /**
+     * Track by function for ngFor loops
+     *
+     * @param index
+     * @param item
+     */
+    trackByFn(index: number, item: any): any {
+        return item.id || index;
+    }
     
-
-  /**
-   * Get the form field helpers as string
-   */
-    getFormFieldHelpersAsString(): string {
-      return this.formFieldHelpers.join(' ');
-  }
+    // -----------------------------------------------------------------------------------------------------
+    // @ Private methods
+    // -----------------------------------------------------------------------------------------------------
     
 }
