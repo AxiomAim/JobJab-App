@@ -1,21 +1,26 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { TextFieldModule } from '@angular/cdk/text-field';
+import { AsyncPipe, DatePipe, NgClass } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    computed,
+    effect,
     ElementRef,
     inject,
     OnDestroy,
     OnInit,
     Renderer2,
+    signal,
     TemplateRef,
     ViewChild,
     ViewContainerRef,
     ViewEncapsulation,
 } from '@angular/core';
 import {
+    FormControl,
     FormsModule,
     ReactiveFormsModule,
     UntypedFormArray,
@@ -36,13 +41,25 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
 import { Tag } from 'app/core/models/tag.model';
+import {  } from 'app/modules/axiomaim/crm/contacts/list/list.component';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
-import { Contact } from '../contacts.model';
+import { Country, Contact, ContactModel } from '../contacts.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
+
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
 import { ContactsV2Service } from '../contacts-v2.service';
-import { User } from 'app/core/user/user.types';
-import { ContactsListComponent } from '../list/list.component';
+import { MatChipsModule } from '@angular/material/chips';
+import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-messages.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { ContactsService } from 'app/modules/axiomaim/apps/contacts/contacts.service';
+import { PhoneLabel } from 'app/core/models/phone-labels.model';
+import { ContactsListComponent } from '../../contacts/list/list.component';
+import { User } from 'app/modules/axiomaim/administration/users/users.model';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 
 
 interface PhonenumberType {
@@ -72,10 +89,19 @@ interface PhonenumberType {
         MatDatepickerModule,
         TextFieldModule,
         SelectMultiComponent,
+        MatChipsModule,
+        AlertMessagesComponent,
+        MatSlideToggleModule,
+        AddressLookupComponent,
+        RouterLink,
+        NgClass,
+        MatAutocompleteModule
+
     ],
 })
 export class ContactsDetailsComponent implements OnInit, OnDestroy {
     _contactsV2Service = inject(ContactsV2Service);
+    _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     _axiomaimLoadingService = inject(AxiomaimLoadingService);
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
     @ViewChild('tagsPanel') private _tagsPanel: TemplateRef<any>;
@@ -87,6 +113,23 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         return this._contact.asObservable();
     }
 
+    private _countries: BehaviorSubject<Country[] | null> = new BehaviorSubject(
+        []
+    );
+    get countries$(): Observable<Country[]> {
+        return this._countries.asObservable();
+    }
+
+    countries: Country[];
+    
+    phonenumberTypes: PhonenumberType[] = [
+        {value: 'mobile', viewValue: 'Mobile'},
+        {value: 'work', viewValue: 'Work'},
+        {value: 'home', viewValue: 'Home'},
+        {value: 'other', viewValue: 'Other'},
+        ];
+    
+
 
     editMode: boolean = false;
     tags: Tag[];
@@ -97,9 +140,15 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     contacts: Contact[];
     private _tagsPanelOverlayRef: OverlayRef;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    phoneLabels: PhoneLabel[] = [];
 
     loginUser: User;
     showRole: string[] = ["admin"];
+
+    readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+    currentContactRole = new FormControl('');
+    readonly announcer = inject(LiveAnnouncer);
+
 
     /**
      * Constructor
@@ -113,8 +162,31 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         private _renderer2: Renderer2,
         private _router: Router,
         private _overlay: Overlay,
-        private _viewContainerRef: ViewContainerRef
-    ) {}
+        private _viewContainerRef: ViewContainerRef,
+        private _contactsService: ContactsService,
+        
+    ) {
+
+        // Create the basic form structure early
+        this.contactForm = this._formBuilder.group({
+            firstName: ["", [Validators.required]],
+            lastName: ["", [Validators.required]],
+            address: [""],
+            isActive: [true],
+            emails: this._formBuilder.array([]),
+            phoneNumbers: this._formBuilder.array([]),
+        });
+
+        // Effect to watch for changes in the service signal
+        effect(() => {
+            const contact = this._contactsV2Service.contact();
+            const data = contact || ContactModel.emptyDto();
+            this.contact = data;
+            this.updateFormData(data);
+            this._changeDetectorRef.markForCheck();
+        });
+
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
@@ -123,30 +195,32 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     /**
      * On init
      */
-    ngOnInit(): void {
+    async ngOnInit() {
+        this.phoneLabels = await this._contactsV2Service.getPhoneLabels();
+
+        this.loginUser = this._firebaseAuthV2Service.loginUser();
         this.contacts = this._contactsV2Service.contacts();
         this.contact = this._contactsV2Service.contact();
         // Open the drawer
         this._contactsListComponent.matDrawer.open();
         const phonePattern = "^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"; 
-
-        // Create the contact form
-        this.contactForm = this._formBuilder.group({
-            id: [''],
-            avatar: [null],
-            firstName: ['', [Validators.required]],
-            lastName: ['', [Validators.required]],
-            phoneNumbers: this._formBuilder.array([]),
-            address: [null],
-            activeProduct:  [true, [Validators.required]],
-        });
-
         this._changeDetectorRef.markForCheck();
 
         this._contactsListComponent.matDrawer.open();
         this.contactForm.patchValue(this.contact);
 
+        this._contactsService.countries$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((codes: Country[]) => {
+                this.countries = codes;
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+        this._changeDetectorRef.markForCheck();
+
     }
+
+    
 
     /**
      * On destroy
@@ -193,86 +267,88 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
      * Update the contact
      */
     updateItem(): void {        
-        this.contact = {...this._contact.getValue(), ...this.contactForm.getRawValue()};
-        console.log('contact', this.contact);
         // Get the contact object
-        // const contact = this.contactForm.getRawValue();
-
+        this.contact.firstName = this.contactForm.get('firstName').value;
+        this.contact.lastName = this.contactForm.get('lastName').value;
+        this.contact.address = this.contactForm.get('address').value;
+        this.contact.phoneNumbers = this.contactForm.get('phoneNumbers').value;
+        this._contact.next(this.contact);
+        console.log('contact', this.contact);
         // Update the contact on the server
         this._contactsV2Service
             .updateItem(this.contact)
             .then(() => {
-                // Toggle the edit mode off
+                // Toggle the edit mode off 
                 this.toggleEditMode(false);
             });
     }
 
-    /**
-     * Delete the contact
-     */
-    deleteProduct(): void {
-        // Open the confirmation dialog
-        const confirmation = this._axiomaimConfirmationService.open({
-            title: 'Delete contact',
-            message:
-                'Are you sure you want to delete this contact? This action cannot be undone!',
-            actions: {
-                confirm: {
-                    label: 'Delete',
-                },
-            },
-        });
+    // /**
+    //  * Delete the contact
+    //  */
+    // deleteContact(): void {
+    //     // Open the confirmation dialog
+    //     const confirmation = this._axiomaimConfirmationService.open({
+    //         title: 'Delete contact',
+    //         message:
+    //             'Are you sure you want to delete this contact? This action cannot be undone!',
+    //         actions: {
+    //             confirm: {
+    //                 label: 'Delete',
+    //             },
+    //         },
+    //     });
 
-        // Subscribe to the confirmation dialog closed action
-        confirmation.afterClosed().subscribe((result) => {
-            // If the confirm button pressed...
-            if (result === 'confirmed') {
-                // Get the current contact's id
-                const id = this.contact.id;
+    //     // Subscribe to the confirmation dialog closed action
+    //     confirmation.afterClosed().subscribe((result) => {
+    //         // If the confirm button pressed...
+    //         if (result === 'confirmed') {
+    //             // Get the current contact's id
+    //             const id = this.contact.id;
 
-                // Get the next/previous contact's id
-                const currentProductIndex = this.contacts.findIndex(
-                    (item) => item.id === id
-                );
-                const nextProductIndex =
-                    currentProductIndex +
-                    (currentProductIndex === this.contacts.length - 1 ? -1 : 1);
-                const nextProductId =
-                    this.contacts.length === 1 && this.contacts[0].id === id
-                        ? null
-                        : this.contacts[nextProductIndex].id;
+    //             // Get the next/previous contact's id
+    //             const currentContactIndex = this.contacts.findIndex(
+    //                 (item) => item.id === id
+    //             );
+    //             const nextContactIndex =
+    //                 currentContactIndex +
+    //                 (currentContactIndex === this.contacts.length - 1 ? -1 : 1);
+    //             const nextContactId =
+    //                 this.contacts.length === 1 && this.contacts[0].id === id
+    //                     ? null
+    //                     : this.contacts[nextContactIndex].id;
 
-                // Delete the contact
-                this._contactsV2Service
-                    .deleteItem(id)
-                    .then((isDeleted) => {
-                        // Return if the contact wasn't deleted...
-                        if (!isDeleted) {
-                            return;
-                        }
+    //             // Delete the contact
+    //             this._contactsV2Service
+    //                 .deleteItem(id)
+    //                 .then((isDeleted) => {
+    //                     // Return if the contact wasn't deleted...
+    //                     if (!isDeleted) {
+    //                         return;
+    //                     }
 
-                        // Navigate to the next contact if available
-                        if (nextProductId) {
-                            this._router.navigate(['../', nextProductId], {
-                                relativeTo: this._activatedRoute,
-                            });
-                        }
-                        // Otherwise, navigate to the parent
-                        else {
-                            this._router.navigate(['../'], {
-                                relativeTo: this._activatedRoute,
-                            });
-                        }
+    //                     // Navigate to the next contact if available
+    //                     if (nextContactId) {
+    //                         this._router.navigate(['../', nextContactId], {
+    //                             relativeTo: this._activatedRoute,
+    //                         });
+    //                     }
+    //                     // Otherwise, navigate to the parent
+    //                     else {
+    //                         this._router.navigate(['../'], {
+    //                             relativeTo: this._activatedRoute,
+    //                         });
+    //                     }
 
-                        // Toggle the edit mode off
-                        this.toggleEditMode(false);
-                    });
+    //                     // Toggle the edit mode off
+    //                     this.toggleEditMode(false);
+    //                 });
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            }
-        });
-    }
+    //             // Mark for check
+    //             this._changeDetectorRef.markForCheck();
+    //         }
+    //     });
+    // }
 
     /**
      * Upload avatar
@@ -314,16 +390,13 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         // Set the file input value as null
         this._avatarFileInput.nativeElement.value = null;
 
-        // Update the contact
-        // this.contact.avatar = null;
     }
 
     onOptionSelected(data: any[]) {
         console.log('onOptionSelected', data);
-        // this.contact.contactRoles = data;
         this._contact.next(this.contact);
         // console.log('onOptionSelected', this.contact);
-        // this.contact$.subscribe((resProduct: Product) => {
+        // this.contact$.subscribe((resContact: Contact) => {
 
         // });
     }
@@ -459,13 +532,67 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     //     // If the found tag is already applied to the contact...
     //     if (isTagApplied) {
     //         // Remove the tag from the contact
-    //         this.removeTagFromProduct(tag);
+    //         this.removeTagFromContact(tag);
     //     } else {
     //         // Otherwise add the tag to the contact
-    //         this.addTagToProduct(tag);
+    //         this.addTagToContact(tag);
     //     }
     // }
 
+
+        /**
+     * Get country info by iso code
+     *
+     * @param iso
+     */
+        getCountryByIso(iso: string): Country {
+            if(iso) {
+                return this.countries.find((country) => country.iso === iso);
+    
+            }
+        }
+
+        /**
+     * Update form data without recreating the form
+     */
+    updateFormData(data: Contact): void {
+        // Patch simple values
+        this.contactForm.patchValue({
+            firstName: data.firstName || '',
+            lastName: data.lastName || '',
+            address: data.address || '',
+            emails: data.emails || null,
+            phoneNumbers: data.phoneNumbers || null,
+        });
+
+        // Update phone numbers array
+        const phoneNumbersArray = this.contactForm.get('phoneNumbers') as UntypedFormArray;
+        phoneNumbersArray.clear();
+        const phoneNumbersFormGroups = data.phoneNumbers && data.phoneNumbers.length > 0 
+            ? data.phoneNumbers.map((phoneNumber) => this._formBuilder.group({ 
+                country: [phoneNumber.country || 'us'], 
+                phoneNumber: [phoneNumber.phoneNumber || ''], 
+                label: [phoneNumber.label || ''] 
+            }))
+            : [this._formBuilder.group({ country: ['us'], phoneNumber: [''], label: [''] })];
+
+        phoneNumbersFormGroups.forEach((phoneNumbersFormGroup) => {
+            phoneNumbersArray.push(phoneNumbersFormGroup);
+        });
+    }
+
+    /**
+     * Capture Address
+     *
+     * @param event
+     */
+    onAddressSelected(event: any) {
+        const place = event.value;
+        this.contactForm.patchValue({
+            address: place.formatted_address || ''
+        });
+    }
+        
     /**
      * Track by function for ngFor loops
      *

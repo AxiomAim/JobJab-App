@@ -5,6 +5,8 @@ import { ContactsV2ApiService } from "./contacts-v2-api.service";
 import { Country, Contact } from "./contacts.model";
 import { firstValueFrom, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
+import { PhoneLabel } from "app/core/models/phone-labels.model";
+import { EmailLabel } from "app/core/models/email-labels.model ";
 
 export const ContactsV2Service = createInjectable(() => {
   const _router = inject(Router);
@@ -82,7 +84,39 @@ export const ContactsV2Service = createInjectable(() => {
         );
     return await firstValueFrom(allCountries)        
   }
+
+    /**
+     * Get emailLabels
+     */
+    const getEmailLabels = async (): Promise<EmailLabel[]> => {
+      const allPhoneLabels = await _httpClient
+          .get<PhoneLabel[]>('api/common/email-labels')
+          .pipe(
+              tap((emailLabelsRes: EmailLabel[]) => {
+                console.log('emailLabelsRes', emailLabelsRes);
+                return emailLabelsRes;
+              })
+          );
+          return null;
+      // return await firstValueFrom(allPhoneLabels)        
+    }
   
+    /**
+     * Get phoneLabels
+     */
+    const getPhoneLabels = async (): Promise<PhoneLabel[]> => {
+      const allPhoneLabels = await _httpClient
+          .get<PhoneLabel[]>('api/common/phone-labels')
+          .pipe(
+              tap((phoneLabelsRes: PhoneLabel[]) => {
+                return phoneLabelsRes;
+              })
+          );
+          return null;
+      // return await firstValueFrom(allPhoneLabels)        
+    }
+
+    
   return {
     contacts: computed(() => contacts()),
     allContacts: computed(() => allContacts()),
@@ -95,6 +129,8 @@ export const ContactsV2Service = createInjectable(() => {
     updateItem,
     deleteItem,
     setContact,
-    getCountries
+    getCountries,
+    getEmailLabels,
+    getPhoneLabels
   };
 });

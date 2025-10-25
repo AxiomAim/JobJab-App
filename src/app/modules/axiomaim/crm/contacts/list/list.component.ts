@@ -40,10 +40,23 @@ import { Contact } from '../contacts.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ContactsV2Service } from '../contacts-v2.service';
 import { ContactsAddItemComponent } from '../add-item/add-item.component';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
     selector: 'contacts-list',
     templateUrl: './list.component.html',
+        styles: [
+        `
+        .example-box {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+        }
+
+        .example-chip {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+        `,
+    ],
+
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
@@ -60,31 +73,17 @@ import { ContactsAddItemComponent } from '../add-item/add-item.component';
         RouterLink,
         AsyncPipe,
         I18nPluralPipe,
-        ContactsAddItemComponent
+        ContactsAddItemComponent,
+        MatChipsModule
     ],
 })
 export class ContactsListComponent implements OnInit, OnDestroy {
     _contactsV2Service = inject(ContactsV2Service);
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
-
-    private _contacts: BehaviorSubject<Contact[] | null> = new BehaviorSubject(
-        null
-    );
-    get contacts$(): Observable<Contact[]> {
-        return this._contacts.asObservable();
-    }
-
-    private _contact: BehaviorSubject<Contact | null> = new BehaviorSubject(
-        null
-    );
-    get contact$(): Observable<Contact> {
-        return this._contact.asObservable();
-    }
-
     contactCount: number = 0;
     drawerMode: 'side' | 'over';
     searchInputControl: UntypedFormControl = new UntypedFormControl();
-    selectedProduct: Contact;
+    selectedUser: Contact;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -109,28 +108,13 @@ export class ContactsListComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         // Get the contacts
-        this._contacts.next(this._contactsV2Service.contacts());
-        this.contacts$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((contacts: Contact[]) => {
-                // Update the counts
-                this.contactCount = contacts.length;
+        this.contactCount = this._contactsV2Service.contacts().length;
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        // Update the selected contact
+        this.selectedUser = this._contactsV2Service.contact();
 
-        // Get the product
-        this._contact.next(this._contactsV2Service.contact());
-        this.contact$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((product: Contact) => {
-                // Update the selected product
-                this.selectedProduct = product;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
 
         // Subscribe to search input field value changes
         this.searchInputControl.valueChanges
@@ -141,15 +125,16 @@ export class ContactsListComponent implements OnInit, OnDestroy {
                     this._contactsV2Service.search(query)
                 )
             )
-            .subscribe((resProducts) => {
-                this._contacts.next(resProducts);
+            .subscribe((resUsers) => {
+                console.log('searchUsers', this._contactsV2Service.contacts());
+                // this._contacts.next(resUsers);
             });
 
         // Subscribe to MatDrawer opened change
         this.matDrawer.openedChange.subscribe((opened) => {
             if (!opened) {
-                // Remove the selected product when drawer closed
-                this.selectedProduct = null;
+                // Remove the selected contact when drawer closed
+                this.selectedUser = null;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -209,6 +194,7 @@ export class ContactsListComponent implements OnInit, OnDestroy {
         // Mark for check
         this._changeDetectorRef.markForCheck();
     }
+
 
     /**
      * Track by function for ngFor loops

@@ -38,15 +38,27 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { axiomaimAnimations } from '@axiomaim/animations';
 import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
+import { TagModel } from 'app/core/models/tag.model';
 import { ItemsService } from 'app/modules/axiomaim/apps/offers/items/items.service';
 import {
-    ItemsBrand,
-    ItemsCategory,
     ItemsPagination,
-    ItemsProduct,
+} from 'app/modules/axiomaim/apps/offers/items/items-data/items-pagination.model';
+import {
+    ItemsOffer,
+    ItemsofferModel,
+} from 'app/modules/axiomaim/apps/offers/items/items-data/items-offers.model';
+import {
+    ItemsBrand,
+} from 'app/modules/axiomaim/apps/offers/items/items-data/items-brands.model';
+import {
+    ItemsCategory,
+} from 'app/modules/axiomaim/apps/offers/items/items-data/items-categories.model';
+import {
     ItemsTag,
+} from 'app/modules/axiomaim/apps/offers/items/items-data/items-tags.model';
+import {
     ItemsVendor,
-} from 'app/modules/axiomaim/apps/offers/items/items.types';
+} from 'app/modules/axiomaim/apps/offers/items/items-data/items-vendors.model';
 import {
     Observable,
     Subject,
@@ -110,7 +122,7 @@ export class ItemsListComponent
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
 
-    offers$: Observable<ItemsProduct[]>;
+    offers$: Observable<ItemsOffer[]>;
 
     brands: ItemsBrand[];
     categories: ItemsCategory[];
@@ -119,8 +131,8 @@ export class ItemsListComponent
     isLoading: boolean = false;
     pagination: ItemsPagination;
     searchInputControl: UntypedFormControl = new UntypedFormControl();
-    selectedProduct: ItemsProduct | null = null;
-    selectedProductForm: UntypedFormGroup;
+    selectedOffer: ItemsOffer | null = null;
+    selectedOfferForm: UntypedFormGroup;
     tags: ItemsTag[];
     tagsEditMode: boolean = false;
     vendors: ItemsVendor[];
@@ -145,7 +157,7 @@ export class ItemsListComponent
      */
     ngOnInit(): void {
         // Create the selected offer form
-        this.selectedProductForm = this._formBuilder.group({
+        this.selectedOfferForm = this._formBuilder.group({
             id: [''],
             category: [''],
             name: ['', [Validators.required]],
@@ -235,11 +247,7 @@ export class ItemsListComponent
                 switchMap((query) => {
                     this.closeDetails();
                     this.isLoading = true;
-                    return this._itemsService.getOffers(
-                        0,
-                        10,
-                        'name',
-                        'asc',
+                    return this._itemsService.searchOffers(
                         query
                     );
                 }),
@@ -283,10 +291,6 @@ export class ItemsListComponent
                         this.closeDetails();
                         this.isLoading = true;
                         return this._itemsService.getOffers(
-                            this._paginator.pageIndex,
-                            this._paginator.pageSize,
-                            this._sort.active,
-                            this._sort.direction
                         );
                     }),
                     map(() => {
@@ -317,7 +321,7 @@ export class ItemsListComponent
      */
     toggleDetails(offerId: string): void {
         // If the offer is already selected...
-        if (this.selectedProduct && this.selectedProduct.id === offerId) {
+        if (this.selectedOffer && this.selectedOffer.id === offerId) {
             // Close the details
             this.closeDetails();
             return;
@@ -325,13 +329,13 @@ export class ItemsListComponent
 
         // Get the offer by id
         this._itemsService
-            .getProductById(offerId)
+            .getOfferById(offerId)
             .subscribe((offer) => {
                 // Set the selected offer
-                this.selectedProduct = offer;
+                this.selectedOffer = offer;
 
                 // Fill the form
-                this.selectedProductForm.patchValue(offer);
+                this.selectedOfferForm.patchValue(offer);
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -342,7 +346,7 @@ export class ItemsListComponent
      * Close the details
      */
     closeDetails(): void {
-        this.selectedProduct = null;
+        this.selectedOffer = null;
     }
 
     /**
@@ -350,9 +354,9 @@ export class ItemsListComponent
      */
     cycleImages(forward: boolean = true): void {
         // Get the image count and current image index
-        const count = this.selectedProductForm.get('images').value.length;
+        const count = this.selectedOfferForm.get('images').value.length;
         const currentIndex =
-            this.selectedProductForm.get('currentImageIndex').value;
+            this.selectedOfferForm.get('currentImageIndex').value;
 
         // Calculate the next and previous index
         const nextIndex = currentIndex + 1 === count ? 0 : currentIndex + 1;
@@ -360,13 +364,13 @@ export class ItemsListComponent
 
         // If cycling forward...
         if (forward) {
-            this.selectedProductForm
+            this.selectedOfferForm
                 .get('currentImageIndex')
                 .setValue(nextIndex);
         }
         // If cycling backwards...
         else {
-            this.selectedProductForm
+            this.selectedOfferForm
                 .get('currentImageIndex')
                 .setValue(prevIndex);
         }
@@ -419,17 +423,17 @@ export class ItemsListComponent
 
         // If there is a tag...
         const tag = this.filteredTags[0];
-        const isTagApplied = this.selectedProduct.tags.find(
+        const isTagApplied = this.selectedOffer.tags.find(
             (id) => id === tag.id
         );
 
         // If the found tag is already applied to the offer...
         if (isTagApplied) {
             // Remove the tag from the offer
-            this.removeTagFromProduct(tag);
+            this.removeTagFromOffer(tag);
         } else {
             // Otherwise add the tag to the offer
-            this.addTagToProduct(tag);
+            this.addTagToOffer(tag);
         }
     }
 
@@ -439,14 +443,16 @@ export class ItemsListComponent
      * @param title
      */
     createTag(title: string): void {
-        const tag = {
-            title,
-        };
+        const tag = TagModel.emptyDto();
+        tag.title = title;
+        // const tag = {
+        //     title,
+        // };
 
         // Create tag on the server
         this._itemsService.createTag(tag).subscribe((response) => {
             // Add the tag to the offer
-            this.addTagToProduct(response);
+            this.addTagToOffer(response);
         });
     }
 
@@ -488,14 +494,14 @@ export class ItemsListComponent
      *
      * @param tag
      */
-    addTagToProduct(tag: ItemsTag): void {
+    addTagToOffer(tag: ItemsTag): void {
         // Add the tag
-        this.selectedProduct.tags.unshift(tag.id);
+        this.selectedOffer.tags.unshift(tag.id);
 
         // Update the selected offer form
-        this.selectedProductForm
+        this.selectedOfferForm
             .get('tags')
-            .patchValue(this.selectedProduct.tags);
+            .patchValue(this.selectedOffer.tags);
 
         // Mark for check
         this._changeDetectorRef.markForCheck();
@@ -506,17 +512,17 @@ export class ItemsListComponent
      *
      * @param tag
      */
-    removeTagFromProduct(tag: ItemsTag): void {
+    removeTagFromOffer(tag: ItemsTag): void {
         // Remove the tag
-        this.selectedProduct.tags.splice(
-            this.selectedProduct.tags.findIndex((item) => item === tag.id),
+        this.selectedOffer.tags.splice(
+            this.selectedOffer.tags.findIndex((item) => item === tag.id),
             1
         );
 
         // Update the selected offer form
-        this.selectedProductForm
+        this.selectedOfferForm
             .get('tags')
-            .patchValue(this.selectedProduct.tags);
+            .patchValue(this.selectedOffer.tags);
 
         // Mark for check
         this._changeDetectorRef.markForCheck();
@@ -528,11 +534,11 @@ export class ItemsListComponent
      * @param tag
      * @param change
      */
-    toggleProductTag(tag: ItemsTag, change: MatCheckboxChange): void {
+    toggleOfferTag(tag: ItemsTag, change: MatCheckboxChange): void {
         if (change.checked) {
-            this.addTagToProduct(tag);
+            this.addTagToOffer(tag);
         } else {
-            this.removeTagFromProduct(tag);
+            this.removeTagFromOffer(tag);
         }
     }
 
@@ -553,14 +559,15 @@ export class ItemsListComponent
     /**
      * Create offer
      */
-    createProduct(): void {
+    createOffer(): void {
+        const createOffer = ItemsofferModel.emptyDto();
         // Create the offer
-        this._itemsService.createProduct().subscribe((newProduct) => {
+        this._itemsService.createOffer(createOffer).subscribe((newOffer) => {
             // Go to new offer
-            this.selectedProduct = newProduct;
+            this.selectedOffer = newOffer;
 
             // Fill the form
-            this.selectedProductForm.patchValue(newProduct);
+            this.selectedOfferForm.patchValue(newOffer);
 
             // Mark for check
             this._changeDetectorRef.markForCheck();
@@ -570,16 +577,16 @@ export class ItemsListComponent
     /**
      * Update the selected offer using the form data
      */
-    updateSelectedProduct(): void {
+    updateSelectedOffer(): void {
         // Get the offer object
-        const offer = this.selectedProductForm.getRawValue();
+        const offer = this.selectedOfferForm.getRawValue();
 
         // Remove the currentImageIndex field
         delete offer.currentImageIndex;
 
         // Update the offer on the server
         this._itemsService
-            .updateProduct(offer.id, offer)
+            .updateOffer(offer.id, offer)
             .subscribe(() => {
                 // Show a success message
                 this.showFlashMessage('success');
@@ -589,7 +596,7 @@ export class ItemsListComponent
     /**
      * Delete the selected offer using the form data
      */
-    deleteSelectedProduct(): void {
+    deleteSelectedOffer(): void {
         // Open the confirmation dialog
         const confirmation = this._axiomaimConfirmationService.open({
             title: 'Delete offer',
@@ -607,11 +614,11 @@ export class ItemsListComponent
             // If the confirm button pressed...
             if (result === 'confirmed') {
                 // Get the offer object
-                const offer = this.selectedProductForm.getRawValue();
+                const offer = this.selectedOfferForm.getRawValue();
 
                 // Delete the offer on the server
                 this._itemsService
-                    .deleteProduct(offer.id)
+                    .deleteOffer(offer.id)
                     .subscribe(() => {
                         // Close the details
                         this.closeDetails();

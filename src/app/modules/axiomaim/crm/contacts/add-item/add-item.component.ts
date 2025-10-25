@@ -31,6 +31,8 @@ import { ContactsService } from 'app/modules/axiomaim/apps/contacts/contacts.ser
 import { Country, Contact, ContactModel } from '../contacts.model';
 import { Overlay } from '@angular/cdk/overlay';
 import { SourcesV2Service } from '../../sources/sources-v2.service';
+import { PhoneLabel } from 'app/core/models/phone-labels.model';
+import { EmailLabel } from 'app/core/models/email-labels.model ';
 
 @Component({
     selector: 'contacts-add-item',
@@ -83,6 +85,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
     // @Input() contact: Contact;
     @Input() btnIcon: string = 'mat_outline:add';
     @Input() btnTitle: string = 'Add Contact';
+    @Input() external: boolean = false;
     @Output() contactCreated: EventEmitter<Contact> = new EventEmitter<Contact>();
     loginUser = inject(FirebaseAuthV2Service).loginUser();
     _alertMessagesService = inject(AlertMessagesService);
@@ -94,7 +97,6 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     contactForm: UntypedFormGroup;
-    #loginUser = signal<User | null>(null);
     showRole: string[] = ["admin"];
     user_roles: any[] = [];
     reLoad: boolean = true;
@@ -108,6 +110,16 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
     isLoading = signal<boolean>(false);
     public countries: Country[] = [];
     public newContact: Contact = ContactModel.emptyDto();
+    public address: FormControl = new FormControl('');
+    phoneLabels: PhoneLabel[] = [];
+    emailLabels: EmailLabel[] = [];
+    
+    lead: boolean = false;
+    leadAt: string = null;
+    customer: boolean = false;
+    customerAt: string = null;
+    cancel: boolean = false;
+    cancelAt: string = null;
 
     /**
      * Constructor
@@ -118,27 +130,15 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         private _axiomaimConfigService: AxiomaimConfigService,
         private _contactsService: ContactsService,
         private _changeDetectorRef: ChangeDetectorRef,
-
         private _activatedRoute: ActivatedRoute,
-        private _renderer2: Renderer2,
-        private _overlay: Overlay,
-        private _viewContainerRef: ViewContainerRef
-
         
     ) {
-        console.log('#loginUser', this.#loginUser());
-
         // Create the basic form structure early
         this.contactForm = this._formBuilder.group({
             firstName: ["", [Validators.required]],
             lastName: ["", [Validators.required]],
             company: ["", [Validators.required]],
-            address: ["", [Validators.required]],
-            lead: [false, [Validators.required]],
-            leadAt: [''],
-            customer: [false, [Validators.required]],
-            source: [{}, [Validators.required]],
-            customerAt: [''],
+            source: [null, [Validators.required]],
             emails: this._formBuilder.array([]),
             phoneNumbers: this._formBuilder.array([]),
         });
@@ -146,9 +146,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         // Effect to watch for changes in the service signal
         effect(() => {
             const contact = this._contactsV2Service.contact();
-            console.log('Signal contact changed', contact);
             const data = contact || ContactModel.emptyDto();
-            console.log('Signal data', data);
             this.newContact = data;
             this.updateFormData(data);
         });
@@ -162,7 +160,9 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
      * On init
      */
     async ngOnInit() {
-        console.log('Signal contact (ngOnInit)', this._contactsV2Service.contact());
+        this.emailLabels = await this._contactsV2Service.getEmailLabels();
+        this.phoneLabels = await this._contactsV2Service.getPhoneLabels();
+
         await this._contactsService.getCountries();
         await this._contactsService.countries$
             .pipe(takeUntil(this._unsubscribeAll))
@@ -171,6 +171,10 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
+
+        this.resetForm();
+        this.setuoForm();
+
     }
 
 
@@ -178,7 +182,6 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
      * After view init
      */
     ngAfterViewInit(): void {
-
         // Subscribe to drawer state changes and emit to parent
         // This needs to be in ngAfterViewInit because ViewChild is not available in ngOnInit
         this.newItemDrawer.openedChanged
@@ -187,6 +190,13 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
                 this.drawerStateChanged.emit(opened);
             });
     }
+
+
+        setuoForm() {
+        this.newContact = ContactModel.emptyDto();
+        console.log('setuoForm - newContact', this.newContact);
+    }
+
 
     /**
      * On destroy
@@ -199,10 +209,14 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
 
     ngOnChanges(): void {        
         // Handle changes to @Input() contact if needed
+        // if(this.newItemDrawer.open) {
+        //     console.log('ngOnChanges - ngAfterViewInit.open');
+        //     this.ngOnInit();
+        //     this.ngAfterViewInit();
+        // }
         this.newContact = this._contactsV2Service.contact();
         this.updateFormData(this.newContact);
     }
-
 
     /**
      * Update form data without recreating the form
@@ -219,9 +233,6 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
             customer: data.customer || false,
             customerAt: data.customerAt || ''
         });
-
-        console.log('this.contactForm', this.contactForm);
-        console.log('this.contact', data);
 
         // Update emails array
         const emailsArray = this.contactForm.get('emails') as UntypedFormArray;
@@ -333,7 +344,8 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
 
     openDrawer(): void {
         // Reset form to ensure clean state when opening
-        this.resetForm();
+        console.log('openDrawer - resetting form');
+        this.ngOnInit();
         
         // Open the drawer
         this.newItemDrawer.open();
@@ -409,10 +421,15 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
      */
 
     async onSubmit() {
-        console.log('onSubmit');
         let date: any = new Date().toISOString();
 
         this.newContact.orgId = this.loginUser.orgId;
+        this.newContact.lead = this.lead;
+        this.newContact.leadAt = this.leadAt;
+        this.newContact.customer = this.customer;
+        this.newContact.customerAt = this.customerAt;
+        this.newContact.cancel = this.cancel;
+        this.newContact.cancelAt = this.cancelAt;
         this.newContact.firstName = this.contactForm.get('firstName').value
         this.newContact.lastName = this.contactForm.get('lastName').value
         this.newContact.company = this.contactForm.get('company').value
@@ -420,18 +437,15 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         this.newContact.emails = this.contactForm.get('emails').value
         this.newContact.phoneNumbers = this.contactForm.get('phoneNumbers').value
         this.newContact.address = this.contactForm.get('address').value
-        if(this.contactForm.get('lead').value === true){
-            this.newContact.leadAt = date
-        }
-        if(this.contactForm.get('customer').value === true){
-            this.newContact.customerAt = date
-        }
-        if(this._contactsV2Service.contact() === null){
-            await this._contactsV2Service.createItem(this.newContact);
+        await this._contactsV2Service.createItem(this.newContact);
+        await this._contactsV2Service.getAll();
+                    
+        if(this.external){
             this.sendContact();
+            this.close();
         } else {
-            await this._contactsV2Service.updateItem(this.newContact);
-            this.sendContact();
+            this.close();
+            // this._router.navigate(['/crm/contacts']);
         }
         
         // this.isLoading.set(true);
@@ -452,6 +466,33 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         this.contactCreated.emit(this.newContact);
         this.close();
     }
+
+        setAtDate(control: string) {
+        switch(control) {
+            case 'lead':
+                if(this.lead === true){
+                    this.leadAt = new Date().toISOString();
+                } else {
+                    this.leadAt = null;
+                }
+                break;
+            case 'customer':
+                if(this.customer === true){
+                    this.customerAt = new Date().toISOString();
+                } else {
+                    this.customerAt = null;
+                }
+                break;
+            case 'cancel':
+                if(this.cancel === true){
+                    this.cancelAt = new Date().toISOString();
+                } else {
+                    this.cancelAt = null;
+                }
+                break;
+        }
+    }
+
 
     /**
      * Track by function for ngFor loops

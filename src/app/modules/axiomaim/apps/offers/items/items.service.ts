@@ -159,7 +159,7 @@ export class ItemsService {
     /**
      * Get offer by id
      */
-    getOffersById(id: string): Observable<ItemsOffer> {
+    getOfferById(id: string): Observable<ItemsOffer> {
         return from(this._itemsOffersV2Service.getItem(id)).pipe(
             tap((offer) => {
                 this._offer.next(offer);
@@ -177,6 +177,17 @@ export class ItemsService {
         return from(this._itemsOffersV2Service.createItem(offer)).pipe(
             tap((newOffer: ItemsOffer) => {
             this._offers.next([...this._offers.value, newOffer]);
+            })
+        );
+    }
+
+    /**
+     * Get categories
+     */
+    searchOffers(query: any): Observable<ItemsOffer[]> {
+        return from(this._itemsOffersV2Service.search(query)).pipe(
+            tap((offers) => {
+                this._offers.next(offers);
             })
         );
     }

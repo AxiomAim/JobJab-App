@@ -53,10 +53,10 @@
 
                 <!-- Sources list -->
                 <div class="relative">
-                    @if (sources$ | async; as sources) {
-                    @if (sources.length) {
+                    <!-- @if (sources$ | async; as sources) { -->
+                    @if (sourceCount > 0) {
                     @for (
-                    source of sources;
+                    source of _sourcesV2Service.sources();
                     track trackByFn(i, source);
                     let i = $index
                     ) {
@@ -106,7 +106,7 @@
                         There are no sources!
                     </div>
                     }
-                    }
+                    <!-- } -->
 
                     <!-- No sources -->
                 </div>

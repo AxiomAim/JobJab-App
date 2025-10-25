@@ -1,16 +1,7 @@
 import { HttpClient, HttpContext, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { EncryptStorage } from 'encrypt-storage';
-import { environment } from 'environments/environment';
-
-export const encryptStorage = new EncryptStorage(environment.LOCAL_STORAGE_KEY, {
-  storageType: 'sessionStorage',
-});
 
 const { hostname } = new URL(window.location.href);
-
-
 @Injectable({
   providedIn: 'root',
 })

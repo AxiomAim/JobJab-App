@@ -26,23 +26,25 @@
         <div class="relative flex flex-auto flex-col overflow-y-auto items-center px-6 sm:px-12">
             <div class="w-full max-w-3xl">
                 <form [formGroup]="contactForm">
-                    <div class="mt-0">
-                        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                            <mat-label>First Name</mat-label>
-                            <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-                            <input matInput [formControlName]="'firstName'" [placeholder]="'First Name'"
-                                [spellcheck]="false" />
-                        </mat-form-field>
-                    </div>
-                    <div class="mt-2">
-                        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                            <mat-label>Last Name</mat-label>
-                            <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-                            <input matInput [formControlName]="'lastName'" [placeholder]="'Last Name'"
-                                [spellcheck]="false" />
-                        </mat-form-field>
+                    <div class="flex flex-wrap gap-x-8 gap-y-4">
+                        <div class="flex-auto">
+                            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                                <mat-label>First Name</mat-label>
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
+                                <input matInput [formControlName]="'firstName'" [placeholder]="'First Name'"
+                                    [spellcheck]="false" />
+                            </mat-form-field>
+                        </div>
+                        <div class="flex-auto">
+                            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                                <mat-label>Last Name</mat-label>
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
+                                <input matInput [formControlName]="'lastName'" [placeholder]="'Last Name'"
+                                    [spellcheck]="false" />
+                            </mat-form-field>
+                        </div>
                     </div>
 
                     <div class="mt-2">
@@ -58,23 +60,31 @@
                     <div class="mt-2">
                         <section class="example-section">
                             <h4>Contact Type:</h4>
-                            <p><mat-checkbox formControlName="lead">Lead</mat-checkbox></p>
-                            <p><mat-checkbox formControlName="customer">Customer</mat-checkbox></p>
+                            <p><mat-checkbox [(ngModel)]="lead" (clickAction)="setAtDate('lead')">Lead</mat-checkbox>
+                            </p>
+                            <p><mat-checkbox [(ngModel)]="customer"
+                                    (clickAction)="setAtDate('customer')">Customer</mat-checkbox></p>
+                            <p><mat-checkbox [(ngModel)]="cancel"
+                                    (clickAction)="setAtDate('cancel')">Cancel</mat-checkbox>
+                            </p>
                         </section>
                     </div>
                     <mat-form-field class="w-full mt-2" [subscriptSizing]="'dynamic'">
                         <mat-label>Lead Source</mat-label>
-                        <mat-select formControlName="source" name="source">
+                        <mat-select [formControlName]="'source'" name="source">
                             @for (source of this._sourcesV2Service.sources(); track source) {
                             <mat-option [value]="source.id">{{source.name}}</mat-option>
                             }
                         </mat-select>
                     </mat-form-field>
+
                     <!-- Emails -->
                     <div class="mt-2">
                         <div class="space-y-4">
                             @for (
-                            email of contactForm.get('emails')['controls'];
+                            email of contactForm.get('emails')[
+                            'controls'
+                            ];
                             track trackByFn(i, email);
                             let i = $index;
                             let first = $first;
@@ -92,14 +102,21 @@
                                         [spellcheck]="false" />
                                 </mat-form-field>
                                 <mat-form-field class="ml-2 w-full max-w-24 flex-auto sm:ml-4 sm:max-w-40"
-                                    [subscriptSizing]="'dynamic'">
+                                    subscriptSizing="dynamic">
                                     @if (first) {
                                     <mat-label>Label</mat-label>
                                     }
                                     <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                        [svgIcon]="'heroicons_solid:tag'"></mat-icon>
-                                    <input matInput [formControl]="email.get('label')" [placeholder]="'Label'" />
+                                        svgIcon="heroicons_solid:tag"></mat-icon>
+                                    <mat-select [formControl]="
+                            email.get('label')
+                        ">
+                                        @for (emailLabel of emailLabels; track trackByFn($index, emailLabel)) {
+                                        <mat-option [value]="emailLabel.value">{{emailLabel.name}}</mat-option>
+                                        }
+                                    </mat-select>
                                 </mat-form-field>
+
                                 <!-- Remove email -->
                                 @if (!(first && last)) {
                                 <div class="flex w-10 items-center pl-2" [ngClass]="{ 'mt-6': first }">
@@ -206,15 +223,19 @@
                                     </mat-select>
                                 </mat-form-field>
                                 <mat-form-field class="ml-2 w-full max-w-24 flex-auto sm:ml-4 sm:max-w-40"
-                                    [subscriptSizing]="'dynamic'">
+                                    subscriptSizing="dynamic">
                                     @if (first) {
                                     <mat-label>Label</mat-label>
                                     }
                                     <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
-                                        [svgIcon]="'heroicons_solid:tag'"></mat-icon>
-                                    <input matInput [formControl]="
-                                                phoneNumber.get('label')
-                                            " [placeholder]="'Label'" />
+                                        svgIcon="heroicons_solid:tag"></mat-icon>
+                                    <mat-select [formControl]="
+                            phoneNumber.get('label')
+                        ">
+                                        @for (phoneLabel of phoneLabels; track trackByFn($index, phoneLabel)) {
+                                        <mat-option [value]="phoneLabel.value">{{phoneLabel.name}}</mat-option>
+                                        }
+                                    </mat-select>
                                 </mat-form-field>
                                 <!-- Remove phone number -->
                                 @if (!(first && last)) {
@@ -241,7 +262,7 @@
 
                     <!-- </div> -->
                     <div class="mt-2">
-                        <address-lookup class="w-full" label="Address" [formControl]="contactForm.controls['address']"
+                        <address-lookup class="w-full" label="Address" [formControl]="address"
                             placeholder="Enter address">
                         </address-lookup>
 

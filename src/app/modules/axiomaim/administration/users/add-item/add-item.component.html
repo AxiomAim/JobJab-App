@@ -1,5 +1,5 @@
 <!-- Settings toggle -->
-<button class="ml-4" mat-flat-button [matTooltip]="'New Customer'" [color]="'primary'" (click)="openDrawer()">
+<button class="ml-4" mat-flat-button [matTooltip]="'New User'" [color]="'primary'" (click)="openDrawer()">
     <mat-icon [svgIcon]="btnIcon"></mat-icon>
     <span class="ml-2 mr-1">{{ btnTitle }}</span>
 </button>
@@ -88,7 +88,7 @@
                     </div>
                     <!-- Address -->
                     <div class="mt-4">
-                        <address-lookup class="w-full" label="Address" [control]="userForm.controls['address']"
+                        <address-lookup class="w-full" label="Address" [formControl]="userForm.controls['address']"
                             placeholder="Enter address">
                         </address-lookup>
                     </div>

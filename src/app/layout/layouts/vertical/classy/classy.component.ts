@@ -23,7 +23,6 @@ import { Subject, takeUntil } from 'rxjs';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { CustomersMenuComponent } from 'app/layout/common/customers-menu/customers-menu.component';
-import { QuotesMenuComponent } from 'app/layout/common/quotes-menu/quotes-menu.component';
 import { OrganizationComponent } from 'app/layout/common/organization/organization.component';
 import { AddItemComponent } from 'app/layout/common/add-item/add-item.component';
 
@@ -46,7 +45,6 @@ import { AddItemComponent } from 'app/layout/common/add-item/add-item.component'
         RouterOutlet,
         QuickChatComponent,
         CustomersMenuComponent,
-        QuotesMenuComponent,
         OrganizationComponent,
         AddItemComponent
     ],
@@ -91,7 +89,6 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        console.log('loginUser', this.loginUser)
         // Subscribe to navigation data
         this._navigationService.navigation$
             .pipe(takeUntil(this._unsubscribeAll))

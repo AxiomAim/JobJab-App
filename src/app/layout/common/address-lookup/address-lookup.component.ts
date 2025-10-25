@@ -56,7 +56,7 @@ export class AddressLookupComponent implements OnInit, OnDestroy {
   @Input() label!: string;
   @Input() formFieldAppearence!: string;
   @Input() placeholder!: string;
-  @Input() control!: FormControl;
+  @Input() formControl!: FormControl;
   @Input() readOnly: boolean = false;
   @Input() selectedOptionData: any;
   @Input() type: string = 'search';
@@ -141,9 +141,9 @@ export class AddressLookupComponent implements OnInit, OnDestroy {
         const place = this.autocomplete.getPlace();
         if (place.geometry) {
           this.selectedOption.emit({ value: place, type: this.type });
-          this.control.setValue(place.formatted_address); //  Update the FormControl with selected address
+          this.formControl.setValue(place.formatted_address); //  Update the FormControl with selected address
         } else {
-          this.control.setValue(''); //  Clear the FormControl
+          this.formControl.setValue(''); //  Clear the FormControl
         }
       });
     });

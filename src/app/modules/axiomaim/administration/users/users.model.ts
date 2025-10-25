@@ -222,7 +222,7 @@ export class UserModel implements BaseDto {
             avatar: '',
             linkedIn: '',
             phoneNumbers: [
-                // { country: 'us', phoneNumber: '', label: 'Mobile' }
+                { country: 'us', phoneNumber: '', label: 'Mobile' }
             ],
             mobileCountry: '',
             mobileNo: '',

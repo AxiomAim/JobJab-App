@@ -2,9 +2,9 @@
   <mat-form-field [ngClass]="formFieldHelpers" class="gt-xs:pr-3 flex-auto"
     [appearance]="formFieldAppearence || 'outline'">
     <mat-label>{{ label }}</mat-label>
-    <input matInput [placeholder]="placeholder" [id]="id" [formControl]="control" [matAutocomplete]="auto"
+    <input matInput [placeholder]="placeholder" [id]="id" [formControl]="formControl" [matAutocomplete]="auto"
       [readonly]="readOnly" [type]="type" (input)="onInput($event)" [autocomplete]="autocompleteAttribute"
-      [disabled]="disabled" #addressInput />
+      #addressInput />
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event.option.value)">
       <mat-option *ngFor="let data of optionData" [value]="data">
         {{ data[selectedKey] }}

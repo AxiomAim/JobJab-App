@@ -1,5 +1,5 @@
 import { createInjectable } from 'ngxtension/create-injectable';
-import { EncryptStorage } from 'encrypt-storage';
+import { Storage } from '@capacitor/storage';
 import { signal, computed, inject, effect } from '@angular/core';
 import { environment } from 'environments/environment';
 import { 
@@ -38,10 +38,6 @@ import { Router } from '@angular/router';
 import { Organization, OrganizationModel } from 'app/modules/axiomaim/administration/organizations/organizations.model';
 import { OrganizationsDataService } from 'app/modules/axiomaim/administration/organizations/organizations-data.service';
 import { AxiomaimConfigService, Scheme, Theme } from '@axiomaim/services/config';
-
-export const encryptStorage = new EncryptStorage(environment.LOCAL_STORAGE_KEY, {
-  storageType: 'sessionStorage',
-});
 
 const LOGIN_USER = "loginUser";
 const AUTH_LOGIN_USER = "authUser";
@@ -83,7 +79,6 @@ export const FirebaseAuthV2Service = createInjectable(() => {
 
   const initiate = async (): Promise<boolean> => {
     try {
-      console.log('Initiating FirebaseAuthV2Service');
       loadFromStorage();          
       return true;
     } catch (error) {
@@ -99,34 +94,34 @@ export const FirebaseAuthV2Service = createInjectable(() => {
     setToStorage()
   }
 
-  const loadFromStorage = () => {
+  const loadFromStorage = async () => {
     try {
-      const jsonUser = encryptStorage.getItem(LOGIN_USER);
-      loginUser.set(jsonUser)
-      const jsonAuthUser = encryptStorage.getItem(AUTH_LOGIN_USER);
-      authUser.set(jsonAuthUser)
-      const jsonOrganization = encryptStorage.getItem(ORGANIZATION);
-      organization.set(jsonOrganization)
+      const jsonUser = await Storage.get({ key: LOGIN_USER });
+      loginUser.set(jsonUser.value ? JSON.parse(jsonUser.value) : null)
+      const jsonAuthUser = await Storage.get({ key: AUTH_LOGIN_USER });
+      authUser.set(jsonAuthUser.value ? JSON.parse(jsonAuthUser.value) : null)
+      const jsonOrganization = await Storage.get({ key: ORGANIZATION });
+      organization.set(jsonOrganization.value ? JSON.parse(jsonOrganization.value) : null);
     } catch(err) {
       console.error('Error loading from storage:', err);
     }
   }
 
-  const setToStorage = () => {
+  const setToStorage = async () => {
     try {
-      encryptStorage.setItem(LOGIN_USER, JSON.stringify(loginUser()));
-      encryptStorage.setItem(AUTH_LOGIN_USER, JSON.stringify(authUser()));
-      encryptStorage.setItem(ORGANIZATION, JSON.stringify(organization()));
+      await Storage.set({key: LOGIN_USER, value: JSON.stringify(loginUser()),});
+      await Storage.set({key: AUTH_LOGIN_USER, value: JSON.stringify(authUser()),});
+      await Storage.set({key: ORGANIZATION, value: JSON.stringify(organization()),});
     } catch(err) {
       console.error('Error setting user to storage:', err);
     }
   }
 
-  const removeFromStorage = () => {
+  const removeFromStorage = async () => {
     try {
-      encryptStorage.removeItem(LOGIN_USER);
-      encryptStorage.removeItem(AUTH_LOGIN_USER);
-      encryptStorage.removeItem(ORGANIZATION);
+      await Storage.remove({ key: LOGIN_USER });
+      await Storage.remove({ key: AUTH_LOGIN_USER });
+      await Storage.remove({ key: ORGANIZATION });
     } catch(err) {
       console.error('Error removing Login User from storage:', err);
     }
@@ -285,9 +280,7 @@ export const FirebaseAuthV2Service = createInjectable(() => {
   };
   
   const signUpOrg = async (signup: any, newUser: User): Promise<any> => {
-    console.log('Sign up data:', signup);
     await createUserWithEmailAndPassword(auth, signup.email, signup.password).then(async (userCredential) => {
-      console.log('User credential from Firebase:', userCredential);
       newUser.id = userCredential.user.uid;
       const createdUser = await firstValueFrom(_usersDataService.createItem(newUser));
       await sendEmailVerificationNew(userCredential.user);
@@ -299,7 +292,6 @@ export const FirebaseAuthV2Service = createInjectable(() => {
   };
 
   const sendEmailVerificationNew = async (user: FirebaseUser): Promise<any> => {
-    console.log('sendEmailVerification:', user);
     return sendEmailVerification(user, actionCodeSettings);
   };
 

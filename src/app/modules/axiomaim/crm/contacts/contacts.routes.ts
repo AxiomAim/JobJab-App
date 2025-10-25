@@ -5,11 +5,11 @@ import {
     RouterStateSnapshot,
     Routes,
 } from '@angular/router';
+import { ContactsComponent } from 'app/modules/axiomaim/crm/contacts/contacts.component';
+import { ContactsDetailsComponent } from 'app/modules/axiomaim/crm/contacts/details/details.component';
+import { ContactsListComponent } from 'app/modules/axiomaim/crm/contacts/list/list.component';
 import { of } from 'rxjs';
 import { ContactsV2Service } from './contacts-v2.service';
-import { ContactsDetailsComponent } from './details/details.component';
-import { ContactsComponent } from './contacts.component';
-import { ContactsListComponent } from './list/list.component';
 import { ContactsService } from '../../apps/contacts/contacts.service';
 import { SourcesV2Service } from '../sources/sources-v2.service';
 
@@ -20,15 +20,15 @@ import { SourcesV2Service } from '../sources/sources-v2.service';
  * @param route
  * @param state
  */
-const customerResolver = (
+const contactResolver = (
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
 ) => {
-    const _productsV2Service = inject(ContactsV2Service);
+    const _contactsV2Service = inject(ContactsV2Service);
     const router = inject(Router);
     const oid = route.paramMap.get('id');
     
-    return _productsV2Service.getItem(oid).catch((error) => {
+    return _contactsV2Service.getItem(oid).catch((error) => {
         // Log the error
         console.error('Error fetching site:', error);
 
@@ -44,7 +44,7 @@ const customerResolver = (
 };
 
 /**
- * Can deactivate users details
+ * Can deactivate contacts details
  *
  * @param component
  * @param currentRoute
@@ -63,9 +63,9 @@ const canDeactivateUsersDetails = (
         nextRoute = nextRoute.firstChild;
     }
 
-    // If the next state doesn't contain '/users'
+    // If the next state doesn't contain '/contacts'
     // it means we are navigating away from the
-    // users app
+    // contacts app
     if (!nextState.url.includes('/contacts')) {
         // Let it navigate
         return true;
@@ -92,17 +92,18 @@ export default [
                 path: '',
                 component: ContactsListComponent,
                 resolve: {
-                    users: () => inject(ContactsV2Service).getAll(),
+                    contacts: () => inject(ContactsV2Service).getAll(),
                     countries: () => inject(ContactsService).getCountries(),
                     sources: () => inject(SourcesV2Service).getAll(),
+
                 },
                 children: [
                     {
                         path: ':id',
                         component: ContactsDetailsComponent,
                         resolve: {
-                            // userRoles: () => inject(ProductsV2Service).getUserRoles(),
-                            user: customerResolver,
+                            contact: contactResolver,
+                            sources: () => inject(SourcesV2Service).getAll(),
                         },
                         canDeactivate: [canDeactivateUsersDetails],
                     },
