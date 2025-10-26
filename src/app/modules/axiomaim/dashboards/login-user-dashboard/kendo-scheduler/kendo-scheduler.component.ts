@@ -26,7 +26,7 @@ import { UserAppointmentsV2Service } from "app/core/services/data-services/user-
 import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
 import { UserAppointment, UserAppointmentModel } from "app/core/services/data-services/user-appointments/user-appointment.model";
 import { filter } from "rxjs";
-import { EditService } from "./edit.services";
+import { EditService } from "./edit.services-1";
 import { AsyncPipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIcon, MatIconModule } from "@angular/material/icon";

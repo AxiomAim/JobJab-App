@@ -16,7 +16,7 @@ export class UserAppointmentModel {
         isAllDay: boolean,
         recurrenceRule: any,
         recurrenceId: string,
-        recurrenceExceptions: string,
+        recurrenceExceptions: any,
         ) {
         this.id = id;
         this.orgId = orgId;
@@ -45,7 +45,7 @@ export class UserAppointmentModel {
     public isAllDay: boolean;
     public recurrenceRule: any;
     public recurrenceId: string;
-    public recurrenceExceptions: string;
+    public recurrenceExceptions: any;
 
     public static emptyDto(): UserAppointment {
         return {
@@ -61,7 +61,7 @@ export class UserAppointmentModel {
             isAllDay: false,
             recurrenceRule: null,
             recurrenceId: '',
-            recurrenceExceptions: '',
+            recurrenceExceptions: null,
         }
     }
 
@@ -79,7 +79,7 @@ export class UserAppointmentModel {
                 isAllDay: dto.isAllDay ? dto.isAllDay : false,
                 recurrenceRule: dto.recurrenceRule ? dto.recurrenceRule : null,
                 recurrenceId: dto.recurrenceId ? dto.recurrenceId : '',
-                recurrenceExceptions: dto.recurrenceExceptions ? dto.recurrenceExceptions : '',
+                recurrenceExceptions: dto.recurrenceExceptions ? dto.recurrenceExceptions : null,
             };
         }
     
@@ -98,7 +98,7 @@ export interface UserAppointment extends BaseDto {
     isAllDay: boolean;
     recurrenceRule: any;
     recurrenceId: string;
-    recurrenceExceptions: string;
+    recurrenceExceptions: any;
 }
 
 

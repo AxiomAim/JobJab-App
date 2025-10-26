@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
 import { Observable, zip } from "rxjs";
@@ -9,27 +9,33 @@ import {
   SchedulerModelFields,
 } from "@progress/kendo-angular-scheduler";
 import { parseDate } from "@progress/kendo-angular-intl";
+// import { UserAppointment } from "app/core/services/data-services/user-appointments/user-appointment.model";
+import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
+import { MyEventsDataService } from "app/core/services/data-services/my-events/my-events-data.service";
+import { MyEvent } from "app/core/services/data-services/my-events/my-events.model";
 
 const CREATE_ACTION = "Create";
 const UPDATE_ACTION = "Update";
 const REMOVE_ACTION = "Destroy";
 
 const fields: SchedulerModelFields = {
-  id: "TaskID",
-  title: "Title",
-  description: "Description",
-  startTimezone: "StartTimezone",
-  start: "Start",
-  end: "End",
-  endTimezone: "EndTimezone",
-  isAllDay: "IsAllDay",
-  recurrenceRule: "RecurrenceRule",
-  recurrenceId: "RecurrenceID",
-  recurrenceExceptions: "RecurrenceException",
+  id: "id",
+  title: "title",
+  description: "description",
+  startTimezone: "startTimezone",
+  start: "start",
+  end: "end",
+  endTimezone: "endTimezone",
+  isAllDay: "isAllDay",
+  recurrenceRule: "recurrenceRule",
+  recurrenceId: "recurrenceID",
+  recurrenceExceptions: "recurrenceException",
 };
 
 @Injectable()
 export class EditService extends BaseEditService<MyEvent> {
+  _myEventsDataService = inject(MyEventsDataService);
+  loginUser = inject(FirebaseAuthV2Service).loginUser();
   public loading = false;
 
   constructor(private http: HttpClient) {
@@ -72,54 +78,79 @@ export class EditService extends BaseEditService<MyEvent> {
   protected fetch(action = "", data?: any): Observable<any[]> {
     this.loading = true;
 
-    return this.http
-      .post(
-        `https://demos.telerik.com/service/v2/core/Tasks/${action}`,
-        this.serializeModels(data),
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      )
+    // console.log('action:', action);
+    // console.log('data:', data);
+
+    return this._myEventsDataService.getQuery('userId', '==', this.loginUser.id)  
       .pipe(
         map((res) => <any[]>res),
         tap(() => (this.loading = false))
       );
+
+    // return this.http
+    //   .post(
+    //     `https://demos.telerik.com/service/v2/core/Tasks/${action}`,
+    //     this.serializeModels(data),
+    //     {
+    //       headers: { "Content-Type": "application/json" },
+    //     }
+    //   )
+    //   .pipe(
+    //     map((res) => <any[]>res),
+    //     tap(() => (this.loading = false))
+    //   );
   }
 
   private readEvent(item: any): MyEvent {
     return {
       ...item,
-      Start: parseDate(item.Start),
-      End: parseDate(item.End),
-      RecurrenceException: this.parseExceptions(item.RecurrenceException),
+      start: parseDate(item.start),
+      end: parseDate(item.end),
+      recurrenceException: this.parseExceptions(item.recurrenceException),
     };
   }
 
-  private serializeModels(events: MyEvent[]): string {
+  private serializeModels(events: any[]): string {
     if (!events) {
       return "";
     }
 
     const data = events.map((event) => ({
       ...event,
-      RecurrenceException: this.serializeExceptions(event.RecurrenceException),
+      recurrenceException: this.serializeExceptions(event.recurrenceExceptions),
     }));
 
     return JSON.stringify(data);
   }
 }
 
-interface MyEvent {
-  TaskID?: number;
-  OwnerID?: number;
-  Title?: string;
-  Description?: string;
-  Start?: Date;
-  End?: Date;
-  StartTimezone?: string;
-  EndTimezone?: string;
-  IsAllDay?: boolean;
-  RecurrenceException?: any;
-  RecurrenceID?: number;
-  RecurrenceRule?: string;
-}
+// interface MyEvent {
+//   id?: string;
+//   orgId?: string;
+//   userId?: string;
+//   title?: string;
+//   description?: string;
+//   start?: Date;
+//   end?: Date;
+//   startTimezone?: string;
+//   endTimezone?: string;
+//   isAllDay?: boolean;
+//   recurrenceException?: any;
+//   recurrenceID?: number;
+//   recurrenceRule?: string;
+// }
+
+// interface MyEvent {
+//   TaskID?: number;
+//   OwnerID?: number;
+//   Title?: string;
+//   Description?: string;
+//   Start?: Date;
+//   End?: Date;
+//   StartTimezone?: string;
+//   EndTimezone?: string;
+//   IsAllDay?: boolean;
+//   RecurrenceException?: any;
+//   RecurrenceID?: number;
+//   RecurrenceRule?: string;
+// }

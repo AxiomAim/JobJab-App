@@ -44,7 +44,6 @@ import { KendoSchedulerComponent } from './kendo-scheduler/kendo-scheduler.compo
     MatTooltipModule,
     DecimalPipe,
     UsersEditItemComponent,
-    // DashboardScheduleComponent,
     KendoSchedulerComponent
 ],
 })
