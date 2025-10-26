@@ -1,5 +1,4 @@
-// kendo-scheduler.component.ts (Fixed and Optimized)
-import { Component, inject, OnInit } from "@angular/core";
+import {Component, inject, OnInit} from "@angular/core";
 import {
   KENDO_SCHEDULER,
   Group,
@@ -13,8 +12,7 @@ import {
   RemoveEvent,
   SaveEvent,
   SchedulerComponent,
-  SlotClickEvent,
-} from "@progress/kendo-angular-scheduler";
+  SlotClickEvent,} from "@progress/kendo-angular-scheduler";
 import {
   FormBuilder,
   FormGroup,
@@ -34,57 +32,103 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIcon, MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { v4 as uuidv4 } from 'uuid';
-import { MyEvent, MyEventModel } from "app/core/services/data-services/my-events/my-events.model"; // Added import
+
 
 @Component({
-  selector: 'app-kendo-scheduler',
-  templateUrl: './kendo-scheduler.component.html',
-  styleUrls: ['./kendo-scheduler.component.scss'],
-  standalone: true,
-  imports: [
-    KENDO_SCHEDULER, 
-    ReactiveFormsModule,
-    AsyncPipe,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule
-  ],
-  providers: [EditService],
+    selector: 'app-kendo-scheduler',
+    templateUrl: './kendo-scheduler.component.html',
+    styleUrls: ['./kendo-scheduler.component.scss'],
+    standalone: true,
+    imports: [
+        KENDO_SCHEDULER, 
+        ReactiveFormsModule,
+        AsyncPipe,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule
+    ],
+    providers: [EditService],
 })
 export class KendoSchedulerComponent implements OnInit {
   loginUser = inject(FirebaseAuthV2Service).loginUser();
   _userAppointmentsV2Service = inject(UserAppointmentsV2Service);
   
-  public selectedDate: Date = new Date(); // Changed to current date for relevance
+  // public selectedDate: Date = new Date(new Date().setHours(0, 0, 0, 0));
+  // public selectedDate: Date = new Date(2025, 8, 16);
+  public selectedDate: Date = new Date("2025-06-10T00:00:00");
   public startTime: string = "08:00";
   public endTime: string = "18:00";
   public formGroup!: FormGroup;
 
-  constructor(
+  public group: Group = {
+    resources: ["Users"],
+    orientation: "horizontal",
+  };
+
+constructor(
     public formBuilder: FormBuilder,
     public editService: EditService
-  ) {
+) {
     this.createFormGroup = this.createFormGroup.bind(this);
   }
 
+
   async createSampleEvent() {
-    const newEvent: MyEvent = MyEventModel.emptyDto(); // Fixed: Use MyEventModel
+    const newEvent: any = UserAppointmentModel.emptyDto();
     newEvent.id = uuidv4().toString();
-    newEvent.Start = new Date();
-    newEvent.End = new Date(new Date().getTime() + 60 * 60 * 1000); // 1 hour later
-    newEvent.IsAllDay = false;
-    newEvent.Title = 'Sample Event'; // Lowercase to match fields
-    newEvent.Description = 'This is a sample event.';
+    newEvent.start = new Date();
+    newEvent.end = new Date(new Date().getTime() + 60 * 60 * 1000); // 1 hour later
+    newEvent.isAllDay = false;
+    newEvent.title = 'Sample Event';
+    newEvent.description = 'This is a sample event.';
     newEvent.userId = this.loginUser.id;
     newEvent.orgId = this.loginUser.organization.id;    
     this.editService.create(newEvent);
+    // await this._userAppointmentsV2Service.createItem(newEvent);
+    // console.log("Sample Event Created", newEvent);
   }
 
   ngOnInit(): void {
     this.editService.read();
+    // this.loadUserAppointments();
   }
 
-  // Removed unused loadUserAppointments() and createItem()
+  // async loadUserAppointments() {
+  //   const appointments = await this._userAppointmentsV2Service.getAllUserAppomitments();
+  //   console.log("Loaded User Appointments:", appointments);
+  //   this.resources = [
+  //     {
+  //       name: "Users",
+  //       data: [
+  //         { 
+  //           text: this.loginUser.displayName, 
+  //           value: this.loginUser.id, 
+  //           color: "#f8a398",
+  //           avatar: "images/avatars/placeholder.png",
+  //          },
+  //       ],
+  //       field: "userId",
+  //       valueField: "value",
+  //       textField: "text",
+  //       colorField: "color",
+  //     },
+  //   ];
+    
+  //   // Map appointments to Kendo Scheduler events if necessary
+  //   this.events = appointments.map((appointment) => ({
+  //     id: appointment.id,
+  //     start: new Date(appointment.start),
+  //     end: new Date(appointment.end),
+  //     title: appointment.title,
+  //     description: appointment.description,
+  //     isAllDay: appointment.isAllDay,
+  //     // recurrenceRule: appointment.recurrenceRule,
+  //     // recurrenceId: appointment.recurrenceId,
+  //     // recurrenceExceptions: appointment.recurrenceExceptions,
+  //     userId: appointment.userId,
+  //   }));
+  // }
+
 
   public slotDblClickHandler({
     sender,
@@ -95,16 +139,16 @@ export class KendoSchedulerComponent implements OnInit {
     console.log("Slot Double Clicked:", start, end, isAllDay);
     this.closeEditor(sender);
 
-    this.formGroup = this.formBuilder.group({ // Fixed: Lowercase fields
-      start: [start, Validators.required],
-      end: [end, Validators.required],
-      startTimezone: new FormControl(),
-      endTimezone: new FormControl(),
-      isAllDay: isAllDay,
-      title: new FormControl(""),
-      description: new FormControl(""),
-      recurrenceRule: new FormControl(),
-      recurrenceID: new FormControl(),
+    this.formGroup = this.formBuilder.group({
+      Start: [start, Validators.required],
+      End: [end, Validators.required],
+      StartTimezone: new FormControl(),
+      EndTimezone: new FormControl(),
+      IsAllDay: isAllDay,
+      Title: new FormControl(""),
+      Description: new FormControl(""),
+      RecurrenceRule: new FormControl(),
+      RecurrenceID: new FormControl(),
     });
 
     sender.addEvent(this.formGroup);
@@ -118,6 +162,7 @@ export class KendoSchedulerComponent implements OnInit {
     if (this.editService.isRecurring(dataItem)) {
       sender
         .openRecurringConfirmationDialog(CrudOperation.Edit)
+        // The result will be undefined if the dialog was closed.
         .pipe(filter((editMode) => editMode !== undefined))
         .subscribe((editMode: EditMode) => {
           if (editMode === EditMode.Series) {
@@ -132,21 +177,21 @@ export class KendoSchedulerComponent implements OnInit {
     }
   }
 
-  public createFormGroup(dataItem: any, mode: EditMode): FormGroup { // Fixed: Lowercase fields
+  public createFormGroup(dataItem: any, mode: EditMode): FormGroup {
     const isOccurrence = mode === EditMode.Occurrence;
-    const exceptions = isOccurrence ? [] : dataItem.recurrenceException;
+    const exceptions = isOccurrence ? [] : dataItem.RecurrenceException;
 
     return this.formBuilder.group({
-      start: [dataItem.start, Validators.required],
-      end: [dataItem.end, Validators.required],
-      startTimezone: [dataItem.startTimezone],
-      endTimezone: [dataItem.endTimezone],
-      isAllDay: dataItem.isAllDay,
-      title: dataItem.title,
-      description: dataItem.description,
-      recurrenceRule: dataItem.recurrenceRule,
-      recurrenceID: dataItem.recurrenceID,
-      recurrenceException: [exceptions],
+      Start: [dataItem.Start, Validators.required],
+      End: [dataItem.End, Validators.required],
+      StartTimezone: [dataItem.StartTimezone],
+      EndTimezone: [dataItem.EndTimezone],
+      IsAllDay: dataItem.IsAllDay,
+      Title: dataItem.Title,
+      Description: dataItem.Description,
+      RecurrenceRule: dataItem.RecurrenceRule,
+      RecurrenceID: dataItem.RecurrenceID,
+      RecurrenceException: [exceptions],
     });
   }
 
@@ -160,6 +205,7 @@ export class KendoSchedulerComponent implements OnInit {
     if (this.editService.isRecurring(dataItem)) {
       sender
         .openRecurringConfirmationDialog(CrudOperation.Remove)
+        // The result will be undefined if the dialog was closed.
         .pipe(filter((editMode) => editMode !== undefined))
         .subscribe((editMode) => {
           this.handleRemove(dataItem, editMode);
@@ -182,10 +228,9 @@ export class KendoSchedulerComponent implements OnInit {
   }: SaveEvent): void {
     console.log("Save Handler Invoked");
     if (formGroup.valid) {
-      const formValue = formGroup.value; // Now lowercase keys
+      const formValue = formGroup.value;
 
       if (isNew) {
-        // Ensure orgId and userId for new events (handled in EditService.save)
         this.editService.create(formValue);
       } else {
         this.handleUpdate(dataItem, formValue, mode);
@@ -197,7 +242,7 @@ export class KendoSchedulerComponent implements OnInit {
 
   public dragEndHandler({ sender, event, start, end, isAllDay }): void {
     console.log("Drag Ended:", start, end, isAllDay);
-    let value = { start, end, isAllDay }; // Lowercase
+    let value = { Start: start, End: end, IsAllDay: isAllDay };
     let dataItem = event.dataItem;
 
     if (this.editService.isRecurring(dataItem)) {
@@ -207,12 +252,12 @@ export class KendoSchedulerComponent implements OnInit {
         .subscribe((editMode: EditMode) => {
           if (editMode === EditMode.Series) {
             dataItem = this.editService.findRecurrenceMaster(dataItem);
-            value.start = this.seriesDate(
-              dataItem.start,
-              event.dataItem.start,
+            value.Start = this.seriesDate(
+              dataItem.Start,
+              event.dataItem.Start,
               start
             );
-            value.end = this.seriesDate(dataItem.end, event.dataItem.end, end);
+            value.End = this.seriesDate(dataItem.End, event.dataItem.End, end);
           } else {
             value = { ...dataItem, ...value };
           }
@@ -226,7 +271,7 @@ export class KendoSchedulerComponent implements OnInit {
 
   public resizeEndHandler({ sender, event, start, end }): void {
     console.log("Resize Ended:", start, end);
-    let value = { start, end }; // Lowercase
+    let value = { Start: start, End: end };
     let dataItem = event.dataItem;
 
     if (this.editService.isRecurring(dataItem)) {
@@ -236,12 +281,12 @@ export class KendoSchedulerComponent implements OnInit {
         .subscribe((editMode: EditMode) => {
           if (editMode === EditMode.Series) {
             dataItem = this.editService.findRecurrenceMaster(dataItem);
-            value.start = this.seriesDate(
-              dataItem.start,
-              event.dataItem.start,
+            value.Start = this.seriesDate(
+              dataItem.Start,
+              event.dataItem.Start,
               start
             );
-            value.end = this.seriesDate(dataItem.end, event.dataItem.end, end);
+            value.End = this.seriesDate(dataItem.End, event.dataItem.End, end);
           } else {
             value = { ...dataItem, ...value };
           }
@@ -269,6 +314,7 @@ export class KendoSchedulerComponent implements OnInit {
         service.createException(item, value);
       }
     } else {
+      // The item is non-recurring or we are editing the entire series.
       service.update(item, value);
     }
   }
@@ -289,7 +335,7 @@ export class KendoSchedulerComponent implements OnInit {
     }
   }
 
-  private seriesDate(head: Date, occurence: Date, current: Date): Date { // Fixed: lowercase
+  private seriesDate(head: Date, occurence: Date, current: Date): Date {
     console.log("Calculating series date for head:", head, "occurrence:", occurence, "current:", current);
     const year =
       occurence.getFullYear() === current.getFullYear()
@@ -314,4 +360,26 @@ export class KendoSchedulerComponent implements OnInit {
 
     return new Date(year, month, date, hours, minutes);
   }
+
+  async createItem() {
+    const newItem: UserAppointment = UserAppointmentModel.emptyDto();
+    newItem.id = this.formGroup.get("id")?.value;
+    newItem.start = this.formGroup.get("start")?.value;
+    newItem.end = this.formGroup.get("end")?.value;
+    newItem.isAllDay = this.formGroup.get("isAllDay")?.value;
+    newItem.title = this.formGroup.get("title")?.value;
+    newItem.description = this.formGroup.get("description")?.value;
+    newItem.userId = this.loginUser.id;
+    newItem.orgId = this.loginUser.organization.id;    
+    await this._userAppointmentsV2Service.createItem(newItem).then((createdAppointment) => {
+      console.log("Created Appointment:", createdAppointment);
+    });    
+    await this._userAppointmentsV2Service.getAllUserAppomitments().then((allAppointment) => {
+      console.log("getAllUserAppomitments:", allAppointment);
+    });    
+  }
+
+  
 }
+
+

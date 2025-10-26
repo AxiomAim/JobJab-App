@@ -1,15 +1,14 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-import { Observable, zip } from "rxjs";
-import { map, tap } from "rxjs/operators";
+import { Observable, zip, forkJoin } from "rxjs";
+import { map, tap, switchMap } from "rxjs/operators";
 
 import {
   BaseEditService,
   SchedulerModelFields,
 } from "@progress/kendo-angular-scheduler";
 import { parseDate } from "@progress/kendo-angular-intl";
-// import { UserAppointment } from "app/core/services/data-services/user-appointments/user-appointment.model";
 import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
 import { MyEventsDataService } from "app/core/services/data-services/my-events/my-events-data.service";
 import { MyEvent } from "app/core/services/data-services/my-events/my-events.model";
@@ -20,22 +19,23 @@ const REMOVE_ACTION = "Destroy";
 
 const fields: SchedulerModelFields = {
   id: "id",
-  title: "title",
-  description: "description",
-  startTimezone: "startTimezone",
-  start: "start",
-  end: "end",
-  endTimezone: "endTimezone",
-  isAllDay: "isAllDay",
-  recurrenceRule: "recurrenceRule",
-  recurrenceId: "recurrenceID",
-  recurrenceExceptions: "recurrenceException",
+  title: "Title",
+  description: "Description",
+  startTimezone: "StartTimezone",
+  start: "Start",
+  end: "End",
+  endTimezone: "EndTimezone",
+  isAllDay: "IsAllDay",
+  recurrenceRule: "RecurrenceRule",
+  recurrenceId: "RecurrenceID",
+  recurrenceExceptions: "RecurrenceException",
 };
 
 @Injectable()
 export class EditService extends BaseEditService<MyEvent> {
   _myEventsDataService = inject(MyEventsDataService);
-  loginUser = inject(FirebaseAuthV2Service).loginUser();
+  private _authService = inject(FirebaseAuthV2Service);
+  private loginUser = this._authService.loginUser(); // Assuming sync; if async, handle accordingly
   public loading = false;
 
   constructor(private http: HttpClient) {
@@ -44,13 +44,20 @@ export class EditService extends BaseEditService<MyEvent> {
 
   public read(): void {
     if (this.data.length) {
-      this.source.next(this.data);
+      // Shallow clone to prevent reference issues during re-emits (avoids Kendo internal null refs)
+      this.source.next([...this.data]);
       return;
     }
 
     this.fetch().subscribe((data) => {
-      this.data = data.map((item) => this.readEvent(item));
-      this.source.next(this.data);
+      // Process and filter valid events only
+      const validData = data
+        .map((item) => this.readEvent(item))
+        .filter((event): event is MyEvent => event !== null); // Type guard to ensure non-null
+
+      this.data = validData;
+      // Shallow clone for emission
+      this.source.next([...this.data]);
     });
   }
 
@@ -60,97 +67,74 @@ export class EditService extends BaseEditService<MyEvent> {
     deleted: MyEvent[]
   ): void {
     const completed = [];
+
     if (deleted.length) {
-      completed.push(this.fetch(REMOVE_ACTION, deleted));
+      const deleteObservables = deleted.map((item) => 
+        this._myEventsDataService.deleteItem(item.id)
+      );
+      completed.push(forkJoin(deleteObservables));
     }
 
     if (updated.length) {
-      completed.push(this.fetch(UPDATE_ACTION, updated));
+      const updateObservables = updated.map((item) => 
+        this._myEventsDataService.updateItem(item)
+      );
+      completed.push(forkJoin(updateObservables));
     }
 
     if (created.length) {
-      completed.push(this.fetch(CREATE_ACTION, created));
+      const createObservables = created.map((item) => {
+        item.orgId = this.loginUser.organization?.id || null;
+        item.userId = this.loginUser.id;
+        return this._myEventsDataService.createItem(item);
+      });
+      completed.push(forkJoin(createObservables));
     }
 
-    zip(...completed).subscribe(() => this.read());
+    if (completed.length > 0) {
+      zip(...completed).subscribe(() => this.read());
+    }
   }
 
-  protected fetch(action = "", data?: any): Observable<any[]> {
+  protected fetch(action = "", data?: any): Observable<MyEvent[]> {
     this.loading = true;
 
-    // console.log('action:', action);
-    // console.log('data:', data);
-
-    return this._myEventsDataService.getQuery('userId', '==', this.loginUser.id)  
+    return this._myEventsDataService.getQuery('userId', '==', this.loginUser.id)
       .pipe(
-        map((res) => <any[]>res),
+        map((res) => res as MyEvent[]),
         tap(() => (this.loading = false))
       );
-
-    // return this.http
-    //   .post(
-    //     `https://demos.telerik.com/service/v2/core/Tasks/${action}`,
-    //     this.serializeModels(data),
-    //     {
-    //       headers: { "Content-Type": "application/json" },
-    //     }
-    //   )
-    //   .pipe(
-    //     map((res) => <any[]>res),
-    //     tap(() => (this.loading = false))
-    //   );
   }
 
-  private readEvent(item: any): MyEvent {
+  private readEvent(item: MyEvent): MyEvent | null {
+    // Parse dates; parseDate(null/undefined) returns null
+    const start = parseDate(item.Start);
+    const end = parseDate(item.End);
+
+    // Filter out invalid events (null/undefined start or end causes ZonedDate.fromLocalDate crash)
+    if (!start || !end) {
+      console.warn(`Skipping invalid event (null start/end): ${item.id || 'unknown'}`, item);
+      return null;
+    }
+
     return {
       ...item,
-      start: parseDate(item.start),
-      end: parseDate(item.end),
-      recurrenceException: this.parseExceptions(item.recurrenceException),
+      Start: start,
+      End: end,
+      RecurrenceException: this.parseExceptions(item.RecurrenceException),
     };
   }
 
-  private serializeModels(events: any[]): string {
-    if (!events) {
-      return "";
-    }
+  // private serializeModels(events: MyEvent[]): string {
+  //   if (!events) {
+  //     return "";
+  //   }
 
-    const data = events.map((event) => ({
-      ...event,
-      recurrenceException: this.serializeExceptions(event.recurrenceExceptions),
-    }));
+  //   const data = events.map((event) => ({
+  //     ...event,
+  //     RecurrenceException: this.serializeExceptions(event.RecurrenceExceptions),
+  //   }));
 
-    return JSON.stringify(data);
-  }
+  //   return JSON.stringify(data);
+  // }
 }
-
-// interface MyEvent {
-//   id?: string;
-//   orgId?: string;
-//   userId?: string;
-//   title?: string;
-//   description?: string;
-//   start?: Date;
-//   end?: Date;
-//   startTimezone?: string;
-//   endTimezone?: string;
-//   isAllDay?: boolean;
-//   recurrenceException?: any;
-//   recurrenceID?: number;
-//   recurrenceRule?: string;
-// }
-
-// interface MyEvent {
-//   TaskID?: number;
-//   OwnerID?: number;
-//   Title?: string;
-//   Description?: string;
-//   Start?: Date;
-//   End?: Date;
-//   StartTimezone?: string;
-//   EndTimezone?: string;
-//   IsAllDay?: boolean;
-//   RecurrenceException?: any;
-//   RecurrenceID?: number;
-//   RecurrenceRule?: string;
-// }
