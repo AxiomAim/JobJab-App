@@ -84,19 +84,19 @@ import { emailLabels } from '../../../../../mock-api/common/email-labels/data';
 })
 export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() btnIcon: string = 'mat_outline:add';
-    @Input() btnTitle: string = 'Add Contact';
+    @Input() btnTitle: string = 'Add';
     @Input() external: boolean = false;
     @Output() contactCreated: EventEmitter<Contact> = new EventEmitter<Contact>();
     loginUser = inject(FirebaseAuthV2Service).loginUser();
-    _alertMessagesService = inject(AlertMessagesService);
-    _contactsV2Service = inject(ContactsV2Service);
-    _sourcesV2Service = inject(SourcesV2Service);
+    public _alertMessagesService = inject(AlertMessagesService);
+    public _contactsV2Service = inject(ContactsV2Service);
+    public _sourcesV2Service = inject(SourcesV2Service);
 
     @ViewChild('newItemDrawer') newItemDrawer: AxiomaimDrawerComponent;
     @Output() drawerStateChanged = new EventEmitter<boolean>();
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-    contactForm: FormGroup;  // Typed for safety
+    itemForm: FormGroup;  // Typed for safety
     isLoading = signal<boolean>(false);
     public countries: Country[] = [];
     public newContact: Contact = ContactModel.emptyDto();
@@ -123,7 +123,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         private _activatedRoute: ActivatedRoute,
     ) {
         // Create the basic form structure early (typed)
-        this.contactForm = this._formBuilder.group({
+        this.itemForm = this._formBuilder.group({
             firstName: ['', [Validators.required]],
             lastName: ['', [Validators.required]],
             company: ['', [Validators.required]],
@@ -153,12 +153,8 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
     async ngOnInit() {
         // Defer async loads to avoid expression change errors
         setTimeout(async () => {
-            this.emailLabels = await this._contactsV2Service.emailLabels();
-            this.phoneLabels = await this._contactsV2Service.phoneLabels();
 
             // Load sources if not already (assuming service has loadSources())
-            await this._sourcesV2Service.getAll();  // Add if needed; adjust based on service
-
             await this._contactsService.getCountries();
             await this._contactsService.countries$
                 .pipe(takeUntil(this._unsubscribeAll))
@@ -204,7 +200,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
      */
     updateFormData(data: Contact): void {
         // Patch simple values
-        this.contactForm.patchValue({
+        this.itemForm.patchValue({
             firstName: data.firstName || '',
             lastName: data.lastName || '',
             company: data.company || '',
@@ -213,7 +209,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         });
 
         // Update emails array
-        const emailsArray = this.contactForm.get('emails') as FormArray;
+        const emailsArray = this.itemForm.get('emails') as FormArray;
         emailsArray.clear();
         const emailFormGroups = data.emails && data.emails.length > 0 
             ? data.emails.map((email) => this._formBuilder.group({ email: [email.email || ''], label: [email.label || ''] }))
@@ -224,7 +220,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         });
 
         // Update phone numbers array
-        const phoneNumbersArray = this.contactForm.get('phoneNumbers') as FormArray;
+        const phoneNumbersArray = this.itemForm.get('phoneNumbers') as FormArray;
         phoneNumbersArray.clear();
         const phoneNumbersFormGroups = data.phoneNumbers && data.phoneNumbers.length > 0 
             ? data.phoneNumbers.map((phoneNumber) => this._formBuilder.group({ 
@@ -254,7 +250,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         });
 
         // Add the email form group to the emails form array
-        (this.contactForm.get('emails') as FormArray).push(
+        (this.itemForm.get('emails') as FormArray).push(
             emailFormGroup
         );
 
@@ -269,7 +265,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
      */
     removeEmailField(index: number): void {
         // Get form array for emails
-        const emailsFormArray = this.contactForm.get(
+        const emailsFormArray = this.itemForm.get(
             'emails'
         ) as FormArray;
 
@@ -292,7 +288,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         });
 
         // Add the phone number form group to the phoneNumbers form array
-        (this.contactForm.get('phoneNumbers') as FormArray).push(
+        (this.itemForm.get('phoneNumbers') as FormArray).push(
             phoneNumberFormGroup
         );
 
@@ -307,7 +303,7 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
      */
     removePhoneNumberField(index: number): void {
         // Get form array for phone numbers
-        const phoneNumbersFormArray = this.contactForm.get(
+        const phoneNumbersFormArray = this.itemForm.get(
             'phoneNumbers'
         ) as FormArray;
 
@@ -346,12 +342,12 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
         this.updateFormData(ContactModel.emptyDto());
         
         // Clear all validation states
-        this.contactForm.markAsUntouched();
-        this.contactForm.markAsPristine();
+        this.itemForm.markAsUntouched();
+        this.itemForm.markAsPristine();
         
         // Reset each form control individually to ensure clean state
-        Object.keys(this.contactForm.controls).forEach(key => {
-            const control = this.contactForm.get(key);
+        Object.keys(this.itemForm.controls).forEach(key => {
+            const control = this.itemForm.get(key);
             if (control) {
                 control.setErrors(null);
                 control.markAsUntouched();
@@ -379,14 +375,14 @@ export class ContactsAddItemComponent implements OnInit, AfterViewInit, OnDestro
             this.newContact.customerAt = this.customerAt;
             this.newContact.cancel = this.cancel;
             this.newContact.cancelAt = this.cancelAt;
-            this.newContact.firstName = this.contactForm.get('firstName').value
-            this.newContact.lastName = this.contactForm.get('lastName').value
-            this.newContact.company = this.contactForm.get('company').value
-            this.newContact.source = this.contactForm.get('source').value;  // Added
+            this.newContact.firstName = this.itemForm.get('firstName').value
+            this.newContact.lastName = this.itemForm.get('lastName').value
+            this.newContact.company = this.itemForm.get('company').value
+            this.newContact.source = this.itemForm.get('source').value;  // Added
             this.newContact.displayName = this.newContact.firstName + ' ' + this.newContact.lastName;
-            this.newContact.emails = this.contactForm.get('emails').value
-            this.newContact.phoneNumbers = this.contactForm.get('phoneNumbers').value
-            this.newContact.address = this.contactForm.get('address').value;  // Now from formGroup
+            this.newContact.emails = this.itemForm.get('emails').value
+            this.newContact.phoneNumbers = this.itemForm.get('phoneNumbers').value
+            this.newContact.address = this.itemForm.get('address').value;  // Now from formGroup
             
             await this._contactsV2Service.createItem(this.newContact);
             await this._contactsV2Service.getAll();

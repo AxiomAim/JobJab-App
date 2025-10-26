@@ -86,7 +86,7 @@ export class UsersEditItemComponent implements OnInit, AfterViewInit, OnDestroy 
     @Output() drawerStateChanged = new EventEmitter<boolean>();
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-    contactForm: UntypedFormGroup;
+    itemForm: UntypedFormGroup;
     showRole: string[] = ["admin"];
     contact_roles: any[] = [];
     reLoad: boolean = true;
@@ -149,7 +149,7 @@ export class UsersEditItemComponent implements OnInit, AfterViewInit, OnDestroy 
      * Set Form Group 
      */
     async setFormGroup() {
-        this.contactForm = this._formBuilder.group({
+        this.itemForm = this._formBuilder.group({
             email: [this.loginUser().email, [Validators.required, Validators.email]],
             firstName: [this.loginUser().firstName, [Validators.required]],
             lastName: [this.loginUser().lastName, [Validators.required]],
@@ -192,15 +192,15 @@ export class UsersEditItemComponent implements OnInit, AfterViewInit, OnDestroy 
      */
     private resetForm(): void {
         // Reset form values
-        this.contactForm.reset();
+        this.itemForm.reset();
         
         // Clear all validation states
-        this.contactForm.markAsUntouched();
-        this.contactForm.markAsPristine();
+        this.itemForm.markAsUntouched();
+        this.itemForm.markAsPristine();
         
         // Reset each form control individually to ensure clean state
-        Object.keys(this.contactForm.controls).forEach(key => {
-            const control = this.contactForm.get(key);
+        Object.keys(this.itemForm.controls).forEach(key => {
+            const control = this.itemForm.get(key);
             if (control) {
                 control.setErrors(null);
                 control.markAsUntouched();
@@ -209,7 +209,7 @@ export class UsersEditItemComponent implements OnInit, AfterViewInit, OnDestroy 
         });
         
         // Set default values for form fields that need them
-        this.contactForm.patchValue({
+        this.itemForm.patchValue({
             active: true,
             contact_roles: [],
             site_account_id: [],

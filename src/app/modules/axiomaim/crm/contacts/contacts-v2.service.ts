@@ -95,13 +95,12 @@ export const ContactsV2Service = createInjectable(() => {
           .get<PhoneLabel[]>('api/common/email-labels')
           .pipe(
               tap((emailLabelsRes: EmailLabel[]) => {
-                console.log('emailLabelsRes', emailLabelsRes);
                 emailLabels.set(emailLabelsRes);
                 return emailLabelsRes;
               })
           );
-          return null;
-      // return await firstValueFrom(allPhoneLabels)        
+          // return null;
+      return await firstValueFrom(allPhoneLabels)        
     }
   
     /**
@@ -116,8 +115,8 @@ export const ContactsV2Service = createInjectable(() => {
                 return phoneLabelsRes;
               })
           );
-          return null;
-      // return await firstValueFrom(allPhoneLabels)        
+          // return null;
+      return await firstValueFrom(allPhoneLabels)        
     }
 
     

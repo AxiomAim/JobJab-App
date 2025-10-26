@@ -61,6 +61,8 @@ import { ContactsListComponent } from '../../contacts/list/list.component';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { EmailLabel } from 'app/core/models/email-labels.model';
+import { SourcesV2Service } from '../../sources/sources-v2.service';
+import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
 
 
 interface PhonenumberType {
@@ -101,18 +103,15 @@ interface PhonenumberType {
     ],
 })
 export class ContactsDetailsComponent implements OnInit, OnDestroy {
-    _contactsV2Service = inject(ContactsV2Service);
-    _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
-    _axiomaimLoadingService = inject(AxiomaimLoadingService);
+    public _alertMessagesService = inject(AlertMessagesService);
+    public _contactsV2Service = inject(ContactsV2Service);
+    public _sourcesV2Service = inject(SourcesV2Service);
+    public _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
+    public _axiomaimLoadingService = inject(AxiomaimLoadingService);
+
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
     @ViewChild('tagsPanel') private _tagsPanel: TemplateRef<any>;
     @ViewChild('tagsPanelOrigin') private _tagsPanelOrigin: ElementRef;
-    private _contact: BehaviorSubject<Contact | null> = new BehaviorSubject(
-        null
-    );
-    get contact$(): Observable<Contact> {
-        return this._contact.asObservable();
-    }
 
     private _countries: BehaviorSubject<Country[] | null> = new BehaviorSubject(
         []
@@ -120,16 +119,9 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     get countries$(): Observable<Country[]> {
         return this._countries.asObservable();
     }
+    isLoading = signal<boolean>(false);
 
     countries: Country[];
-    
-    phonenumberTypes: PhonenumberType[] = [
-        {value: 'mobile', viewValue: 'Mobile'},
-        {value: 'work', viewValue: 'Work'},
-        {value: 'home', viewValue: 'Home'},
-        {value: 'other', viewValue: 'Other'},
-        ];
-    
 
 
     editMode: boolean = false;
@@ -137,12 +129,13 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     tagsEditMode: boolean = false;
     filteredTags: Tag[];
     contact: Contact;
-    contactForm: UntypedFormGroup;
+    itemForm: UntypedFormGroup;
     contacts: Contact[];
     private _tagsPanelOverlayRef: OverlayRef;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     emailLabels: EmailLabel[] = [];
     phoneLabels: PhoneLabel[] = [];
+    public address = new FormControl('');  // Standalone, but tied via formControlName in HTML
 
     loginUser: User;
     showRole: string[] = ["admin"];
@@ -170,13 +163,14 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     ) {
 
         // Create the basic form structure early
-        this.contactForm = this._formBuilder.group({
-            firstName: ["", [Validators.required]],
-            lastName: ["", [Validators.required]],
-            address: [""],
-            isActive: [true],
+        this.itemForm = this._formBuilder.group({
+            firstName: ['', [Validators.required]],
+            lastName: ['', [Validators.required]],
+            company: ['', [Validators.required]],
+            source: [null, [Validators.required]],
             emails: this._formBuilder.array([]),
             phoneNumbers: this._formBuilder.array([]),
+            address: [''],  // Added for address-lookup integration
         });
 
         // Effect to watch for changes in the service signal
@@ -203,14 +197,12 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
 
         this.loginUser = await this._firebaseAuthV2Service.loginUser();
         this.contacts = await this._contactsV2Service.contacts();
-        this.contact = await this._contactsV2Service.contact();
+        const phonePattern = "^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"; 
+        this.itemForm.patchValue(this._contactsV2Service.contact());
+        console.log('form data', this.itemForm.value);
+        this._changeDetectorRef.markForCheck();
         // Open the drawer
         this._contactsListComponent.matDrawer.open();
-        const phonePattern = "^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"; 
-        this._changeDetectorRef.markForCheck();
-
-        this._contactsListComponent.matDrawer.open();
-        this.contactForm.patchValue(this.contact);
 
         this._contactsService.countries$
             .pipe(takeUntil(this._unsubscribeAll))
@@ -271,12 +263,10 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
      */
     updateItem(): void {        
         // Get the contact object
-        this.contact.firstName = this.contactForm.get('firstName').value;
-        this.contact.lastName = this.contactForm.get('lastName').value;
-        this.contact.address = this.contactForm.get('address').value;
-        this.contact.phoneNumbers = this.contactForm.get('phoneNumbers').value;
-        this._contact.next(this.contact);
-        console.log('contact', this.contact);
+        this.contact.firstName = this.itemForm.get('firstName').value;
+        this.contact.lastName = this.itemForm.get('lastName').value;
+        this.contact.address = this.itemForm.get('address').value;
+        this.contact.phoneNumbers = this.itemForm.get('phoneNumbers').value;
         // Update the contact on the server
         this._contactsV2Service
             .updateItem(this.contact)
@@ -385,7 +375,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
      */
     removeAvatar(): void {
         // Get the form control for 'avatar'
-        const avatarFormControl = this.contactForm.get('avatar');
+        const avatarFormControl = this.itemForm.get('avatar');
 
         // Set the avatar as null
         avatarFormControl.setValue(null);
@@ -397,7 +387,6 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
 
     onOptionSelected(data: any[]) {
         console.log('onOptionSelected', data);
-        this._contact.next(this.contact);
         // console.log('onOptionSelected', this.contact);
         // this.contact$.subscribe((resContact: Contact) => {
 
@@ -548,19 +537,18 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
      *
      * @param iso
      */
-        getCountryByIso(iso: string): Country {
-            if(iso) {
-                return this.countries.find((country) => country.iso === iso);
-    
-            }
+    getCountryByIso(iso: string): Country {
+        if(iso) {
+            return this.countries.find((country) => country.iso === iso);
         }
+    }
 
         /**
      * Update form data without recreating the form
      */
     updateFormData(data: Contact): void {
         // Patch simple values
-        this.contactForm.patchValue({
+        this.itemForm.patchValue({
             firstName: data.firstName || '',
             lastName: data.lastName || '',
             address: data.address || '',
@@ -569,7 +557,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         });
 
         // Update phone numbers array
-        const phoneNumbersArray = this.contactForm.get('phoneNumbers') as UntypedFormArray;
+        const phoneNumbersArray = this.itemForm.get('phoneNumbers') as UntypedFormArray;
         phoneNumbersArray.clear();
         const phoneNumbersFormGroups = data.phoneNumbers && data.phoneNumbers.length > 0 
             ? data.phoneNumbers.map((phoneNumber) => this._formBuilder.group({ 
@@ -591,7 +579,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
      */
     onAddressSelected(event: any) {
         const place = event.value;
-        this.contactForm.patchValue({
+        this.itemForm.patchValue({
             address: place.formatted_address || ''
         });
     }

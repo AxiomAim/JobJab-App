@@ -23,7 +23,8 @@ import { User } from '../../administration/users/users.model';
 import { LoginUserDashboardV2Service } from './login-user-dashboardV2.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { UsersEditItemComponent } from '../../administration/users/edit-item /edit-item.component';
-
+import { DashboardScheduleComponent } from './dashboard-schedule/dashboard-schedule.component';
+import { KendoSchedulerComponent } from './kendo-scheduler/kendo-scheduler.component';
 
 @Component({
     selector: 'login-user-dashboard',
@@ -31,19 +32,21 @@ import { UsersEditItemComponent } from '../../administration/users/edit-item /ed
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        TranslocoModule,
-        MatIconModule,
-        MatButtonModule,
-        MatRippleModule,
-        MatMenuModule,
-        MatTabsModule,
-        MatButtonToggleModule,
-        NgApexchartsModule,
-        MatTableModule,
-        MatTooltipModule,
-        DecimalPipe,
-        UsersEditItemComponent
-    ],
+    TranslocoModule,
+    MatIconModule,
+    MatButtonModule,
+    MatRippleModule,
+    MatMenuModule,
+    MatTabsModule,
+    MatButtonToggleModule,
+    NgApexchartsModule,
+    MatTableModule,
+    MatTooltipModule,
+    DecimalPipe,
+    UsersEditItemComponent,
+    // DashboardScheduleComponent,
+    KendoSchedulerComponent
+],
 })
 export class LoginUserDashboardComponent implements OnInit, OnDestroy {
     private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);

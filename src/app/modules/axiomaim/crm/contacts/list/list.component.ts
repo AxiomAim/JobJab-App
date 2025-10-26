@@ -41,6 +41,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ContactsV2Service } from '../contacts-v2.service';
 import { ContactsAddItemComponent } from '../add-item/add-item.component';
 import { MatChipsModule } from '@angular/material/chips';
+import { PhonePipe } from '@axiomaim/pipes/phone.pipe';
 
 @Component({
     selector: 'contacts-list',
@@ -74,16 +75,16 @@ import { MatChipsModule } from '@angular/material/chips';
         // AsyncPipe,
         I18nPluralPipe,
         ContactsAddItemComponent,
-        MatChipsModule
+        MatChipsModule,
+        PhonePipe
     ],
 })
 export class ContactsListComponent implements OnInit, OnDestroy {
     _contactsV2Service = inject(ContactsV2Service);
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
-    contactCount: number = 0;
     drawerMode: 'side' | 'over';
     searchInputControl: UntypedFormControl = new UntypedFormControl();
-    selectedUser: Contact;
+    selectedItem: Contact;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -107,11 +108,8 @@ export class ContactsListComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        // Get the contacts
-        this.contactCount = this._contactsV2Service.contacts().length;
-
         // Update the selected contact
-        this.selectedUser = this._contactsV2Service.contact();
+        this.selectedItem = this._contactsV2Service.contact();
 
         // Mark for check
         this._changeDetectorRef.markForCheck();
@@ -134,7 +132,7 @@ export class ContactsListComponent implements OnInit, OnDestroy {
         this.matDrawer.openedChange.subscribe((opened) => {
             if (!opened) {
                 // Remove the selected contact when drawer closed
-                this.selectedUser = null;
+                this.selectedItem = null;
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();

@@ -11,7 +11,7 @@
     <alert-messages />
 
     <div class="flex w-full flex-col ">
-        <div class="flex w-full flex-col  mb-8">
+        <div class="flex w-full flex-col mb-8">
             <div class="flex h-10 min-h-10 flex-row items-center bg-sky-900 px-6 text-white py-8">
                 <!-- <mat-icon class="text-current icon-size-7" [svgIcon]="'axiomaim:davesa-c'"></mat-icon> -->
                 <div class="ml-3 text-2xl font-semibold tracking-tight">
@@ -26,7 +26,7 @@
         <!-- form -->
         <div class="relative flex flex-auto flex-col overflow-y-auto items-center px-6 sm:px-12">
             <div class="w-full max-w-3xl">
-                <form [formGroup]="contactForm">
+                <form [formGroup]="itemForm">
                     <div class="flex flex-wrap gap-x-8 gap-y-4">
                         <div class="flex-auto">
                             <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
@@ -60,24 +60,26 @@
                     <div class="mt-2">
                         <section class="example-section">
                             <h4>Contact Type:</h4>
-                            <p>
-                                <mat-checkbox [(ngModel)]="lead" (change)="setAtDate('lead')"
-                                    [ngModelOptions]="{standalone: true}">
-                                    Lead
-                                </mat-checkbox>
-                            </p>
-                            <p>
-                                <mat-checkbox [(ngModel)]="customer" (change)="setAtDate('customer')"
-                                    [ngModelOptions]="{standalone: true}">
-                                    Customer
-                                </mat-checkbox>
-                            </p>
-                            <p>
-                                <mat-checkbox [(ngModel)]="cancel" (change)="setAtDate('cancel')"
-                                    [ngModelOptions]="{standalone: true}">
-                                    Cancel
-                                </mat-checkbox>
-                            </p>
+                            <div class="flex flex-wrap gap-x-8 gap-y-4">
+                                <div class="flex-auto">
+                                    <mat-checkbox [(ngModel)]="lead" (change)="setAtDate('lead')"
+                                        [ngModelOptions]="{standalone: true}">
+                                        Lead
+                                    </mat-checkbox>
+                                </div>
+                                <div class="flex-auto">
+                                    <mat-checkbox [(ngModel)]="customer" (change)="setAtDate('customer')"
+                                        [ngModelOptions]="{standalone: true}">
+                                        Customer
+                                    </mat-checkbox>
+                                </div>
+                                <div class="flex-auto">
+                                    <mat-checkbox [(ngModel)]="cancel" (change)="setAtDate('cancel')"
+                                        [ngModelOptions]="{standalone: true}">
+                                        Cancel
+                                    </mat-checkbox>
+                                </div>
+                            </div>
                         </section>
                     </div>
                     <mat-form-field class="w-full mt-2" [subscriptSizing]="'dynamic'">
@@ -93,7 +95,7 @@
                     <div class="mt-2">
                         <div class="space-y-4">
                             @for (
-                            email of contactForm.get('emails')[
+                            email of itemForm.get('emails')[
                             'controls'
                             ];
                             track trackByFn(i, email);
@@ -122,7 +124,9 @@
                                     <mat-select [formControl]="
                             email.get('label')
                         ">
-                                        @for (emailLabel of emailLabels; track trackByFn($index, emailLabel)) {
+                                        @for (emailLabel of _contactsV2Service.emailLabels(); track
+                                        trackByFn($index,
+                                        emailLabel)) {
                                         <mat-option [value]="emailLabel.value">{{emailLabel.name}}</mat-option>
                                         }
                                     </mat-select>
@@ -154,7 +158,7 @@
                     <div class="mt-2">
                         <div class="space-y-4">
                             @for (
-                            phoneNumber of contactForm.get('phoneNumbers')[
+                            phoneNumber of itemForm.get('phoneNumbers')[
                             'controls'
                             ];
                             track trackByFn(i, phoneNumber);
@@ -226,7 +230,9 @@
                                     <mat-select [formControl]="
                             phoneNumber.get('label')
                         ">
-                                        @for (phoneLabel of phoneLabels; track trackByFn($index, phoneLabel)) {
+                                        @for (phoneLabel of _contactsV2Service.phoneLabels(); track
+                                        trackByFn($index,
+                                        phoneLabel)) {
                                         <mat-option [value]="phoneLabel.value">{{phoneLabel.name}}</mat-option>
                                         }
                                     </mat-select>
@@ -270,8 +276,7 @@
                             </button>
                             <!-- Save -->
                             <button class="ml-2" mat-flat-button [color]="'primary'"
-                                [disabled]="contactForm.invalid || isLoading()" [matTooltip]="'Save'"
-                                (click)="onSubmit()">
+                                [disabled]="itemForm.invalid || isLoading()" [matTooltip]="'Save'" (click)="onSubmit()">
                                 {{ isLoading() ? 'Saving...' : 'Save' }}
                             </button>
                         </div>

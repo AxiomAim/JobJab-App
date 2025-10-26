@@ -162,6 +162,9 @@ export class SourcesAddItemComponent implements OnInit, AfterViewInit, OnDestroy
      * On init
      */
     async ngOnInit() {
+        this.newSource = SourceModel.emptyDto();
+        this.resetForm();
+
     }
 
 
@@ -213,9 +216,7 @@ export class SourcesAddItemComponent implements OnInit, AfterViewInit, OnDestroy
     // -----------------------------------------------------------------------------------------------------
     
     openDrawer(): void {
-        // Reset form to ensure clean state when opening
-        this.resetForm();
-        
+        this.ngOnInit();        
         // Open the drawer
         this.newItemDrawer.open();
     }
@@ -298,10 +299,12 @@ export class SourcesAddItemComponent implements OnInit, AfterViewInit, OnDestroy
         this.newSource.description = this.sourceForm.get('description').value
         await this._sourcesV2Service.createItem(this.newSource);
         await this._sourcesV2Service.getAll();
+        console.log('onSubmit source', this._sourcesV2Service.sources());
         if(this.external){
             this.sendSource();
+            this.close();
         } else {
-            this._router.navigate(['/crm/sources']);
+            this.close();
         }
         
         // this.isLoading.set(true);

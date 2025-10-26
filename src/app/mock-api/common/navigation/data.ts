@@ -245,13 +245,6 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 link: '/administration/user-timesheets',
             },
             {
-                id: 'administration.jobs',
-                title: 'Jobs',
-                type: 'basic',
-                icon: 'heroicons_outline:clipboard-document-check',
-                link: '/administration/jobs',
-            },
-            {
                 id: 'administration.invoices',
                 title: 'Invoices',
                 type: 'basic',
@@ -294,6 +287,22 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 type: 'basic',
                 icon: 'heroicons_outline:clipboard-document-check',
                 link: '/crm/sources',
+            },
+        ],
+    },
+    {
+        id: 'jobjab',
+        title: 'JobJab',
+        subtitle: 'JobJab Tools',
+        type: 'group',
+        icon: 'heroicons_outline:home',
+        children: [
+            {
+                id: 'jobjab.jobs',
+                title: 'Jobs',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/jobjab/jobs',
             },
         ],
     },
