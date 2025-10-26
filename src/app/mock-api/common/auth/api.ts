@@ -56,8 +56,6 @@ export class AuthMockApi {
         this._axiomaimMockApiService
             .onPost('api/auth/sign-in', 1500)
             .reply(({ request }) => {
-                console.log('request.body', request.body)
-
                 // Sign in successful
                 // if (
                 //     request.body.email === 'tig@jobjab.app' &&

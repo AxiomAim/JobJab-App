@@ -1,0 +1,15 @@
+<main id="mainContent">
+    <div class="container">
+      <div class="row justify-content-center py-5">
+        <h3>Syncfusion Angular Chart</h3>
+        <div class="container">
+        <ejs-chart id="chart-container" (load)='load($event)' [primaryXAxis]='primaryXAxis' [primaryYAxis]='primaryYAxis'
+    [title]='title' [legendSettings]='legendSettings' [tooltip]='tooltip'>
+        <e-series-collection>
+            <e-series [dataSource]='chartData' type='Line' xName='month' yName='sales' name='Sales' [marker]='marker'></e-series>
+        </e-series-collection>
+    </ejs-chart>
+  </div>
+      </div>
+    </div>
+</main>

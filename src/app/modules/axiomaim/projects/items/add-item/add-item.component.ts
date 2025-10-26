@@ -93,7 +93,7 @@ interface ItemType {
         MatChipsModule,
         MatSidenavModule,
         GridAllModule,
-        AxiomaimCardComponent,
+        // AxiomaimCardComponent,
         ImageGalleryComponent
         
 

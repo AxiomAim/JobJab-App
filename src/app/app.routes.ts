@@ -112,7 +112,6 @@ export const appRoutes: Route[] = [
                 {path: 'users', loadChildren: () => import('app/modules/axiomaim/administration/users/users.routes')},
                 {path: 'user-timesheets', loadChildren: () => import('app/modules/axiomaim/administration/user-timesheets/user-timesheets.routes')},
                 {path: 'products', loadChildren: () => import('app/modules/axiomaim/administration/products/products.routes')},
-                {path: 'jobs', loadChildren: () => import('app/modules/axiomaim/administration/jobs/jobs.routes')},
                 {path: 'invoices', loadChildren: () => import('app/modules/axiomaim/administration/invoices/invoices.routes')},
                 {path: 'technicians', loadChildren: () => import('app/modules/axiomaim/administration/technicians/technicians.routes')},
                 {path: 'newsletters', loadChildren: () => import('app/modules/axiomaim/administration/newsletters/newsletters.routes')},
@@ -138,6 +137,11 @@ export const appRoutes: Route[] = [
             {path: 'services', children: [
                 {path: 'services', loadChildren: () => import('app/modules/axiomaim/services/services/services.routes')},
                 {path: 'subscriptions', loadChildren: () => import('app/modules/axiomaim/services/subscriptions/subscriptions.routes')},
+            ]},
+
+            // Services
+            {path: 'jobjab', children: [
+                {path: 'jobs', loadChildren: () => import('app/modules/axiomaim/jobjab/jobs/jobs.routes')},
             ]},
 
             // Apps

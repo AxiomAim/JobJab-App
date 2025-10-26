@@ -10,18 +10,18 @@
             <!-- Main -->
             <div class="flex-auto">
                 <!-- Header -->
-                <div class="flex flex-auto flex-col justify-between border-b px-6 py-8 sm:flex-row md:flex-col md:px-8">
+                <div class="flex flex-auto flex-col justify-between border-b px-6 py-3 sm:flex-row md:flex-col md:px-4">
                     <!-- Title -->
                     <div>
                         <div class="text-4xl font-extrabold leading-none tracking-tight">
                             Contacts
                         </div>
                         <div class="text-secondary ml-0.5 font-medium">
-                            @if (contactCount > 0) {
-                            {{ contactCount }}
+                            @if (_contactsV2Service.contacts().length > 0) {
+                            {{ _contactsV2Service.contacts().length }}
                             }
                             {{
-                            contactCount
+                            _contactsV2Service.contacts().length
                             | i18nPlural
                             : {
                             '=0': 'No contacts',
@@ -52,9 +52,9 @@
 
                 <!-- Contacts list -->
                 <div class="relative">
-                    @if (contactCount > 0) {
+                    @if (_contactsV2Service.contacts().length > 0) {
                     @for (
-                    contact of this._contactsV2Service.contacts();
+                    contact of _contactsV2Service.contacts();
                     track trackByFn(i, contact);
                     let i = $index
                     ) {
@@ -70,41 +70,42 @@
                     </div>
                     } -->
                     <!-- User -->
-                    <a class="z-20 flex cursor-pointer items-center border-b px-6 py-4 md:px-8" [ngClass]="{
+                    <a class="z-20 flex cursor-pointer items-center border-b px-4 py-2 md:px-4" [ngClass]="{
                                         'dark:hover:bg-hover hover:bg-gray-100':
-                                            !selectedUser ||
-                                            selectedUser.id !== contact.id,
+                                            !selectedItem ||
+                                            selectedItem.id !== contact.id,
                                         'bg-primary-50 dark:bg-hover':
-                                            selectedUser &&
-                                            selectedUser.id === contact.id,
+                                            selectedItem &&
+                                            selectedItem.id === contact.id,
                                     }" [routerLink]="['./', contact.id]">
                         <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
                             @if (contact.avatar) {
                             <img class="h-full w-full object-cover" [src]="contact.avatar" alt="User avatar" />
                             }
                             @if (!contact.avatar) {
-                            <div class="flex h-full w-full items-center justify-center rounded-full  text-lg uppercase text-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                                [ngClass]="contact.activeUser ? 'bg-green-200' : 'bg-gray-200'">
+                            <div
+                                class="flex h-full w-full items-center justify-center rounded-full  text-lg uppercase text-gray-600 dark:bg-gray-700 dark:text-gray-200">
                                 {{ contact.firstName?.charAt(0) }}{{ contact.lastName?.charAt(0) }}
                             </div>
                             }
                         </div>
                         <div class="flex flex-wrap">
                             <div class="ml-4 min-w-0">
-                                <div class="truncate font-medium leading-5">
+                                <div class="truncate font-medium leading-5 text-md">
                                     {{ contact.displayName }}
                                 </div>
-                                <div class="text-secondary truncate leading-5">
-                                    {{ contact.email }}
+                                <div class="text-secondary truncate leading-5 text-md">
+                                    {{ contact.emails[0].email }}
                                 </div>
                             </div>
+                        </div>
+                        <div class="flex flex-wrap">
                             <div class="ml-4 min-w-0">
-                                <div class="truncate font-medium leading-5">
-                                    <mat-chip-set class="example-chip">
-                                        @for (contactRole of contact.contactRoles; track contactRole.name) {
-                                        <mat-chip class="example-box">{{contactRole.name}}</mat-chip>
-                                        }
-                                    </mat-chip-set>
+                                <div class="truncate font-medium leading-5 text-md">
+                                    {{ contact.phoneNumbers[0].phoneNumber | phone}}
+                                </div>
+                                <div class="text-secondary truncate leading-5 text-md">
+                                    {{ contact.address }}
                                 </div>
                             </div>
                         </div>
