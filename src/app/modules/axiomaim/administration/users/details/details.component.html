@@ -322,7 +322,8 @@
                                 <mat-select [formControl]="
                             phoneNumber.get('label')
                         ">
-                                    @for (phoneLabel of phoneLabels; track trackByFn($index, phoneLabel)) {
+                                    @for (phoneLabel of _usersV2Service.phoneLabels(); track trackByFn($index,
+                                    phoneLabel)) {
                                     <mat-option [value]="phoneLabel.value">{{phoneLabel.name}}</mat-option>
                                     }
                                 </mat-select>

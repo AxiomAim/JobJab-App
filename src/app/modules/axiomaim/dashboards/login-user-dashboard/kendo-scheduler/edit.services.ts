@@ -1,17 +1,14 @@
 import { inject, Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-
-import { Observable, zip, forkJoin } from "rxjs";
-import { map, tap, switchMap } from "rxjs/operators";
-
+import { Observable, zip, forkJoin, from } from "rxjs";
+// import { map, tap, switchMap, catchError, filter } from "rxjs/operators";
+import { catchError, map, tap } from "rxjs/operators";
 import {
   BaseEditService,
   SchedulerModelFields,
 } from "@progress/kendo-angular-scheduler";
-import { parseDate } from "@progress/kendo-angular-intl";
 import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
-import { MyEventsDataService } from "app/core/services/data-services/my-events/my-events-data.service";
-import { MyEvent } from "app/core/services/data-services/my-events/my-events.model";
+import { MyEvent, MyEventModel } from "app/core/services/data-services/my-events/my-events.model";
+import { MyEventsV2Service } from "app/core/services/data-services/my-events/my-events-v2.service";
 
 const CREATE_ACTION = "Create";
 const UPDATE_ACTION = "Update";
@@ -33,87 +30,179 @@ const fields: SchedulerModelFields = {
 
 @Injectable()
 export class EditService extends BaseEditService<MyEvent> {
-  _myEventsDataService = inject(MyEventsDataService);
+  _myEventsV2Service = inject(MyEventsV2Service);
   private _authService = inject(FirebaseAuthV2Service);
   private loginUser = this._authService.loginUser(); // Assuming sync; if async, handle accordingly
   public loading = false;
 
-  constructor(private http: HttpClient) {
+  constructor(
+    // private http: HttpClient
+  ) {
     super(fields);
+  }  
+
+  
+public read(): void {
+  // debugger
+  if (this.data.length > 0) {
+    this.source.next([...this.data]); // Clone to avoid ref issues
+    return;
   }
 
-  public read(): void {
-    if (this.data.length) {
-      // Shallow clone to prevent reference issues during re-emits (avoids Kendo internal null refs)
-      this.source.next([...this.data]);
-      return;
-    }
+  this.fetch().subscribe((data: MyEvent[]) => {
+    const processedData = data
+      .map((item) => {
+        const response = this.readEvent(item);
+        console.log('this.fetch():response', response);
+        return response;
+      })
+      .filter((item): item is MyEvent => item !== null); // Type guard ensures valid MyEvent[]
+    // console.log('processedData', processedData);
+    this.data = processedData;
+    console.log('this.data', this.data);
+    // this.source.next([...processedData]); // Clone the array
 
-    this.fetch().subscribe((data) => {
-      // Process and filter valid events only
-      const validData = data
-        .map((item) => this.readEvent(item))
-        .filter((event): event is MyEvent => event !== null); // Type guard to ensure non-null
+    this.source.next([...processedData]); // Emit cloned valid array
+  });
+}
 
-      this.data = validData;
-      // Shallow clone for emission
-      this.source.next([...this.data]);
-    });
-  }
-
-  protected save(
+  protected async save(
     created: MyEvent[],
     updated: MyEvent[],
     deleted: MyEvent[]
-  ): void {
+  ) {
     const completed = [];
 
     if (deleted.length) {
-      const deleteObservables = deleted.map((item) => 
-        this._myEventsDataService.deleteItem(item.id)
-      );
-      completed.push(forkJoin(deleteObservables));
+      const deleteObservables = deleted.map(async (item) => 
+        await this._myEventsV2Service.deleteItem(item.id).then((res) => {
+          completed.push(this.fetch(REMOVE_ACTION, deleted));
+          return res;
+        }));
     }
 
     if (updated.length) {
-      const updateObservables = updated.map((item) => 
-        this._myEventsDataService.updateItem(item)
+      completed.push(
+        from(Promise.all(updated.map(async (event: any) => {
+          const appointment: MyEvent = {
+            id: event.id as string,
+            orgId: this.loginUser.organization.id,
+            userId: this.loginUser.id,
+            Title: event.Title || '',
+            Description: event.Description || '',
+            Start: event.start!,
+            End: event.end!,
+            StartTimezone: event.StartTimezone || '',
+            EndTimezone: event.EndTimezone || '',
+            IsAllDay: event.IsAllDay || false,
+            RecurrenceRule: event.RecurrenceRule || null,
+            RecurrenceID: typeof event.RecurrenceID === 'number' ? event.RecurrenceID : null,
+            RecurrenceException: this.serializeExceptions(event.RecurrenceException),
+          };
+          await this._myEventsV2Service.updateItem(appointment).then((res) => {
+            console.log('updateItem:res', res);
+            completed.push(this.fetch(UPDATE_ACTION, updated));
+          });
+        })))
       );
-      completed.push(forkJoin(updateObservables));
     }
 
     if (created.length) {
-      const createObservables = created.map((item) => {
-        item.orgId = this.loginUser.organization?.id || null;
-        item.userId = this.loginUser.id;
-        return this._myEventsDataService.createItem(item);
-      });
-      completed.push(forkJoin(createObservables));
+      completed.push(
+        from(Promise.all(created.map(async (event: MyEvent) => {
+          console.log('created:event', event);
+          const base = MyEventModel.emptyDto();
+          // delete base.id; // Remove generated UUID to let Firestore auto-generate
+          const appointment: MyEvent = {
+            ...base,
+            orgId: this.loginUser.organization.id,
+            userId: this.loginUser.id,
+            Title: event.Title || '',
+            Description: event.Description || '',
+            Start: event.Start!,
+            End: event.End!,
+            StartTimezone: event.StartTimezone || '',
+            EndTimezone: event.EndTimezone || '',
+            IsAllDay: event.IsAllDay || false,
+            RecurrenceRule: event.RecurrenceRule || null,
+            RecurrenceID: typeof event.RecurrenceID === 'number' ? event.RecurrenceID : null,
+            RecurrenceException: this.serializeExceptions(event.RecurrenceException),
+          };
+          await this._myEventsV2Service.createItem(appointment).then((res) => {  
+            console.log('Created appointment:', res);
+            completed.push(this.fetch(CREATE_ACTION, created));
+           });
+        })))
+      );
     }
 
-    if (completed.length > 0) {
+    // if (completed.length > 0) {
       zip(...completed).subscribe(() => this.read());
-    }
+    // }
   }
 
   protected fetch(action = "", data?: any): Observable<MyEvent[]> {
     this.loading = true;
 
-    return this._myEventsDataService.getQuery('userId', '==', this.loginUser.id)
-      .pipe(
-        map((res) => res as MyEvent[]),
-        tap(() => (this.loading = false))
-      );
+    return from(this._myEventsV2Service.getAllUserAppomitments()).pipe(
+      map((appointments: any[]) => {
+        // Filter to current user's appointments
+        const userAppointments = appointments.filter(a => a.userId === this.loginUser.id);
+        return userAppointments;
+      }),
+      tap(() => (this.loading = false)),
+      catchError((error) => {
+        console.error('Error fetching appointments:', error);
+        this.loading = false;
+        throw error;
+      })
+    );
   }
 
-  private readEvent(item: MyEvent): MyEvent | null {
-    // Parse dates; parseDate(null/undefined) returns null
-    const start = parseDate(item.Start);
-    const end = parseDate(item.End);
+  // private readEvent(item: MyEvent): MyEvent | null {
+  //   // Parse dates; parseDate(null/undefined) returns null
+  //   const start = parseDate(item.Start);
+  //   const end = parseDate(item.End);
 
-    // Filter out invalid events (null/undefined start or end causes ZonedDate.fromLocalDate crash)
-    if (!start || !end) {
-      console.warn(`Skipping invalid event (null start/end): ${item.id || 'unknown'}`, item);
+  //   // Filter out invalid events (null/undefined start or end causes ZonedDate.fromLocalDate crash)
+  //   if (!start || !end) {
+  //     console.warn(`Skipping invalid event (null start/end): ${item.id || 'unknown'}`, item);
+  //     return null;
+  //   }
+
+  //   return {
+  //     ...item,
+  //     Start: start,
+  //     End: end,
+  //     RecurrenceException: this.parseExceptions(item.RecurrenceException),
+  //   };
+  // }
+
+private isValidDate(date: any): boolean {
+  return date instanceof Date && !isNaN(date.getTime());
+}
+
+  private readEvent(item: any): MyEvent | null {
+    // Ensure start and end are valid Dates
+    let start = item.Start;
+    let end = item.End;
+
+    if (!(start instanceof Date) || isNaN(start.getTime())) {
+      console.warn(`Invalid start date for appointment ${item.id}:`, item.Start);
+      start = new Date(); // or skip: return null;
+    } else {
+      start = new Date(start);
+    }
+
+    if (!(end instanceof Date) || isNaN(end.getTime())) {
+      console.warn(`Invalid end date for appointment ${item.id}:`, item.End);
+      end = new Date(start.getTime() + 3600000); // 1 hour later
+    } else {
+      end = new Date(end);
+    }
+
+    if (start >= end) {
+      console.warn(`Invalid date range for appointment ${item.id}`);
       return null;
     }
 
@@ -121,20 +210,50 @@ export class EditService extends BaseEditService<MyEvent> {
       ...item,
       Start: start,
       End: end,
-      RecurrenceException: this.parseExceptions(item.RecurrenceException),
+      recurrenceExceptions: this.parseExceptions(item.recurrenceExceptions),
     };
   }
 
-  // private serializeModels(events: MyEvent[]): string {
-  //   if (!events) {
-  //     return "";
-  //   }
 
-  //   const data = events.map((event) => ({
-  //     ...event,
-  //     RecurrenceException: this.serializeExceptions(event.RecurrenceExceptions),
-  //   }));
+// private readEvent(item: MyEvent): MyEvent | null {
+//   console.log('readEvent', item);
+//   // Parse dates safely – handle strings, timestamps, or nulls
+//   let start: Date | null = null;
+//   let end: Date | null = null;
 
-  //   return JSON.stringify(data);
-  // }
+//   if (item.Start) {
+//     start = typeof item.Start === 'string' ? new Date(item.Start) : (item.Start as Date);
+//     if (!this.isValidDate(start)) start = null;
+//   }
+
+//   if (item.End) {
+//     end = typeof item.End === 'string' ? new Date(item.End) : (item.End as Date);
+//     if (!this.isValidDate(end)) end = null;
+//   }
+
+//   // Skip if either date is invalid (prevents crash)
+//   if (!start || !end) {
+//     console.warn(`Skipping invalid event ID: ${item.id || 'unknown'} – Invalid start/end dates`, item);
+//     return null;
+//   }
+
+//     return {
+//       ...item,
+//       Start: start,
+//       End: end,
+//       RecurrenceException: this.parseExceptions(item.RecurrenceException),
+//     };
+// }
+  private serializeModels(events: any[]): string {
+    if (!events) {
+      return "";
+    }
+
+    const data = events.map((event) => ({
+      ...event,
+      RecurrenceException: this.serializeExceptions(event.RecurrenceExceptions),
+    }));
+
+    return JSON.stringify(data);
+  }
 }

@@ -13,6 +13,8 @@ export class MyEventModel {
         Description?: string,
         Start?: Date,
         End?: Date,
+        start?: Date,
+        end?: Date,
         StartTimezone?: string,
         EndTimezone?: string,
         IsAllDay?: boolean,
@@ -29,6 +31,7 @@ export class MyEventModel {
         this.Description = Description;
         this.Start = Start;
         this.End = End;
+
         this.StartTimezone = StartTimezone;
         this.EndTimezone = EndTimezone;
         this.IsAllDay = IsAllDay;
@@ -46,6 +49,8 @@ export class MyEventModel {
     public Description?: string;
     public Start?: Date;
     public End?: Date;
+    public start?: Date;
+    public end?: Date;
     public StartTimezone?: string;
     public EndTimezone?: string;
     public IsAllDay?: boolean;
@@ -65,6 +70,8 @@ export class MyEventModel {
             Description: null,
             Start: null,
             End: null,
+            start: null, 
+            end: null, 
             StartTimezone: null,
             EndTimezone: null,
             IsAllDay: null,
@@ -85,6 +92,8 @@ export class MyEventModel {
                 Description: dto.Description ? dto.Description : null,
                 Start: dto.Start ? dto.Start : null,
                 End: dto.End ? dto.End : null,
+                start: dto.start ? dto.start : null,
+                end: dto.end ? dto.end : null,
                 StartTimezone: dto.StartTimezone ? dto.StartTimezone : null,
                 EndTimezone: dto.EndTimezone ? dto.EndTimezone : null,
                 IsAllDay: dto.IsAllDay ? dto.IsAllDay : null,
@@ -106,6 +115,8 @@ export interface MyEvent extends BaseDto {
     Description?: string;
     Start?: Date;
     End?: Date;
+    start?: Date;
+    end?: Date;
     StartTimezone?: string;
     EndTimezone?: string;
     IsAllDay?: boolean;

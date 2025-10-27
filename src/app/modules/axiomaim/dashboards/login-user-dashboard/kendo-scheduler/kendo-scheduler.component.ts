@@ -26,12 +26,11 @@ import {
 } from "@angular/forms";
 import { UserAppointmentsV2Service } from "app/core/services/data-services/user-appointments/user-appointments-v2.service";
 import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
-import { UserAppointment, UserAppointmentModel } from "app/core/services/data-services/user-appointments/user-appointment.model";
 import { filter } from "rxjs";
 import { EditService } from "./edit.services";
 import { AsyncPipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
-import { MatIcon, MatIconModule } from "@angular/material/icon";
+import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { v4 as uuidv4 } from 'uuid';
 import { MyEvent, MyEventModel } from "app/core/services/data-services/my-events/my-events.model"; // Added import
@@ -45,9 +44,9 @@ import { MyEvent, MyEventModel } from "app/core/services/data-services/my-events
     KENDO_SCHEDULER, 
     ReactiveFormsModule,
     AsyncPipe,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule
+    // MatButtonModule,
+    // MatIconModule,
+    // MatTooltipModule
   ],
   providers: [EditService],
 })
@@ -73,8 +72,8 @@ export class KendoSchedulerComponent implements OnInit {
     newEvent.Start = new Date();
     newEvent.End = new Date(new Date().getTime() + 60 * 60 * 1000); // 1 hour later
     newEvent.IsAllDay = false;
-    newEvent.Title = 'Sample Event'; // Lowercase to match fields
-    newEvent.Description = 'This is a sample event.';
+    newEvent.Title = 'Event One'; // Lowercase to match fields
+    newEvent.Description = 'Testing event.';
     newEvent.userId = this.loginUser.id;
     newEvent.orgId = this.loginUser.organization.id;    
     this.editService.create(newEvent);
@@ -95,16 +94,16 @@ export class KendoSchedulerComponent implements OnInit {
     console.log("Slot Double Clicked:", start, end, isAllDay);
     this.closeEditor(sender);
 
-    this.formGroup = this.formBuilder.group({ // Fixed: Lowercase fields
-      start: [start, Validators.required],
-      end: [end, Validators.required],
-      startTimezone: new FormControl(),
-      endTimezone: new FormControl(),
-      isAllDay: isAllDay,
-      title: new FormControl(""),
-      description: new FormControl(""),
-      recurrenceRule: new FormControl(),
-      recurrenceID: new FormControl(),
+    this.formGroup = this.formBuilder.group({
+      Start: [start, Validators.required],
+      End: [end, Validators.required],
+      StartTimezone: new FormControl(),
+      EndTimezone: new FormControl(),
+      IsAllDay: isAllDay,
+      Title: new FormControl(""),
+      Description: new FormControl(""),
+      RecurrenceRule: new FormControl(),
+      RecurrenceID: new FormControl(),
     });
 
     sender.addEvent(this.formGroup);
@@ -137,16 +136,16 @@ export class KendoSchedulerComponent implements OnInit {
     const exceptions = isOccurrence ? [] : dataItem.recurrenceException;
 
     return this.formBuilder.group({
-      start: [dataItem.start, Validators.required],
-      end: [dataItem.end, Validators.required],
-      startTimezone: [dataItem.startTimezone],
-      endTimezone: [dataItem.endTimezone],
-      isAllDay: dataItem.isAllDay,
-      title: dataItem.title,
-      description: dataItem.description,
-      recurrenceRule: dataItem.recurrenceRule,
-      recurrenceID: dataItem.recurrenceID,
-      recurrenceException: [exceptions],
+      Start: [dataItem.Start, Validators.required],
+      End: [dataItem.End, Validators.required],
+      StartTimezone: [dataItem.StartTimezone],
+      EndTimezone: [dataItem.EndTimezone],
+      IsAllDay: dataItem.IsAllDay,
+      Title: dataItem.Title,
+      Description: dataItem.Description,
+      RecurrenceRule: dataItem.RecurrenceRule,
+      RecurrenceID: dataItem.RecurrenceID,
+      RecurrenceException: [exceptions],
     });
   }
 
@@ -208,11 +207,11 @@ export class KendoSchedulerComponent implements OnInit {
           if (editMode === EditMode.Series) {
             dataItem = this.editService.findRecurrenceMaster(dataItem);
             value.start = this.seriesDate(
-              dataItem.start,
-              event.dataItem.start,
+              dataItem.Start,
+              event.dataItem.Start,
               start
             );
-            value.end = this.seriesDate(dataItem.end, event.dataItem.end, end);
+            value.end = this.seriesDate(dataItem.End, event.dataItem.End, end);
           } else {
             value = { ...dataItem, ...value };
           }
@@ -237,11 +236,11 @@ export class KendoSchedulerComponent implements OnInit {
           if (editMode === EditMode.Series) {
             dataItem = this.editService.findRecurrenceMaster(dataItem);
             value.start = this.seriesDate(
-              dataItem.start,
-              event.dataItem.start,
+              dataItem.Start,
+              event.dataItem.Start,
               start
             );
-            value.end = this.seriesDate(dataItem.end, event.dataItem.end, end);
+            value.end = this.seriesDate(dataItem.End, event.dataItem.End, end);
           } else {
             value = { ...dataItem, ...value };
           }

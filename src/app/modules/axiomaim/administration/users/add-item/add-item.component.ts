@@ -102,10 +102,8 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     userForm: UntypedFormGroup;
-    #loginUser = signal<User | null>(null);
     showRole: string[] = ["admin"];
     // userRoles: UserRole[] = [];
-    phoneLabels: PhoneLabel[] = [];
     reLoad: boolean = true;
     sitePermission: boolean = false;
     complinePermission: boolean = false;
@@ -125,7 +123,6 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
     };
     showAlert: boolean = false;
 
-
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     currentUserRole = new FormControl('');
     readonly userRoles = signal<UserRole[]>([]);
@@ -136,8 +133,6 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
             ? this.allUserRoles().filter(role => role.name.toLowerCase().includes(currentValue))
             : this.allUserRoles().slice();
         });
-
-
     readonly announcer = inject(LiveAnnouncer);
 
     /**
@@ -196,13 +191,13 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
      * On init
      */
     async ngOnInit() {
-        this.phoneLabels = await this._usersV2Service.phoneLabels();
         this.allUserRoles.set(await this._usersV2Service.userRoles());
 
         this._contactsService.countries$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((codes: Country[]) => {
                 this.countries = codes;
+                console.log('Countries loaded in add user component:', this.countries);
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
@@ -312,6 +307,7 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
 
     openDrawer(): void {
         // Reset form to ensure clean state when opening
+        // this.ngOnInit();
         this.resetForm();
         
         // Open the drawer

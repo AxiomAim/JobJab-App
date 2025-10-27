@@ -7,6 +7,7 @@ import { UserRole } from "app/core/models/user-roles.model";
 import { HttpClient } from "@angular/common/http";
 import { firstValueFrom, tap } from "rxjs";
 import { PhoneLabel } from "app/core/models/phone-labels.model";
+import { EmailLabel } from "app/core/models/email-labels.model";
 
 export const UsersV2Service = createInjectable(() => {
   const _router = inject(Router);
@@ -17,6 +18,7 @@ export const UsersV2Service = createInjectable(() => {
   const user = signal<User | null>(null);
   const loginUser = signal<User | null>(null);
   const userRoles = signal<UserRole[] | null>(null);
+  const emailLabels = signal<EmailLabel[] | null>(null);
   const phoneLabels = signal<PhoneLabel[] | null>(null);
 
   const getAll = async ():Promise<User[]> => {
@@ -90,16 +92,34 @@ export const UsersV2Service = createInjectable(() => {
     }
   
     /**
+     * Get emailLabels
+     */
+    const getEmailLabels = async (): Promise<EmailLabel[]> => {
+      const allPhoneLabels = await _httpClient
+          .get<PhoneLabel[]>('api/common/email-labels')
+          .pipe(
+              tap((emailLabelsRes: EmailLabel[]) => {
+                emailLabels.set(emailLabelsRes);
+                return emailLabelsRes;
+              })
+          );
+          // return null;
+      return await firstValueFrom(allPhoneLabels)        
+    }
+  
+    /**
      * Get phoneLabels
      */
     const getPhoneLabels = async (): Promise<PhoneLabel[]> => {
-      const allPhoneLabels = _httpClient
+      const allPhoneLabels = await _httpClient
           .get<PhoneLabel[]>('api/common/phone-labels')
           .pipe(
               tap((phoneLabelsRes: PhoneLabel[]) => {
+                phoneLabels.set(phoneLabelsRes);
                 return phoneLabelsRes;
               })
           );
+          // return null;
       return await firstValueFrom(allPhoneLabels)        
     }
 
@@ -110,6 +130,7 @@ export const UsersV2Service = createInjectable(() => {
     loginUser: computed(() => loginUser()),
     userRoles: computed(() => userRoles()),
     phoneLabels: computed(() => phoneLabels()),
+    emailLabels: computed(() => emailLabels()),
     getAll,
     getItem,
     search,
@@ -118,6 +139,7 @@ export const UsersV2Service = createInjectable(() => {
     deleteItem,
     setUser,
     getUserRoles,
-    getPhoneLabels
+    getPhoneLabels,
+    getEmailLabels
   };
 });

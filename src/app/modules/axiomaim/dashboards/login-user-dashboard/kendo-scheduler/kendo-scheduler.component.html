@@ -19,11 +19,11 @@
     <kendo-scheduler-year-view></kendo-scheduler-year-view>
 </kendo-scheduler> -->
 
-<button class="ml-4" mat-flat-button [matTooltip]="'New event'" [color]="'primary'" (click)="createSampleEvent()"
+<!-- <button class="ml-4" mat-flat-button [matTooltip]="'New event'" [color]="'primary'" (click)="createSampleEvent()"
     aria-label="Add new event">
     <mat-icon [svgIcon]="'mat_outline:add'"></mat-icon>
     <span class="ml-2 mr-1">Add Event</span>
-</button>
+</button> -->
 
 <kendo-scheduler [kendoSchedulerBinding]="editService.events | async" [modelFields]="editService.fields"
     [loading]="editService.loading" [editable]="true" [selectedViewIndex]="0" [selectedDate]="selectedDate"

@@ -2,7 +2,6 @@ import { createInjectable } from "ngxtension/create-injectable";
 import { signal, computed, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
-import { UserAppointment } from "app/core/services/data-services/user-appointments/user-appointment.model";
 import { MyEvent } from "./my-events.model";
 import { MyEventsApiV2Service } from "./my-events-v2-api.service";
 
@@ -22,7 +21,7 @@ export const MyEventsV2Service = createInjectable(() => {
     return response;
   };
 
-  const getAllUserAppomitments = async ():Promise<UserAppointment[]> => {
+  const getAllUserAppomitments = async ():Promise<MyEvent[]> => {
     const response = await _myEventsApiV2Service.getAll();
     allMyEvents.set(response);
     myEvents.set(response);
@@ -30,19 +29,19 @@ export const MyEventsV2Service = createInjectable(() => {
   };
 
 
-  const getItem = async (oid: string): Promise<UserAppointment> => {
+  const getItem = async (oid: string): Promise<MyEvent> => {
     const response = await _myEventsApiV2Service.getItem(oid);
     myEvent.set(response);
     return response;
   };
 
-  const createItem = async (data: UserAppointment): Promise<UserAppointment> => {
+  const createItem = async (data: MyEvent): Promise<MyEvent> => {
     const response = await _myEventsApiV2Service.createItem(data);
     myEvent.set(response);
     return response;
   };
 
-  const updateItem = async (data: UserAppointment): Promise<UserAppointment> => {
+  const updateItem = async (data: MyEvent): Promise<MyEvent> => {
     const response = await _myEventsApiV2Service.updateItem(data);
     return response;
   };
@@ -53,7 +52,7 @@ export const MyEventsV2Service = createInjectable(() => {
     return response;
   };
 
-  const setContact = async (thisContact: UserAppointment): Promise<UserAppointment> => {
+  const setContact = async (thisContact: MyEvent): Promise<MyEvent> => {
     myEvent.set(thisContact);
     return myEvent();
   };
