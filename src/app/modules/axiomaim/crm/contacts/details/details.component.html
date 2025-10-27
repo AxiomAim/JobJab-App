@@ -456,23 +456,7 @@
                     <address-lookup class="w-full" label="Address" formControlName="address"
                         placeholder="Enter address">
                     </address-lookup>
-
-                    <!-- Actions -->
-                    <div
-                        class="-mx-6 mt-10 flex items-center border-t bg-gray-50 py-4 pl-1 pr-4 dark:bg-transparent sm:-mx-12 sm:pl-7 sm:pr-12">
-                        <!-- Cancel -->
-                        <button class="ml-auto" mat-button [matTooltip]="'Cancel'" (click)="close()"
-                            [disabled]="isLoading()">
-                            Cancel
-                        </button>
-                        <!-- Save -->
-                        <button class="ml-2" mat-flat-button [color]="'primary'"
-                            [disabled]="itemForm.invalid || isLoading()" [matTooltip]="'Save'" (click)="onSubmit()">
-                            {{ isLoading() ? 'Saving...' : 'Save' }}
-                        </button>
-                    </div>
                 </div>
-
 
                 <!-- Actions -->
                 <div
