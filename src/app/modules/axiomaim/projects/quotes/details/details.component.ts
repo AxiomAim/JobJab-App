@@ -35,7 +35,6 @@ import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
-import { Tag } from 'app/core/models/tag.model';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { Quote } from '../quotes.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
@@ -43,6 +42,7 @@ import { SelectMultiComponent } from 'app/layout/common/select-multi/select-mult
 import { QuotesV2Service } from '../quotes-v2.service';
 import { User } from 'app/core/user/user.types';
 import { QuotesListComponent } from '../list/list.component';
+import { Tag } from 'app/core/services/data-services/tags/tags.model';
 
 
 interface PhonenumberType {

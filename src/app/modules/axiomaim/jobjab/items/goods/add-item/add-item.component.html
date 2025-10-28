@@ -1,0 +1,249 @@
+<!-- Settings toggle -->
+<button class="ml-4" mat-flat-button [matTooltip]="'New Customer'" [color]="'primary'" (click)="openDrawer()"
+    aria-label="Add new contact">
+    <mat-icon [svgIcon]="btnIcon"></mat-icon>
+    <span class="ml-2 mr-1">{{ btnTitle }}</span>
+</button>
+
+<axiomaim-drawer
+    class="z-999 mt-16 w-full min-w-full xl:w-3/4 xl:min-w-3/4 lg:w-3/4 lg:min-w-3/4 md:w-3/4 md:min-w-3/4 sm:w-full sm:min-w-full xs:w-full xs:min-w-full"
+    fixed [mode]="'over'" [name]="'newItemDrawer'" [position]="'right'" #newItemDrawer>
+    <alert-messages />
+
+    <div class="flex w-full flex-col ">
+        <div class="flex w-full flex-col mb-8">
+            <div class="flex h-10 min-h-10 flex-row items-center bg-sky-900 px-6 text-white py-8">
+                <!-- <mat-icon class="text-current icon-size-7" [svgIcon]="'axiomaim:davesa-c'"></mat-icon> -->
+                <div class="ml-3 text-2xl font-semibold tracking-tight">
+                    Add Contact
+                </div>
+                <button class="ml-auto mr-12" mat-icon-button (click)="close()" aria-label="Close drawer">
+                    <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <!-- form -->
+        <div class="overflow-auto shadow-lg">
+            <div class="flex border-b">
+                <!-- Selected good form -->
+                <form class="flex w-full flex-col" [formGroup]="goodForm">
+                    <div class="flex flex-col p-8 sm:flex-row">
+                        <!-- Good images and status -->
+                        <div class="mb-8 flex flex-col items-center sm:mb-0 sm:items-start">
+                            <div class="flex flex-col items-center">
+                                <div class="h-44 w-32 overflow-hidden rounded border">
+                                    @if (
+                                    goodForm.get(
+                                    'images'
+                                    ).value.length
+                                    ) {
+                                    <img class="h-full w-full object-cover" [src]="
+                                                        goodForm.get(
+                                                            'images'
+                                                        ).value[
+                                                            goodForm.get(
+                                                                'currentImageIndex'
+                                                            ).value
+                                                        ]
+                                                    " />
+                                    } @else {
+                                    <span class="flex min-h-20 items-center text-lg font-semibold">NO IMAGE</span>
+                                    }
+                                </div>
+                                @if (
+                                goodForm.get('images')
+                                .value.length
+                                ) {
+                                <div class="mt-2 flex items-center whitespace-nowrap">
+                                    <button mat-icon-button (click)="cycleImages(false)">
+                                        <mat-icon class="icon-size-5" [svgIcon]="
+                                                            'heroicons_mini:arrow-long-left'
+                                                        "></mat-icon>
+                                    </button>
+                                    <span class="font-sm mx-2">
+                                        {{
+                                        goodForm.get(
+                                        'currentImageIndex'
+                                        ).value + 1
+                                        }}
+                                        of
+                                        {{
+                                        goodForm.get(
+                                        'images'
+                                        ).value.length
+                                        }}
+                                    </span>
+                                    <button mat-icon-button (click)="cycleImages(true)">
+                                        <mat-icon class="icon-size-5" [svgIcon]="
+                                                            'heroicons_mini:arrow-long-right'
+                                                        "></mat-icon>
+                                    </button>
+                                </div>
+                                }
+                            </div>
+                            <div class="mt-8 flex flex-col">
+                                <span class="mb-2 font-semibold">Good status</span>
+                                <mat-slide-toggle [formControlName]="'active'" [color]="'primary'">
+                                    {{
+                                    goodForm.get(
+                                    'active'
+                                    ).value === true
+                                    ? 'Active'
+                                    : 'Disabled'
+                                    }}
+                                </mat-slide-toggle>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-auto flex-wrap">
+                            <!-- <div>{{ goodForm.get('category').value }}</div> -->
+                            <!-- Name, SKU & etc. -->
+                            <div class="flex w-full flex-col sm:pl-8 lg:w-2/4">
+                                <!-- Name -->
+                                <mat-form-field class="w-full">
+                                    <mat-label>Name</mat-label>
+                                    <input matInput [formControlName]="'name'" />
+                                </mat-form-field>
+                                <!-- Category, Brand & Vendor -->
+                                <div class="flex">
+                                    <mat-form-field class="w-1/3 pr-2">
+                                        <mat-label>Category</mat-label>
+                                        <mat-select [formControlName]="
+                                                        'category'
+                                                    ">
+                                            @for (
+                                            category of _goodsV2Service.categories();
+                                            track category
+                                            ) {
+                                            <mat-option [value]="
+                                                                category.id
+                                                            ">
+                                                {{ category.name }}
+                                            </mat-option>
+                                            }
+                                        </mat-select>
+                                    </mat-form-field>
+                                    @if(goodForm.get('category').value == '00000005-0002-0000-0000-000000000000') {
+
+                                    <mat-form-field class="w-1/3 px-2">
+                                        <mat-label>Brand</mat-label>
+                                        <mat-select [formControlName]="'brand'">
+                                            @for (
+                                            brand of _brandsV2Service.brands();
+                                            track brand
+                                            ) {
+                                            <mat-option [value]="brand.id">
+                                                {{ brand.name }}
+                                            </mat-option>
+                                            }
+                                        </mat-select>
+                                        <mat-icon [svgIcon]="'mat_outline:add'" (click)="openDialogBrands()"></mat-icon>
+                                    </mat-form-field>
+                                    <mat-form-field class="w-1/3 pl-2">
+                                        <mat-label>Vendor</mat-label>
+                                        <mat-select [formControlName]="'vendor'">
+                                            @for (
+                                            vendor of _vendorsV2Service.vendors();
+                                            track vendor
+                                            ) {
+                                            <mat-option [value]="vendor.id">
+                                                {{ vendor.name }}
+                                            </mat-option>
+                                            }
+                                        </mat-select>
+                                        <mat-icon [svgIcon]="'mat_outline:add'"
+                                            (click)="openDialogVendors()"></mat-icon>
+                                    </mat-form-field>
+                                    }
+                                </div>
+
+                                @if(goodForm.get('category').value == '00000005-0002-0000-0000-000000000000') {
+
+                                <!-- SKU and Barcode -->
+                                <div class="flex">
+                                    <mat-form-field class="w-1/3 pr-2">
+                                        <mat-label>SKU</mat-label>
+                                        <input matInput [formControlName]="'sku'" />
+                                    </mat-form-field>
+                                    <mat-form-field class="w-2/3 pl-2">
+                                        <mat-label>Barcode</mat-label>
+                                        <input matInput [formControlName]="
+                                                        'barcode'
+                                                    " />
+                                    </mat-form-field>
+                                </div>
+
+                                <!-- Stock and Reserved -->
+                                <div class="flex">
+                                    <mat-form-field class="w-1/3 pr-2">
+                                        <mat-label>Stock</mat-label>
+                                        <input type="number" matInput [formControlName]="'stock'" />
+                                    </mat-form-field>
+                                    <mat-form-field class="w-1/3 pl-2">
+                                        <mat-label>Reserved</mat-label>
+                                        <input type="number" matInput [formControlName]="
+                                                        'reserved'
+                                                    " />
+                                    </mat-form-field>
+                                </div>
+                                }
+                            </div>
+                            <!-- Cost, Base price, Tax & Price -->
+                            <div class="flex w-full flex-col sm:pl-8 lg:w-1/4">
+                                @if(goodForm.get('category').value == '00000005-0002-0000-0000-000000000000') {
+                                <mat-form-field class="w-full">
+                                    <mat-label>Cost</mat-label>
+                                    <span matPrefix>$</span>
+                                    <input matInput [formControlName]="'cost'" />
+                                </mat-form-field>
+                                <mat-form-field class="w-full">
+                                    <mat-label>Base Price</mat-label>
+                                    <span matPrefix>$</span>
+                                    <input matInput [formControlName]="'basePrice'" />
+                                </mat-form-field>
+                                }
+                                <mat-form-field class="w-full">
+                                    <mat-label>Price</mat-label>
+                                    <span matSuffix>$</span>
+                                    <input matInput [formControlName]="'price'" />
+                                </mat-form-field>
+                                @if(goodForm.get('category').value == '00000005-0002-0000-0000-000000000000') {
+                                <mat-form-field class="w-full">
+                                    <mat-label>Tax Rate</mat-label>
+                                    <span matSuffix>%</span>
+                                    <input type="number" matInput [formControlName]="'taxPercent'" />
+                                </mat-form-field>
+
+                                }
+                            </div>
+
+
+                            @if(goodForm.get('category').value == '00000005-0002-0000-0000-000000000000') {
+                            <!-- Weight & Tags -->
+                            <div class="flex w-full flex-col sm:pl-8 lg:w-1/4">
+                                <mat-form-field class="w-full">
+                                    <mat-label>Weight</mat-label>
+                                    <span matSuffix>lbs.</span>
+                                    <input matInput [formControlName]="'weight'" />
+                                </mat-form-field>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="flex w-full items-center justify-between border-t px-8 py-4">
+                        <button class="-ml-4" mat-button [color]="'warn'" (click)="close()">
+                            Cancel
+                        </button>
+                        <div class="flex items-center">
+                            <button class="ml-2" mat-flat-button [color]="'primary'"
+                                [disabled]="goodForm.invalid || isLoading()" [matTooltip]="'Save'" (click)="onSubmit()">
+                                {{ isLoading() ? 'Saving...' : 'Save' }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</axiomaim-drawer>

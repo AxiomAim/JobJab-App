@@ -35,7 +35,6 @@ import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
-import { Tag } from 'app/core/models/tag.model';
 import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { UserTimesheet } from '../user-timesheets.model';
@@ -43,6 +42,7 @@ import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
 import { UserTimesheetsV2Service } from '../user-timesheets-v2.service';
 import { UserRole } from 'app/core/models/user-roles.model';
+import { Tag } from 'app/core/services/data-services/tags/tags.model';
 
 
 interface PhonenumberType {

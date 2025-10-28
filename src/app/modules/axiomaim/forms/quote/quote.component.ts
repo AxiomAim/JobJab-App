@@ -2,7 +2,6 @@ import { CdkScrollable } from '@angular/cdk/scrolling';
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
 import { Contact } from '../../crm/contacts/contacts.model';
 import { ContactsService } from '../../apps/contacts/contacts.service';
 import { Country } from '../../apps/contacts/contacts.types';

@@ -40,16 +40,11 @@ import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
-import { Tag } from 'app/core/models/tag.model';
-import {  } from 'app/modules/axiomaim/crm/contacts/list/list.component';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { Country, Contact, ContactModel } from '../contacts.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
-
-import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
 import { ContactsV2Service } from '../contacts-v2.service';
 import { MatChipsModule } from '@angular/material/chips';
-import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-messages.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -63,6 +58,7 @@ import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.s
 import { EmailLabel } from 'app/core/models/email-labels.model';
 import { SourcesV2Service } from '../../sources/sources-v2.service';
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
+import { Tag } from 'app/core/services/data-services/tags/tags.model';
 
 
 interface PhonenumberType {

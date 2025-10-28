@@ -1,0 +1,47 @@
+<div class="-m-6 flex max-h-screen max-w-240 flex-col md:min-w-160">
+    <!-- Header -->
+    <div class="flex h-16 flex-0 items-center justify-between bg-primary pl-6 pr-3 text-on-primary sm:pl-8 sm:pr-5">
+        <div class="text-lg font-medium">Add New Vendor</div>
+        <button mat-icon-button (click)="cancel()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+        </button>
+    </div>
+
+    <!-- Compose form -->
+    <form class="flex flex-auto flex-col overflow-y-auto p-6 sm:p-8" [formGroup]="vendorForm">
+        <!-- Name -->
+        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+            <mat-label>Name</mat-label>
+            <mat-icon matPrefix class="hidden icon-size-5 sm:flex" [svgIcon]="'mat_solid:title'"></mat-icon>
+            <input matInput formControlName="name" [placeholder]="'Vendor Name'" [spellcheck]="false" />
+        </mat-form-field>
+
+        <!-- Slug -->
+        <div class="mt-2">
+            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                <mat-label>Slug</mat-label>
+                <mat-icon matPrefix class="hidden icon-size-5 sm:flex" [svgIcon]="'mat_solid:add_box'"></mat-icon>
+                <input matInput formControlName="slug" [placeholder]="'Slug'" [spellcheck]="false" />
+            </mat-form-field>
+        </div>
+
+        <!-- Notes -->
+        <div class="mt-2">Notes</div>
+        <quill-editor class="mt-2" [formControlName]="'notes'" [bounds]="'self'"
+            [modules]="quillModules"></quill-editor>
+
+        <!-- Actions -->
+        <div class="mt-4 flex flex-col justify-between sm:mt-6 sm:flex-row sm:items-center">
+            <div class="mt-4 flex items-center sm:mt-0">
+                <!-- Discard -->
+                <button class="ml-auto sm:ml-0" mat-stroked-button (click)="cancel()">
+                    Cancel
+                </button>
+                <!-- Send -->
+                <button class="order-first sm:order-last" mat-flat-button [color]="'primary'" (click)="onSubmit()">
+                    Save
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

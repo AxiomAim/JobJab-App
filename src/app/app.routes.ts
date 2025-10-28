@@ -111,9 +111,7 @@ export const appRoutes: Route[] = [
                 {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
                 {path: 'users', loadChildren: () => import('app/modules/axiomaim/administration/users/users.routes')},
                 {path: 'user-timesheets', loadChildren: () => import('app/modules/axiomaim/administration/user-timesheets/user-timesheets.routes')},
-                {path: 'products', loadChildren: () => import('app/modules/axiomaim/administration/products/products.routes')},
                 {path: 'invoices', loadChildren: () => import('app/modules/axiomaim/administration/invoices/invoices.routes')},
-                {path: 'technicians', loadChildren: () => import('app/modules/axiomaim/administration/technicians/technicians.routes')},
                 {path: 'newsletters', loadChildren: () => import('app/modules/axiomaim/administration/newsletters/newsletters.routes')},
             ]},
 
@@ -125,7 +123,7 @@ export const appRoutes: Route[] = [
 
             // Projects
             {path: 'projects', children: [
-                {path: 'items', loadChildren: () => import('app/modules/axiomaim/projects/items/items.routes')},
+                // {path: 'items', loadChildren: () => import('app/modules/axiomaim/projects/items/items.routes')},
                 {path: 'quotes', loadChildren: () => import('app/modules/axiomaim/projects/quotes/quotes.routes')},
                 {path: 'quotes-requests', loadChildren: () => import('app/modules/axiomaim/projects/quotes-requests/quotes-requests.routes')},
                 {path: 'project-teams', loadChildren: () => import('app/modules/axiomaim/projects/project-teams/project-teams.routes')},
@@ -142,15 +140,16 @@ export const appRoutes: Route[] = [
             // Services
             {path: 'jobjab', children: [
                 {path: 'jobs', loadChildren: () => import('app/modules/axiomaim/jobjab/jobs/jobs.routes')},
+                {path: 'items', loadChildren: () => import('app/modules/axiomaim/jobjab/items/items.routes')},
             ]},
 
             // Apps
+
             {path: 'apps', children: [
                 {path: 'academy', loadChildren: () => import('app/modules/axiomaim/apps/academy/academy.routes')},
                 {path: 'chat', loadChildren: () => import('app/modules/axiomaim/apps/chat/chat.routes')},
                 {path: 'contacts', loadChildren: () => import('app/modules/axiomaim/apps/contacts/contacts.routes')},
                 {path: 'ecommerce', loadChildren: () => import('app/modules/axiomaim/apps/ecommerce/ecommerce.routes')},
-                {path: 'offers', loadChildren: () => import('app/modules/axiomaim/apps/offers/offers.routes')},
                 {path: 'file-manager', loadChildren: () => import('app/modules/axiomaim/apps/file-manager/file-manager.routes')},
                 {path: 'help-center', loadChildren: () => import('app/modules/axiomaim/apps/help-center/help-center.routes')},
                 {path: 'mailbox', loadChildren: () => import('app/modules/axiomaim/apps/mailbox/mailbox.routes')},

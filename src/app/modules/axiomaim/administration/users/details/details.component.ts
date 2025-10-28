@@ -40,7 +40,6 @@ import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
-import { Tag } from 'app/core/models/tag.model';
 import { UsersListComponent } from 'app/modules/axiomaim/administration/users/list/list.component';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { Country, User, UserModel } from '../users.model';
@@ -58,6 +57,7 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { ContactsService } from 'app/modules/axiomaim/apps/contacts/contacts.service';
 import { PhoneLabel } from 'app/core/models/phone-labels.model';
+import { Tag } from 'app/core/services/data-services/tags/tags.model';
 
 
 interface PhonenumberType {

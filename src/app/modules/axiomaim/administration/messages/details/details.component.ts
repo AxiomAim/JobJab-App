@@ -35,14 +35,13 @@ import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
-import { Tag } from 'app/core/models/tag.model';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { Message } from '../messages.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
-import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
 import { MessagesV2Service } from '../messages-v2.service';
 import { User } from 'app/core/user/user.types';
 import { MessagesListComponent } from '../list/list.component';
+import { Tag } from 'app/core/services/data-services/tags/tags.model';
 
 
 interface PhonenumberType {

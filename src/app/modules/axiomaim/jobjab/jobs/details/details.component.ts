@@ -40,15 +40,11 @@ import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AxiomaimConfirmationService } from '@axiomaim/services/confirmation';
-import { Tag } from 'app/core/models/tag.model';
 import { BehaviorSubject, Observable, Subject, debounceTime, takeUntil } from 'rxjs';
 import { Country, Job, JobModel } from '../jobs.model';
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
-
-import { SelectMultiComponent } from 'app/layout/common/select-multi/select-multi.component';
 import { JobsV2Service } from '../jobs-v2.service';
 import { MatChipsModule } from '@angular/material/chips';
-import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-messages.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -60,6 +56,7 @@ import { User } from 'app/modules/axiomaim/administration/users/users.model';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { EmailLabel } from 'app/core/models/email-labels.model';
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
+import { Tag } from 'app/core/services/data-services/tags/tags.model';
 
 
 interface PhonenumberType {
