@@ -153,6 +153,7 @@ export class SettingsOrganizationComponent implements OnInit, AfterViewInit, OnD
             email: [''],
             contact: [''],
             logo: [''],
+            website: [''],
             facebook: [''],
             x: [''],
             linkedIn: [''],

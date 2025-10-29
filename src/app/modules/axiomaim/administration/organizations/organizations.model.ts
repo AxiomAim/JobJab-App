@@ -21,6 +21,7 @@ export class OrganizationModel implements BaseDto {
             slides: Slides[],
             testimonials: Testimonials[],
             homeIntro: HomeIntro[],
+            website: string,
             facebook: string,
             x: string,
             linkedIn: string,
@@ -48,6 +49,7 @@ export class OrganizationModel implements BaseDto {
             this.slides = slides;
             this.testimonials = testimonials;
             this.homeIntro = homeIntro;
+            this.website = website;
             this.facebook = facebook;
             this.x = x;
             this.linkedIn = linkedIn;
@@ -75,6 +77,7 @@ export class OrganizationModel implements BaseDto {
     public slides: Slides[];
     public testimonials: Testimonials[];
     public homeIntro: HomeIntro[];
+    public website: string;
     public facebook: string;
     public x: string;
     public linkedIn: string;
@@ -106,6 +109,7 @@ export class OrganizationModel implements BaseDto {
             slides: dto.slides ? dto.slides : [],
             testimonials: dto.testimonials ? dto.testimonials : [],
             homeIntro: dto.homeIntro ? dto.homeIntro : [],
+            website: dto.website ? dto.website : '',
             facebook: dto.facebook ? dto.facebook : '',
             x: dto.x ? dto.x : '',
             linkedIn: dto.linkedIn ? dto.linkedIn : '',
@@ -139,6 +143,7 @@ export class OrganizationModel implements BaseDto {
             slides: [],
             testimonials: [],
             homeIntro: [],
+            website: '',
             facebook: '',
             x: '',
             linkedIn: '',
@@ -171,6 +176,7 @@ export interface Organization  extends BaseDto {
     slides: Slides[];
     testimonials: Testimonials[];
     homeIntro: HomeIntro[];
+    website: string;
     facebook: string;
     x: string;
     linkedIn: string;

@@ -8,12 +8,13 @@
                 <div class="grid grid-rows-2 place-items-start gap-y-12">
                     <div class="grid auto-cols-max grid-flow-col gap-x-8">
                         <div class="w-24 place-self-center">
-                            <img class="w-24" src="images/logo/logo.svg" />
+                            <img class="w-24" [src]="_organizationsV2Service.organization().logo" />
                         </div>
                         <div class="border-l pl-10 text-md">
-                            <div class="font-medium">{{ _organizationsV2Service.organization.name }}</div>
-                            <div>2810 Country Club Road</div>
-                            <div>Cranford, NJ 07016</div>
+                            <div class="font-medium">{{ _organizationsV2Service.organization().name }}</div>
+                            <div>{{ _organizationsV2Service.organization().address }}</div>
+                            <div>{{ _organizationsV2Service.organization().email }}</div>
+                            <div>{{ _organizationsV2Service.organization().phone }}</div>
                             <div>+66 123 455 87</div>
                             <div>hello&#64;axiomaiminc.com</div>
                             <div>www.axiomaiminc.com</div>
