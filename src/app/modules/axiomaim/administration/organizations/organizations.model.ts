@@ -13,7 +13,7 @@ export class OrganizationModel implements BaseDto {
             address: string,
             phone: string,
             email: string,
-            contact: Contact,
+            contact: string,
             users: User[],
             logo: string,
             logo_light: string,
@@ -67,7 +67,7 @@ export class OrganizationModel implements BaseDto {
     public address: string;
     public phone: string;
     public email: string;
-    public contact: Contact;
+    public contact: string;
     public users: User[];
     public logo: string;
     public logo_light: string;
@@ -98,7 +98,7 @@ export class OrganizationModel implements BaseDto {
             address: dto.address ? dto.address : '',
             phone: dto.phone ? dto.phone : '',
             email: dto.email ? dto.email : '',
-            contact: dto.contact ? dto.contact : {name:0, title:'', phone:'', email:'', image:''},
+            contact: dto.contact ? dto.contact : '',
             users: dto.users ? dto.users : [],
             logo: dto.logo ? dto.logo : '',
             logo_light: dto.logo_light ? dto.logo_light : '',
@@ -131,7 +131,7 @@ export class OrganizationModel implements BaseDto {
             address: '',
             phone: '',
             email: '',
-            contact: {name:0, title:'', phone:'', email:'', image:''},
+            contact: '',
             users: [],
             logo: '',
             logo_light: '',
@@ -163,7 +163,7 @@ export interface Organization  extends BaseDto {
     address: string;
     phone: string;
     email: string;
-    contact: Contact;
+    contact: string;
     users: User[];
     logo: string;
     logo_light: string;

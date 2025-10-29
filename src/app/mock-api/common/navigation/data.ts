@@ -210,6 +210,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         icon: 'heroicons_outline:home',
         children: [
             {
+                id: 'administration.',
+                title: 'Settings',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/administration/settings',
+            },
+            {
                 id: 'administration.messages',
                 title: 'Messages',
                 type: 'basic',
@@ -223,13 +230,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 icon: 'heroicons_outline:clipboard-document-check',
                 link: '/administration/newsletters',
             },
-            {
-                id: 'administration.organizations',
-                title: 'Organizations',
-                type: 'basic',
-                icon: 'heroicons_outline:clipboard-document-check',
-                link: '/administration/organizations',
-            },
+            // {
+            //     id: 'administration.organizations',
+            //     title: 'Organizations',
+            //     type: 'basic',
+            //     icon: 'heroicons_outline:clipboard-document-check',
+            //     link: '/administration/organizations',
+            // },
             {
                 id: 'administration.users',
                 title: 'Users',
@@ -250,13 +257,6 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 type: 'basic',
                 icon: 'heroicons_outline:clipboard-document-check',
                 link: '/administration/invoices',
-            },
-            {
-                id: 'administration.technicians',
-                title: 'Technicians',
-                type: 'basic',
-                icon: 'heroicons_outline:clipboard-document-check',
-                link: '/administration/technicians',
             },
         ],
     },

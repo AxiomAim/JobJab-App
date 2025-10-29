@@ -1,0 +1,142 @@
+<!-- Settings toggle -->
+<button class="ml-4" mat-button [matTooltip]="'Edit Organization' Settings" [color]="'primary'" (click)="openDrawer()"
+    aria-label="Edit Organization Settings">
+    <mat-icon [svgIcon]="btnIcon"></mat-icon>
+    <span class="ml-2 mr-1">{{ btnTitle }}</span>
+</button>
+
+<axiomaim-drawer
+    class="z-999 mt-16 w-full min-w-full xl:w-3/4 xl:min-w-3/4 lg:w-3/4 lg:min-w-3/4 md:w-3/4 md:min-w-3/4 sm:w-full sm:min-w-full xs:w-full xs:min-w-full"
+    fixed [mode]="'over'" [name]="'newItemDrawer'" [position]="'right'" #newItemDrawer>
+    <alert-messages />
+
+    <div class="flex w-full flex-col ">
+        <div class="flex w-full flex-col mb-8">
+            <div class="flex h-10 min-h-10 flex-row items-center bg-sky-900 px-6 text-white py-8">
+                <!-- <mat-icon class="text-current icon-size-7" [svgIcon]="'axiomaim:davesa-c'"></mat-icon> -->
+                <div class="ml-3 text-2xl font-semibold tracking-tight">
+                    Add Job
+                </div>
+                <button class="ml-auto mr-12" mat-icon-button (click)="close()" aria-label="Close drawer">
+                    <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <!-- form -->
+        <div class="relative flex flex-auto flex-col overflow-y-auto items-center px-6 sm:px-12">
+            <div class="w-full max-w-3xl">
+                <form [formGroup]="organizationForm">
+                    <div class="flex flex-wrap gap-x-8 gap-y-4">
+                        <div class="flex-auto my-2">
+                            <mat-form-field class="w-full" subscriptSizing="dynamic">
+                                <mat-label>Organization Name</mat-label>
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    svgIcon="mat_solid:title"></mat-icon>
+                                <input matInput formControlName="name" placeholder="Organization Name"
+                                    spellcheck="false" autocomplete="chrome-off" />
+                            </mat-form-field>
+                        </div>
+                        <div class="flex-auto my-2">
+                            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                                <mat-label>Description</mat-label>
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    [svgIcon]="'mat_solid:description'"></mat-icon>
+                                <textarea matInput [formControlName]="'description'" [placeholder]="'Description'"
+                                    [rows]="5" [spellcheck]="false" cdkTextareaAutosize></textarea>
+                            </mat-form-field>
+                        </div>
+                        <div class="flex-auto my-2">
+                            <div>Address</div>
+                            <address-lookup class="w-full" label="Address"
+                                [formControl]="organizationForm.controls['address']" placeholder="Enter address">
+                            </address-lookup>
+                        </div>
+                        <div class="flex-auto my-2">
+                            <mat-form-field class="w-full" subscriptSizing="dynamic">
+                                <mat-label>Phone</mat-label>
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    svgIcon="mat_solid:phone"></mat-icon>
+                                <input matInput formControlName="phone" placeholder="Phone" spellcheck="false"
+                                    autocomplete="chrome-off" />
+                            </mat-form-field>
+                        </div>
+                        <div class="flex-auto my-2">
+                            <mat-form-field class="w-full" subscriptSizing="dynamic">
+                                <mat-label>Email</mat-label>
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    svgIcon="mat_solid:mail"></mat-icon>
+                                <input matInput formControlName="email" placeholder="Email" spellcheck="false"
+                                    autocomplete="chrome-off" />
+                            </mat-form-field>
+                        </div>
+                        <div class="flex-auto my-2">
+                            <mat-form-field class="w-full" subscriptSizing="dynamic">
+                                <mat-label>Contact</mat-label>
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    svgIcon="heroicons_solid:user-circle"></mat-icon>
+                                <input matInput formControlName="contact" placeholder="Contact Name" spellcheck="false"
+                                    autocomplete="chrome-off" />
+                            </mat-form-field>
+                        </div>
+                        <div class="flex-auto my-2">
+                            <mat-form-field class="w-full" subscriptSizing="dynamic">
+                                <mat-label>Facebook</mat-label>
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    svgIcon="feather:facebook"></mat-icon>
+                                <input matInput formControlName="facebook" placeholder="Facebook URL" spellcheck="false"
+                                    autocomplete="chrome-off" />
+                            </mat-form-field>
+                        </div>
+                        <div class="flex-auto my-2">
+                            <mat-form-field class="w-full" subscriptSizing="dynamic">
+                                <mat-label>X (Twitter)</mat-label>
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    svgIcon="feather:twitter"></mat-icon>
+                                <input matInput formControlName="x" placeholder="X URL" spellcheck="false"
+                                    autocomplete="chrome-off" />
+                            </mat-form-field>
+                        </div>
+                        <div class="flex-auto my-2">
+                            <mat-form-field class="w-full" subscriptSizing="dynamic">
+                                <mat-label>LinkedIn</mat-label>
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    svgIcon="feather:linkedin"></mat-icon>
+                                <input matInput formControlName="linkedIn" placeholder="LinkedIn URL" spellcheck="false"
+                                    autocomplete="chrome-off" />
+                            </mat-form-field>
+                        </div>
+                        <div class="flex-auto my-2">
+                            <mat-form-field class="w-full" subscriptSizing="dynamic">
+                                <mat-label>Instagram</mat-label>
+                                <mat-icon matPrefix class="hidden icon-size-5 sm:flex"
+                                    svgIcon="feather:instagram"></mat-icon>
+                                <input matInput formControlName="instagram" placeholder="Instagram URL"
+                                    spellcheck="false" autocomplete="chrome-off" />
+                            </mat-form-field>
+                        </div>
+                        <!-- Divider -->
+                        <div class="my-4 border-t"></div>
+                        <div class="mt-2">
+                            <!-- Actions -->
+                            <div
+                                class="-mx-6 mt-10 flex items-center border-t bg-gray-50 py-4 pl-1 pr-4 dark:bg-transparent sm:-mx-12 sm:pl-7 sm:pr-12">
+                                <!-- Cancel -->
+                                <!-- <button class="ml-auto" mat-button [matTooltip]="'Cancel'" (click)="close()"
+                                    [disabled]="isLoading()">
+                                    Cancel
+                                </button> -->
+                                <!-- Save -->
+                                <!-- <button class="ml-2" mat-flat-button [color]="'primary'"
+                                    [disabled]="organizationForm.invalid || isLoading()" [matTooltip]="'Save'"
+                                    (click)="onSubmit()">
+                                    {{ isLoading() ? 'Saving...' : 'Save' }}
+                                </button> -->
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</axiomaim-drawer>

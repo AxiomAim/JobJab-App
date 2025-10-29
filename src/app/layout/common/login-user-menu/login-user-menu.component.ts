@@ -20,6 +20,7 @@ import { LoginUserService } from 'app/core/login-user/login-user.service';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
 // import { User } from 'app/core/user/user.types';
 import { Subject, takeUntil } from 'rxjs';
+import { SettingsOrganizationComponent } from '../settings-organization/settings-organization.component';
 
 @Component({
     selector: 'login-user-menu',
@@ -33,6 +34,7 @@ import { Subject, takeUntil } from 'rxjs';
         MatIconModule,
         // NgClass,
         MatDividerModule,
+        SettingsOrganizationComponent
     ],
 })
 export class LoginUserMenuComponent implements OnInit, OnDestroy {

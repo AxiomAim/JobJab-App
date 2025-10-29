@@ -19,6 +19,7 @@ import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
+import { AxiomaimCardComponent } from '@axiomaim/components/card';
 import { Image } from 'app/core/models/image.model';
 import { ImageModel } from 'app/core/models/image.model';
 import { MessagesService } from 'app/layout/common/messages/messages.service';
@@ -35,6 +36,7 @@ import { Subject, takeUntil } from 'rxjs';
         MatButtonModule,
         MatIconModule,
         MatTooltipModule,
+        AxiomaimCardComponent
     ],
 })
 export class ImageGalleryComponent implements OnInit, OnDestroy {

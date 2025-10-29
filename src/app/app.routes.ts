@@ -107,6 +107,7 @@ export const appRoutes: Route[] = [
 
             // Administration
             {path: 'administration', children: [
+                {path: 'settings', loadChildren: () => import('app/modules/axiomaim/administration/settings/settings.routes')},
                 {path: 'messages', loadChildren: () => import('app/modules/axiomaim/administration/messages/messages.routes')},
                 {path: 'organizations', loadChildren: () => import('app/modules/axiomaim/administration/organizations/organizations.routes')},
                 {path: 'users', loadChildren: () => import('app/modules/axiomaim/administration/users/users.routes')},

@@ -25,6 +25,7 @@ import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.s
 import { CustomersMenuComponent } from 'app/layout/common/customers-menu/customers-menu.component';
 import { OrganizationComponent } from 'app/layout/common/organization/organization.component';
 import { AddItemComponent } from 'app/layout/common/add-item/add-item.component';
+import { SettingsOrganizationComponent } from 'app/layout/common/settings-organization/settings-organization.component';
 
 @Component({
     selector: 'classy-layout',
@@ -46,14 +47,17 @@ import { AddItemComponent } from 'app/layout/common/add-item/add-item.component'
         QuickChatComponent,
         // CustomersMenuComponent,
         OrganizationComponent,
-        AddItemComponent
+        AddItemComponent,
+        SettingsOrganizationComponent
+        
     ],
 })
 export class ClassyLayoutComponent implements OnInit, OnDestroy {
-    _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
+    loginUser = inject(FirebaseAuthV2Service).loginUser();
+    isAdmin: boolean;
     isScreenSmall: boolean;
     navigation: Navigation;
-    loginUser: User;
+    // loginUser: User;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -66,8 +70,7 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy {
         private _axiomaimMediaWatcherService: AxiomaimMediaWatcherService,
         private _axiomaimNavigationService: AxiomaimNavigationService
     ) {
-        this._firebaseAuthV2Service.initiate();
-        this.loginUser = this._firebaseAuthV2Service.loginUser();
+        this.isAdmin = this.loginUser.userRoles?.some(role => role.value?.toLowerCase() === 'owner') ?? false;
     }
 
     // -----------------------------------------------------------------------------------------------------
