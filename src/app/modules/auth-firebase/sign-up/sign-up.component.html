@@ -73,6 +73,9 @@
                         @if (passwordField.type === 'text') {
                         <mat-icon class="icon-size-5 text-black" svgIcon="heroicons_solid:eye-slash"></mat-icon>
                         }
+                        @if (signUpForm.get('password')?.hasError('minlength') && signUpForm.get('password')?.touched) {
+                        <mat-error>Password must be at least 6 characters</mat-error>
+                        }
                     </button>
                     @if (signUpForm.get('password')?.hasError('required') && signUpForm.get('password')?.touched) {
                     <mat-error> Password is required </mat-error>
@@ -89,11 +92,11 @@
                 </mat-form-field>
 
                 <!-- Address -->
-                <div class="mt-4">
+                <!-- <div class="mt-4">
                     <address-lookup class="w-full" label="Address" [formControl]="signUpForm.controls['address']"
                         placeholder="Enter address">
                     </address-lookup>
-                </div>
+                </div> -->
 
                 <!-- Phone numbers -->
                 <div class="mt-4">

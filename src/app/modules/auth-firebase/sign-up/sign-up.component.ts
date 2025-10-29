@@ -56,7 +56,6 @@ interface PhoneLabel {
         MatIconModule,
         MatCheckboxModule,
         MatProgressSpinnerModule,
-        AddressLookupComponent,
         NgClass,
         MatRippleModule,
         MatTooltipModule,
@@ -87,22 +86,42 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     showAlert: boolean = false;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     public newUser: User = UserModel.emptyDto();
+    public userRoles = [    
+        {
+            id: '00000001-0002-0000-0000-000000000000',
+            sort: 2,
+            value: 'owner',
+            name: 'Owner',
+            description: '',
+            isVisible: true,
+
+        },
+        {
+            id: '00000001-0003-0000-0000-000000000000',
+            sort: 3,
+            value: 'technician',
+            name: 'Technication',
+            description: '',
+            isVisible: true,
+        },
+    ]
+
 
     /**
      * Custom validator for address (string or place object) - optional; make required by adding to form
      */
-    private createAddressValidator(required: boolean = false): ValidatorFn {
-        return (control: AbstractControl): { [key: string]: any } | null => {
-            const value = control.value;
-            if (required && (!value || (typeof value === 'string' && !value.trim()))) {
-                return { required: true };
-            }
-            if (typeof value === 'object' && !value.geometry) {
-                return { invalidAddress: true };
-            }
-            return null;
-        };
-    }
+    // private createAddressValidator(required: boolean = false): ValidatorFn {
+    //     return (control: AbstractControl): { [key: string]: any } | null => {
+    //         const value = control.value;
+    //         if (required && (!value || (typeof value === 'string' && !value.trim()))) {
+    //             return { required: true };
+    //         }
+    //         if (typeof value === 'object' && !value.geometry) {
+    //             return { invalidAddress: true };
+    //         }
+    //         return null;
+    //     };
+    // }
 
     /**
      * Constructor
@@ -118,9 +137,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
-            password: ['', Validators.required],
+            password: ['', Validators.required, Validators.minLength(6)],
             company: ['', Validators.required],
-            address: ['', [this.createAddressValidator()]],  // Optional; set true for required
             agreements: [false, Validators.requiredTrue],
             phoneNumbers: this._formBuilder.array([
                 this._formBuilder.group({
@@ -129,6 +147,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
                     label: ['mobile'],
                 })
             ]),
+            userRoles: [this.userRoles, Validators.required],
+            isOwner: [true, Validators.required],
         });
 
         // Initialize form with empty user data
@@ -215,6 +235,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     async signUp() {
         // Do nothing if the form is invalid
         if (this.signUpForm.invalid) {
+            console.log('Form invalid errors:', this.signUpForm.errors);  // Add this
             return;
         }
         // Disable the form
@@ -222,13 +243,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
         // Hide the alert
         this.showAlert = false;
-
-        console.log('signUpForm', this.signUpForm.value);
-        console.log('Address:', this.signUpForm.value.address);  // Debug: Verify full place object
         try {
             // firebase-auth v2 sign up
             const newAuth = await this._firebaseAuthV2Service.signUp(this.signUpForm.value);
-            console.log('newAuth', newAuth);
             this._router.navigateByUrl('/confirmation-required');
         } catch (err) {
             // Re-enable the form

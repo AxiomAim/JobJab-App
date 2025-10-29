@@ -52,7 +52,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-messages.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { ContactsService } from 'app/modules/axiomaim/apps/contacts/contacts.service';
@@ -93,7 +93,8 @@ interface PhonenumberType {
         AddressLookupComponent,
         RouterLink,
         NgClass,
-        MatAutocompleteModule
+        MatAutocompleteModule,
+
 
     ],
 })
@@ -212,6 +213,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
         this.loginUser = this._usersV2Service.loginUser();
         this.users = this._usersV2Service.users();
         this.user = this._usersV2Service.user();
+        // console.log('this.user', this.user);
         // Open the drawer
         this._usersListComponent.matDrawer.open();
         const phonePattern = "^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"; 
@@ -609,6 +611,16 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
         });
     }
         
+    selected(event: MatAutocompleteSelectedEvent): void {
+        const selectedRole = event.option.value as UserRole;
+        // Avoid duplicates
+        if (!this.userRoles().some(role => role.name === selectedRole.name)) {
+            this.userRoles.update(currentRoles => [...currentRoles, selectedRole]);
+        }
+        this.currentUserRole.setValue('');
+        event.option.deselect();
+    }
+
     /**
      * Track by function for ngFor loops
      *

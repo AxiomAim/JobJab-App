@@ -197,7 +197,7 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((codes: Country[]) => {
                 this.countries = codes;
-                console.log('Countries loaded in add user component:', this.countries);
+                // console.log('Countries loaded in add user component:', this.countries);
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
@@ -406,7 +406,7 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
      */
     async onSubmit() {
         if (this.userForm.invalid) {
-            console.log('Form invalid:', this.userForm.errors);  // Debug: Check if address validation fails
+            // console.log('Form invalid:', this.userForm.errors);  // Debug: Check if address validation fails
             this._changeDetectorRef.markForCheck();
             return;
         }
@@ -423,10 +423,10 @@ export class UsersAddItemComponent implements OnInit, AfterViewInit, OnDestroy, 
             this.newUser.phoneNumbers = this.userForm.get('phoneNumbers')?.value || [];
             this.newUser.address = this.userForm.get('address')?.value;  // Now full place object or string
 
-            console.log('Saving user with address:', this.newUser.address);  // Debug: Verify full place
+            // console.log('Saving user with address:', this.newUser.address);  // Debug: Verify full place
 
             const createdUser = await this._firebaseAuthV2Service.signUpOrg(this.userForm.value, this.newUser);
-            console.log('Created User', createdUser);
+            // console.log('Created User', createdUser);
 
             await this._usersV2Service.getAll();
 

@@ -240,6 +240,9 @@ export const FirebaseAuthV2Service = createInjectable(() => {
       user.phoneNumbers = signup.phoneNumbers;
       user.agreements = signup.agreements;
       user.id = userCredential.user.uid;
+      user.isOwner = signup.isOwner ? true : false;
+      user.userRoles = signup.userRoles ? signup.userRoles : [];
+
       // user.userRoles = [    
       //   {
       //         id: '00000001-0002-0000-0000-000000000000',
@@ -266,8 +269,8 @@ export const FirebaseAuthV2Service = createInjectable(() => {
       user.orgId = createdOrg.id;
       const createdUser = await firstValueFrom(_usersDataService.createItem(user));
       loginUser.set(createdUser);
-      setScheme();
-      setTheme();
+      // setScheme();
+      // setTheme();
       setToStorage();
       authUser.set(userCredential.user);
       loginUser.set(user);

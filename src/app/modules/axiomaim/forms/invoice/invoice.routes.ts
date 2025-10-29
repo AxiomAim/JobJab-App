@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { ModernComponent } from 'app/modules/axiomaim/pages/invoice/printable/modern/modern.component';
+import { InvoiceComponent } from 'app/modules/axiomaim/forms/invoice/invoice.component';
 
 export default [
     {
         path: '',
-        component: ModernComponent,
+        component: InvoiceComponent,
     },
 ] as Routes;

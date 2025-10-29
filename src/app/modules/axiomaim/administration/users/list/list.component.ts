@@ -126,7 +126,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
                 )
             )
             .subscribe((resUsers) => {
-                console.log('searchUsers', this._usersV2Service.users());
+                // console.log('searchUsers', this._usersV2Service.users());
                 // this._users.next(resUsers);
             });
 

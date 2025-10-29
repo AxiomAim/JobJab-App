@@ -46,6 +46,7 @@ export class UserModel implements BaseDto {
         scheme?: Scheme,
         login_at?: string[],
         login_info?: any[],
+        isOwner?: boolean,
         createdAt?: string,
         updatedAt?: string,
         deletedAt?: string,
@@ -85,6 +86,7 @@ export class UserModel implements BaseDto {
             this.scheme = scheme;    
             this.login_at = login_at;
             this.login_info = login_info;
+            this.isOwner = isOwner;
             this.createdAt = createdAt;
             this.updatedAt = updatedAt;
             this.deletedAt = deletedAt;
@@ -144,6 +146,7 @@ export class UserModel implements BaseDto {
     public selected?: boolean;
     public login_at?: string[];
     public login_info?: any[];
+    public isOwner?: boolean;
     public createdAt?: string;
     public updatedAt?: string;
     public deletedAt?: string;
@@ -190,6 +193,7 @@ export class UserModel implements BaseDto {
             selected: dto.selected ? dto.selected : false,
             login_at: dto.login_at ? dto.login_at : [],
             login_info: dto.login_info ? dto.login_info : [],
+            isOwner: dto.isOwner ? dto.isOwner : false,
             createdAt: dto.createdAt ? dto.createdAt : '',
             updatedAt: dto.updatedAt ? dto.updatedAt : '',
             deletedAt: dto.deletedAt ? dto.deletedAt : '',
@@ -237,6 +241,7 @@ export class UserModel implements BaseDto {
             selected: false,
             login_at: [],
             login_info: [],
+            isOwner: false,
             createdAt: date,
             updatedAt: date,
             deletedAt: '',
@@ -286,6 +291,7 @@ export interface User  extends BaseDto {
     selected?: boolean;
     login_at?: string[];
     login_info?: any[];
+    isOwner?: boolean;
     createdAt?: string;
     updatedAt?: string;
     deletedAt?: string;    
