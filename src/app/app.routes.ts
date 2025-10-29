@@ -96,6 +96,7 @@ export const appRoutes: Route[] = [
             // Forms
             {path: 'forms', children: [
                 // Quote Form
+                {path: 'invoice', loadChildren: () => import('app/modules/axiomaim/forms/invoice/invoice.routes')},
                 {path: 'quote', loadChildren: () => import('app/modules/axiomaim/forms/quote/quote.routes')},
                 {path: 'quote-normal', loadChildren: () => import('app/modules/axiomaim/forms/quote-normal/quote-normal.routes')},
                 {path: 'quote-scroll', loadChildren: () => import('app/modules/axiomaim/forms/quote-scroll/quote-scroll.routes')},

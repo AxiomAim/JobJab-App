@@ -61,6 +61,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         icon: 'heroicons_outline:rectangle-stack',
         children: [
             {
+                id: 'forms.invoice',
+                title: 'Invoice',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/forms/invoice',
+            },
+            {
                 id: 'forms.quote',
                 title: 'Quote',
                 type: 'basic',
