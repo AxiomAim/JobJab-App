@@ -1,10 +1,11 @@
-import { CurrencyPipe, DecimalPipe, NgClass } from '@angular/common';
+import { CurrencyPipe, DatePipe, DecimalPipe, NgClass } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
     inject,
     OnDestroy,
     OnInit,
+    signal,
     ViewEncapsulation,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +26,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { UsersEditItemComponent } from '../../administration/users/edit-item /edit-item.component';
 import { DashboardScheduleComponent } from './dashboard-schedule/dashboard-schedule.component';
 import { KendoSchedulerComponent } from './kendo-scheduler/kendo-scheduler.component';
+import { WorkflowComponent } from 'app/layout/common/workflow/workflow.component';
 
 @Component({
     selector: 'login-user-dashboard',
@@ -43,13 +45,15 @@ import { KendoSchedulerComponent } from './kendo-scheduler/kendo-scheduler.compo
     MatTableModule,
     MatTooltipModule,
     DecimalPipe,
-    UsersEditItemComponent,
-    KendoSchedulerComponent
+    WorkflowComponent,
+    KendoSchedulerComponent,
+    DatePipe
 ],
 })
 export class LoginUserDashboardComponent implements OnInit, OnDestroy {
     private _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
     private _loginUserDashboardV2Service = inject(LoginUserDashboardV2Service);
+    today = signal<string>(new Date().toISOString());
 
     chartVisitors: ApexOptions;
     chartConversions: ApexOptions;

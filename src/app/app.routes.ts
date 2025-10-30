@@ -143,6 +143,7 @@ export const appRoutes: Route[] = [
             {path: 'jobjab', children: [
                 {path: 'jobs', loadChildren: () => import('app/modules/axiomaim/jobjab/jobs/jobs.routes')},
                 {path: 'items', loadChildren: () => import('app/modules/axiomaim/jobjab/items/items.routes')},
+                {path: 'job-board', loadChildren: () => import('app/modules/axiomaim/jobjab/job-board/job-board.routes')},
             ]},
 
             // Apps

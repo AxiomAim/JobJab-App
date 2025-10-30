@@ -2,11 +2,10 @@ import { createInjectable } from "ngxtension/create-injectable";
 import { signal, computed, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { JobsV2ApiService } from "./jobs-v2-api.service";
-import { Country, Job } from "./jobs.model";
-import { firstValueFrom, tap } from "rxjs";
+import { Job } from "./jobs.model";
 import { HttpClient } from "@angular/common/http";
-import { PhoneLabel } from "app/core/models/phone-labels.model";
-import { EmailLabel } from "app/core/models/email-labels.model";
+import { JobBoardList } from "app/core/models/job-board-list.model";
+import { firstValueFrom, tap } from "rxjs";
 
 export const JobsV2Service = createInjectable(() => {
   const _router = inject(Router);
@@ -15,8 +14,8 @@ export const JobsV2Service = createInjectable(() => {
   const allJobs = signal<Job[] | null>(null);
   const jobs = signal<Job[] | null>(null);
   const job = signal<Job | null>(null);
+  const jobBoardList = signal<JobBoardList[] | null>(null);
 
-  
   const getAll = async ():Promise<Job[]> => {
     const response = await _customersV2ApiService.getAll();
     allJobs.set(response);
@@ -70,11 +69,29 @@ export const JobsV2Service = createInjectable(() => {
     }
   };
 
+    /**
+     * Get jobboardList
+     */
+    const getJobBoardList = async (): Promise<JobBoardList[]> => {
+      const allPhoneLabels = await _httpClient
+          .get<JobBoardList[]>('api/common/job-board-list')
+          .pipe(
+              tap((jobBoardListRes: JobBoardList[]) => {
+                jobBoardList.set(jobBoardListRes);
+                return jobBoardListRes;
+              })
+          );
+          // return null;
+      return await firstValueFrom(allPhoneLabels)        
+    }
+  
+  
     
   return {
     jobs: computed(() => jobs()),
     allJobs: computed(() => allJobs()),
     job: computed(() => job()),
+    jobBoardList: computed(() => jobBoardList()),
     getAll,
     getItem,
     search,
@@ -82,5 +99,6 @@ export const JobsV2Service = createInjectable(() => {
     updateItem,
     deleteItem,
     setContact,
+    getJobBoardList
   };
 });

@@ -28,6 +28,8 @@ import { UserRolesMockApi } from './common/user-roles/api';
 import { PhoneLabelsMockApi } from './common/phone-labels/api';
 import { EmailLabelsMockApi } from './common/email-labels/api';
 import { CategoriesMockApi } from './common/categories/api';
+import { JobBoardMockApi } from './jobjab/job-board/api';
+import { JobBoardListMockApi } from './common/job-board-list/api';
 
 @Injectable({ providedIn: 'root' })
 export class MockApiService {
@@ -60,4 +62,8 @@ export class MockApiService {
     phoneLabelsMockApi = inject(PhoneLabelsMockApi);
     emailLabelsMockApi = inject(EmailLabelsMockApi);
     categoriesMockApi = inject(CategoriesMockApi);
+    jobBoardMockApi = inject(JobBoardMockApi);
+    jobBoardListMockApi = inject(JobBoardListMockApi);
+
+    
 }

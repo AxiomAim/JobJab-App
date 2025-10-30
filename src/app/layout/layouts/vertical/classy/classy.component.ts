@@ -48,7 +48,8 @@ import { SettingsOrganizationComponent } from 'app/layout/common/settings-organi
         // CustomersMenuComponent,
         OrganizationComponent,
         AddItemComponent,
-        SettingsOrganizationComponent
+        SettingsOrganizationComponent,
+        
         
     ],
 })
