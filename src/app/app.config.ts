@@ -23,6 +23,7 @@ import { environment } from '../environments/environment';
 import { firebaseProvideAuth } from './core/auth-firebase/firebase-auth.provider';
 import { provideFormlyCore } from '@ngx-formly/core';
 import { withFormlyMaterial } from '@ngx-formly/material';
+import { withFormlyKendo } from '@ngx-formly/kendo';
 import { CustomFieldType } from './custom-field.type';
 
 export const appConfig: ApplicationConfig = {
@@ -30,7 +31,7 @@ export const appConfig: ApplicationConfig = {
         provideAnimations(),
         provideHttpClient(),
             provideFormlyCore([
-            ...withFormlyMaterial(),
+            ...withFormlyKendo(),
       {
         validationMessages: [{ name: 'required', message: 'This field is required' }],
       },

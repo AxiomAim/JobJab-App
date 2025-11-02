@@ -1,3 +1,4 @@
+<!-- dialog-form.component.html -->
 <div class="-m-6 flex max-h-screen max-w-240 flex-col md:min-w-160">
     <!-- Header -->
     <div class="flex h-16 flex-0 items-center justify-between bg-primary pl-6 pr-3 text-on-primary sm:pl-8 sm:pr-5">
@@ -34,6 +35,34 @@
         <div class="p-2">
             <mat-checkbox formControlName="required">Required</mat-checkbox>
         </div>
+
+        <!-- FIX: Added conditional options editor for select/radio/multi-select -->
+        @if (data.type === 'select' || data.type === 'radio' || data.type === 'select-multi') {
+        <div class="p-2">
+            <h3 class="text-lg font-medium mb-2">Options</h3>
+            <div formArrayName="options">
+                @for (option of getOptions(); track $index; let last = $last) {
+                <div [formGroupName]="$index" class="flex items-end gap-2 mb-2 p-2 border rounded">
+                    <mat-form-field class="flex-1">
+                        <mat-label>Value</mat-label>
+                        <input matInput formControlName="value" placeholder="Option value" />
+                    </mat-form-field>
+                    <mat-form-field class="flex-1">
+                        <mat-label>Label</mat-label>
+                        <input matInput formControlName="label" placeholder="Option label" />
+                    </mat-form-field>
+                    <button mat-icon-button type="button" (click)="removeOption($index)"
+                        [disabled]="getOptions().length <= 1">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+                }
+            </div>
+            <button mat-stroked-button type="button" (click)="addOption()" class="w-full mt-2">
+                Add Option
+            </button>
+        </div>
+        }
 
         <!-- Actions -->
         <div class="mt-4 flex flex-col justify-between sm:mt-6 sm:flex-row sm:items-center">

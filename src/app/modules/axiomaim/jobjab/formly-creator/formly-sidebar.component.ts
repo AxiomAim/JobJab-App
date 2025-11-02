@@ -1,3 +1,4 @@
+// formly-sidebar.component.ts
 import { Component, Output, EventEmitter, inject, ViewEncapsulation } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { AxiomaimVerticalNavigationComponent } from '@axiomaim/components/navigation';
@@ -71,18 +72,18 @@ export class FormlySidebarComponent {
                         }
                     },
                     {
-                        title: 'Testarea',
+                        title: 'Textarea',
                         type: 'basic',
-                        icon: 'heroicons_outline:user-group',
+                        icon: 'mat_outline:description',
                         function: () => {
-                            console.log('Testarea clicked');
+                            console.log('Textarea clicked');
                             this.fieldTypeSelected.emit({ key: 'Textarea', type: 'textarea' });
                         }
                     },
                     {
                         title: 'Checkbox',
                         type: 'basic',
-                        icon: 'heroicons_outline:briefcase',
+                        icon: 'mat_outline:check_box',
                         function: () => {
                             console.log('Checkbox clicked');
                             this.fieldTypeSelected.emit({ key: 'Checkbox', type: 'checkbox' });
@@ -91,7 +92,7 @@ export class FormlySidebarComponent {
                     {
                         title: 'Radio Button',
                         type: 'basic',
-                        icon: 'heroicons_outline:user-plus',
+                        icon: 'mat_outline:radio_button_checked',
                         function: () => {
                             console.log('Radio Button clicked');
                             this.fieldTypeSelected.emit({ key: 'Radio Button', type: 'radio' });
@@ -101,7 +102,7 @@ export class FormlySidebarComponent {
                         title: 'Select',
                         subtitle: 'Assign to a task or a project',
                         type: 'basic',
-                        icon: 'heroicons_outline:check-badge',
+                        icon: 'mat_outline:list_alt',
                         function: () => {
                             console.log('Select clicked');
                             this.fieldTypeSelected.emit({ key: 'Select', type: 'select' });
@@ -111,50 +112,11 @@ export class FormlySidebarComponent {
                         title: 'Select Multiple',
                         subtitle: 'Assign to a task or a project',
                         type: 'basic',
-                        icon: 'heroicons_outline:check-badge',
+                        icon: 'mat_outline:view_list',
                         function: () => {
                             console.log('Select Multiple clicked');
-                            this.fieldTypeSelected.emit({ key: 'Select Multiple', type: 'select' });
-                        }
-                    },
-                    {
-                        title: 'Datepicker',
-                        subtitle: 'Assign to a task or a project',
-                        type: 'basic',
-                        icon: 'heroicons_outline:check-badge',
-                        function: () => {
-                            console.log('Datepicker clicked');
-                            this.fieldTypeSelected.emit({ key: 'Datepicker', type: 'datepicker' });
-                        }
-                    },
-                    {
-                        title: 'Toggle',
-                        subtitle: 'Assign to a task or a project',
-                        type: 'basic',
-                        icon: 'heroicons_outline:check-badge',
-                        function: () => {
-                            console.log('Toggle clicked');
-                            this.fieldTypeSelected.emit({ key: 'Toggle', type: 'toggle' });
-                        }
-                    },
-                    {
-                        title: 'Slider',
-                        subtitle: 'Assign to a task or a project',
-                        type: 'basic',
-                        icon: 'heroicons_outline:check-badge',
-                        function: () => {
-                            console.log('Slider clicked');
-                            this.fieldTypeSelected.emit({ key: 'Slider', type: 'slider' });
-                        }
-                    },
-                    {
-                        title: 'Autocomplete',
-                        subtitle: 'Assign to a task or a project',
-                        type: 'basic',
-                        icon: 'heroicons_outline:check-badge',
-                        function: () => {
-                            console.log('Autocomplete clicked');
-                            this.fieldTypeSelected.emit({ key: 'Autocomplete', type: 'autocomplete' });
+                            // FIX: Changed type to 'select-multi' for special handling (multiple=true)
+                            this.fieldTypeSelected.emit({ key: 'Select Multiple', type: 'select-multi' });
                         }
                     },
                 ],

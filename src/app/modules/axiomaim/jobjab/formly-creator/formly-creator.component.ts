@@ -1,3 +1,4 @@
+// formly-creator.component.ts
 import {
     ChangeDetectionStrategy,
     Component,
@@ -12,12 +13,25 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { AxiomaimMediaWatcherService } from '@axiomaim/services/media-watcher';
-import { FormlyForm, FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
+import { FormlyForm, FormlyFormOptions, FormlyFieldConfig, FormlyField } from '@ngx-formly/core';  // FIX: Added FormlyField import
 import { Subject, takeUntil } from 'rxjs';
 import { FormlySidebarComponent } from './formly-sidebar.component';
 import { DialogFormComponent } from './dialog-form/dialog-form.component';
 import { CdkDragDrop, moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
 
+interface FieldData {
+    key: string;
+    type: string;
+    props: FieldProps;
+}
+
+interface FieldProps {
+    label: string;
+    placeholder: string;
+    description: string;
+    required: boolean;
+    options?: Array<{ value: any; label: string }>;
+}
 @Component({
     selector: 'formly-creator',
     styleUrls: ['./formly-creator.component.scss'],
@@ -27,6 +41,7 @@ import { CdkDragDrop, moveItemInArray, DragDropModule } from '@angular/cdk/drag-
     imports: [
         ReactiveFormsModule,
         FormlyForm,
+        FormlyField,  // FIX: Added to imports for <formly-field> directive
         MatSidenavModule,
         FormlySidebarComponent,
         MatButtonModule,
@@ -111,7 +126,7 @@ export class FormlyCreatorComponent implements OnInit, OnDestroy {
         fieldData: { key: string; type: string },
         customProps: any = {}
     ): FormlyFieldConfig {
-        const baseProps = {
+        const baseProps: FieldProps = {
             label: fieldData.key,  // Use display key for label (e.g., 'Select Multiple')
             placeholder: 'Placeholder',
             description: 'Description',
@@ -125,45 +140,37 @@ export class FormlyCreatorComponent implements OnInit, OnDestroy {
             props: baseProps,
         };
 
+        // FIX: Apply general required validation based on props.required
+        config.validation = baseProps.required ? { required: true } : null;
+
         // Handle special cases
         switch (fieldData.type) {
             case 'checkbox':
-                // Use validation for required checkbox (better than pattern for boolean)
-                config.validation = {
-                    required: true,
-                    messages: { required: 'Please accept the terms' },
-                };
+                // No special props needed; validation handles required
                 break;
             case 'radio':
             case 'select':
-                config.props.options = [
-                    { value: 1, label: 'Option 1' },
-                    { value: 2, label: 'Option 2' },
-                    { value: 3, label: 'Option 3' },
-                ];
+                // FIX: Use dialog options or fallback to defaults if empty
+                if (!baseProps.options || baseProps.options.length === 0) {
+                    baseProps.options = [
+                        { value: '1', label: 'Option 1' },
+                        { value: '2', label: 'Option 2' },
+                        { value: '3', label: 'Option 3' },
+                    ];
+                }
                 break;
             case 'select-multi':
                 config.type = 'select';
                 config.props.multiple = true;
                 config.props.selectAllOption = 'Select All';
-                config.props.options = [
-                    { value: 1, label: 'Option 1' },
-                    { value: 2, label: 'Option 2' },
-                    { value: 3, label: 'Option 3' },
-                ];
-                break;
-            case 'autocomplete':
-                // Assuming Formly supports 'autocomplete' type; if not, change to 'input' with props.autocomplete
-                config.props.options = [
-                    { value: 1, label: 'Option 1' },
-                    { value: 2, label: 'Option 2' },
-                ];
-                break;
-            case 'slider':
-                // Add defaults for slider
-                config.props.min = 0;
-                config.props.max = 100;
-                config.props.thumbLabel = true;
+                // FIX: Use dialog options or fallback to defaults if empty
+                if (!baseProps.options || baseProps.options.length === 0) {
+                    baseProps.options = [
+                        { value: '1', label: 'Option 1' },
+                        { value: '2', label: 'Option 2' },
+                        { value: '3', label: 'Option 3' },
+                    ];
+                }
                 break;
             // Add more cases as needed
             default:
