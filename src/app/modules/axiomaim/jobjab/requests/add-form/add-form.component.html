@@ -1,0 +1,12 @@
+<!-- Settings toggle -->
+<button class="ml-4" mat-flat-button [matTooltip]="'New Form'" [color]="'primary'" (click)="openDrawer()"
+    aria-label="Add new form">
+    <mat-icon [svgIcon]="btnIcon"></mat-icon>
+    <span class="ml-2 mr-1">{{ btnTitle }}</span>
+</button>
+
+<axiomaim-drawer
+    class="z-999 mt-16 w-3/4 min-w-full xl:w-3/4 xl:min-w-3/4 lg:w-3/4 lg:min-w-3/4 md:w-3/4 md:min-w-3/4 sm:w-full sm:min-w-full xs:w-full xs:min-w-full"
+    fixed [mode]="'over'" [name]="'newItemDrawer'" [position]="'right'" #newItemDrawer>
+    <formly-creator></formly-creator>
+</axiomaim-drawer>

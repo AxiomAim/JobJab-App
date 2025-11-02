@@ -20,10 +20,7 @@
             "outputPath": "dist/axiomaim",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js",
-              "@angular/localize/init"
-            ],
+            "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "allowedCommonJsDependencies": [
@@ -45,9 +42,7 @@
               }
             ],
             "stylePreprocessorOptions": {
-              "includePaths": [
-                "src/@axiomaim/styles"
-              ]
+              "includePaths": ["src/@axiomaim/styles"]
             },
             "styles": [
               {
@@ -60,7 +55,9 @@
               "src/styles/vendors.scss",
               "src/@axiomaim/styles/main.scss",
               "src/styles/styles.scss",
-              "src/styles/tailwind.scss"
+              "src/styles/tailwind.scss",
+              "node_modules/survey-core/survey-core.min.css",
+              "node_modules/survey-creator-core/survey-creator-core.min.css"
             ],
             "scripts": []
           },

@@ -1,7 +1,6 @@
 import { Scheme, Theme } from '@axiomaim/services/config';
 import { v4 as uuidv4 } from 'uuid';
 import { BaseDto } from 'app/core/models/base-dto.model';
-import * as v from 'valibot';
 
 
 export class NoteLebelModel implements BaseDto {

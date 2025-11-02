@@ -21,13 +21,12 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { GridAllModule } from '@syncfusion/ej2-angular-grids';
 import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-messages.component';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
-import { User } from '../../users/user.model';
 import { AddressLookupComponent } from 'app/layout/common/address-lookup/address-lookup.component';
 import { ProjectTeamsMembersV2Service } from '../project-teams-members-v2.service';
+import { User } from 'app/modules/axiomaim/administration/users/users.model';
 
 @Component({
     selector: 'project-teams-members-add-item',
@@ -70,7 +69,6 @@ import { ProjectTeamsMembersV2Service } from '../project-teams-members-v2.servic
         MatSlideToggleModule,
         MatChipsModule,
         MatSidenavModule,
-        GridAllModule,
         AddressLookupComponent
 
     ]

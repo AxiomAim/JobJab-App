@@ -21,7 +21,6 @@ import { ProjectService } from 'app/modules/axiomaim/dashboards/project/project.
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { ReplaySubject, Subject, takeUntil } from 'rxjs';
 import { User } from '../../administration/users/users.model';
-import { ProjectScheduleComponent } from './project-schedule/project-schedule.component';
 
 @Component({
     selector: 'project',
@@ -40,7 +39,6 @@ import { ProjectScheduleComponent } from './project-schedule/project-schedule.co
         MatTableModule,
         NgClass,
         CurrencyPipe,
-        ProjectScheduleComponent
     ],
 })
 export class ProjectComponent implements OnInit, OnDestroy {

@@ -1,0 +1,53 @@
+<div class="-m-6 flex max-h-screen max-w-240 flex-col md:min-w-160">
+    <!-- Header -->
+    <div class="flex h-16 flex-0 items-center justify-between bg-primary pl-6 pr-3 text-on-primary sm:pl-8 sm:pr-5">
+        <div class="text-lg font-medium">Add New {{ data.key }}</div>
+        <button mat-icon-button (click)="cancel()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+        </button>
+    </div>
+
+    <!-- Compose form -->
+    <form class="flex flex-auto flex-col overflow-y-auto p-6 sm:p-8" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <!-- Label -->
+        <mat-form-field class="w-full p-2" [subscriptSizing]="'dynamic'">
+            <mat-label>Label</mat-label>
+            <mat-icon matPrefix class="hidden icon-size-5 sm:flex" [svgIcon]="'mat_solid:title'"></mat-icon>
+            <input matInput formControlName="label" placeholder="Enter label" [spellcheck]="false" />
+        </mat-form-field>
+
+        <!-- Placeholder -->
+        <mat-form-field class="w-full p-2" [subscriptSizing]="'dynamic'">
+            <mat-label>Placeholder</mat-label>
+            <mat-icon matPrefix class="hidden icon-size-5 sm:flex" [svgIcon]="'mat_solid:title'"></mat-icon>
+            <input matInput formControlName="placeholder" placeholder="Enter placeholder" [spellcheck]="false" />
+        </mat-form-field>
+
+        <!-- Description -->
+        <mat-form-field class="w-full p-2" [subscriptSizing]="'dynamic'">
+            <mat-label>Description</mat-label>
+            <mat-icon matPrefix class="hidden icon-size-5 sm:flex" [svgIcon]="'mat_solid:title'"></mat-icon>
+            <input matInput formControlName="description" placeholder="Enter description" [spellcheck]="false" />
+        </mat-form-field>
+
+        <!-- Required -->
+        <div class="p-2">
+            <mat-checkbox formControlName="required">Required</mat-checkbox>
+        </div>
+
+        <!-- Actions -->
+        <div class="mt-4 flex flex-col justify-between sm:mt-6 sm:flex-row sm:items-center">
+            <div class="mt-4 flex items-center sm:mt-0">
+                <!-- Discard -->
+                <button class="ml-auto sm:ml-0" mat-stroked-button type="button" (click)="cancel()">
+                    Cancel
+                </button>
+                <!-- Send -->
+                <button class="order-first sm:order-last ml-2" mat-flat-button color="primary" type="submit"
+                    [disabled]="form.invalid">
+                    Save
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

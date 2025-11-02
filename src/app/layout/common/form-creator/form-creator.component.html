@@ -1,0 +1,11 @@
+<div id="surveyCreator">
+    <survey-creator [model]="surveyCreatorModel"></survey-creator>
+</div>
+<!-- Actions -->
+<div
+    class="-mx-6 mt-10 flex items-center border-t bg-gray-50 py-4 pl-1 pr-4 dark:bg-transparent sm:-mx-12 sm:pl-7 sm:pr-12">
+    <!-- Save -->
+    <button class="ml-2" mat-flat-button [color]="'primary'" [matTooltip]="'Save'" (click)="onSubmit()">
+        {{ isLoading() ? 'Saving...' : 'Save' }}
+    </button>
+</div>

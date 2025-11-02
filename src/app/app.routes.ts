@@ -142,8 +142,10 @@ export const appRoutes: Route[] = [
             // Services
             {path: 'jobjab', children: [
                 {path: 'jobs', loadChildren: () => import('app/modules/axiomaim/jobjab/jobs/jobs.routes')},
+                {path: 'requests', loadChildren: () => import('app/modules/axiomaim/jobjab/requests/requests.routes')},
                 {path: 'items', loadChildren: () => import('app/modules/axiomaim/jobjab/items/items.routes')},
                 {path: 'job-board', loadChildren: () => import('app/modules/axiomaim/jobjab/job-board/job-board.routes')},
+                {path: 'formly-creator', loadChildren: () => import('app/modules/axiomaim/jobjab/formly-creator/formly-creator.routes')},
             ]},
 
             // Apps

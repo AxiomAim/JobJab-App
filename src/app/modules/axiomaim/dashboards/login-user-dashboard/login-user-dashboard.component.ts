@@ -23,8 +23,6 @@ import { ReplaySubject, Subject, takeUntil } from 'rxjs';
 import { User } from '../../administration/users/users.model';
 import { LoginUserDashboardV2Service } from './login-user-dashboardV2.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { UsersEditItemComponent } from '../../administration/users/edit-item /edit-item.component';
-import { DashboardScheduleComponent } from './dashboard-schedule/dashboard-schedule.component';
 import { KendoSchedulerComponent } from './kendo-scheduler/kendo-scheduler.component';
 import { WorkflowComponent } from 'app/layout/common/workflow/workflow.component';
 

@@ -20,7 +20,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { GridAllModule } from '@syncfusion/ej2-angular-grids';
 import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-messages.component';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
@@ -71,7 +70,6 @@ import { Overlay } from '@angular/cdk/overlay';
         MatSlideToggleModule,
         MatChipsModule,
         MatSidenavModule,
-        GridAllModule,
         AddressLookupComponent,
         // RouterLink,
         NgClass,
