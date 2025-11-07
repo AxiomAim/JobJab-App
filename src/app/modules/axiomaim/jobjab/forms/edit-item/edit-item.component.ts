@@ -19,7 +19,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDrawerToggleResult, MatSidenavModule } from '@angular/material/sidenav';
 import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-messages.component';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
@@ -30,6 +30,7 @@ import { Storage, ref, uploadBytesResumable, getDownloadURL } from '@angular/fir
 import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { SurveyCreatorModel } from 'survey-creator-core';
 import { SurveyCreatorModule } from 'survey-creator-angular';
+import { FormsListComponent } from '../list/list.component';
 
 const surveyJson = {
   elements: [{
@@ -50,9 +51,9 @@ const creatorOptions = {
 
 
 @Component({
-    selector: 'forms-add-item',
-    styleUrls: ['./add-item.component.scss'],
-    templateUrl: './add-item.component.html',
+    selector: 'forms-edit-item',
+    styleUrls: ['./edit-item.component.scss'],
+    templateUrl: './edit-item.component.html',
     styles: [
         `
             settings {
@@ -72,10 +73,10 @@ const creatorOptions = {
     encapsulation: ViewEncapsulation.None,
     standalone: true,
     imports: [
+        RouterLink,
         MatIconModule,
         MatRippleModule,
         MatTooltipModule,
-        AxiomaimDrawerComponent,
         MatButtonModule,
         FormsModule,
         ReactiveFormsModule,
@@ -84,7 +85,6 @@ const creatorOptions = {
         MatSelectModule,
         MatOptionModule,
         MatTooltipModule,
-        AlertMessagesComponent,
         MatCheckboxModule,
         MatDatepickerModule,
         TextFieldModule,
@@ -92,13 +92,9 @@ const creatorOptions = {
         MatChipsModule,
         MatSidenavModule,
         SurveyCreatorModule
-        
-        // AddressLookupComponent,
-        // RouterLink,
-        // NgClass,
     ]
 })
-export class FormsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
+export class FormsEditItemComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() btnIcon: string = 'mat_outline:add';
     @Input() btnTitle: string = 'Add';
     @Input() external: boolean = false;
@@ -139,6 +135,7 @@ export class FormsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
         private _activatedRoute: ActivatedRoute,
         @Inject(Storage) private readonly storage: Storage,
         private _axiomaimLoadingService: AxiomaimLoadingService,
+        private _formsListComponent: FormsListComponent,
 
     ) {
         // Create the basic form structure early (typed)
@@ -164,6 +161,10 @@ export class FormsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
      * On init
      */
     async ngOnInit() {
+    this.newForm = this._formsV2Service.form();
+    this._formsListComponent.matDrawer.open();
+
+    console.log('edit-item - newForm', this.newForm);
       const creator = new SurveyCreatorModel(creatorOptions, surveyJson);
       creator.text = JSON.stringify(this.newForm.formJson);
       creator.saveSurveyFunc = (saveNo: number, callback: Function) => { 
@@ -374,6 +375,13 @@ export class FormsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
     
+    /**
+     * Close the drawer
+     */
+    closeDrawer(): Promise<MatDrawerToggleResult> {
+        return this._formsListComponent.matDrawer.close();
+    }
+
 
     /**
      * Track by function for ngFor loops

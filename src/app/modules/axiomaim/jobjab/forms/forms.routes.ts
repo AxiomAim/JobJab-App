@@ -12,6 +12,7 @@ import { FormsComponent } from './forms.component';
 import { FormsListComponent } from './list/list.component';
 import { FormsV2Service } from './forms-v2.service';
 import { FormsDetailsComponent } from './details/details.component';
+import { FormsEditItemComponent } from './edit-item/edit-item.component';
 
 
 /**
@@ -122,7 +123,7 @@ export default [
         children: [
           {
             path: ':id',
-            component: FormsDetailsComponent,
+            component: FormsEditItemComponent,
             resolve: {
               form: formResolver,
             },
