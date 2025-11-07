@@ -38,11 +38,9 @@ import {
 } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
-import { PhonePipe } from '@axiomaim/pipes/phone.pipe';
 import { FormsV2Service } from '../forms-v2.service';
 import { Form } from '../forms.model';
 import { FormsAddItemComponent } from '../add-item/add-item.component';
-import { FormCreatorComponent } from 'app/modules/axiomaim/jobjab/forms/form-creator/form-creator.component';
 
 @Component({
     selector: 'forms-list',

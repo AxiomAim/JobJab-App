@@ -169,7 +169,7 @@ export class FormsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
       creator.text = JSON.stringify(this.newForm.formJson);
       creator.saveSurveyFunc = (saveNo: number, callback: Function) => { 
       callback(saveNo, true);
-    //   console.log('New form data...', JSON.parse(creator.text));
+      console.log('New form data...', JSON.parse(creator.text));
       // this._formsV2Service.createItem(JSON.parse(creator.text));
       //   creator.onUploadFile.add((_, options) => {
       //     const formData = new FormData();
