@@ -80,6 +80,7 @@
     "survey-core": "^2.3.13",
     "survey-creator-angular": "^2.3.13",
     "survey-creator-core": "^2.3.13",
+    "survey-pdf": "^2.3.14",
     "tslib": "2.6.2",
     "zone.js": "0.15.0"
   },

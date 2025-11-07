@@ -305,11 +305,11 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         icon: 'heroicons_outline:home',
         children: [
             {
-                id: 'jobjab.formly-creator',
-                title: 'Formly',
+                id: 'jobjab.forms',
+                title: 'Forms',
                 type: 'basic',
                 icon: 'heroicons_outline:clipboard-document-check',
-                link: '/jobjab/formly-creator',
+                link: '/jobjab/forms',
             },
             {
                 id: 'jobjab.jobs',

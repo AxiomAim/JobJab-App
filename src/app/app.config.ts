@@ -21,21 +21,27 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
 import { firebaseProvideAuth } from './core/auth-firebase/firebase-auth.provider';
-import { provideFormlyCore } from '@ngx-formly/core';
+import { ConfigOption, provideFormlyCore } from '@ngx-formly/core';
 import { withFormlyMaterial } from '@ngx-formly/material';
 import { withFormlyKendo } from '@ngx-formly/kendo';
 import { CustomFieldType } from './custom-field.type';
 
+const formlyConfig: ConfigOption = {
+  // Optional: Custom validation messages, etc.
+  validationMessages: [{ name: 'required', message: 'This field is required' }]
+};
+
 export const appConfig: ApplicationConfig = {
     providers: [
         provideAnimations(),
-        provideHttpClient(),
-            provideFormlyCore([
-            ...withFormlyKendo(),
-      {
-        validationMessages: [{ name: 'required', message: 'This field is required' }],
-      },
-    ]),
+        provideHttpClient(),        
+        provideFormlyCore([
+            ...withFormlyMaterial(),
+            formlyConfig
+        //   {
+        //     validationMessages: [{ name: 'required', message: 'This field is required' }],
+        //   },
+        ]),
         provideRouter(
             appRoutes,
             withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })

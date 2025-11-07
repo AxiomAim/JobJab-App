@@ -1,0 +1,40 @@
+<div class="flex w-full flex-col">
+    <!-- View mode -->
+    @if (!editMode) {
+    <!-- Header -->
+    <div class="relative h-40 w-full bg-accent-100 px-8 dark:bg-accent-700 sm:h-40 sm:px-12">
+        <!-- Background -->
+        @if (form.background) {
+        <img class="absolute inset-0 h-full w-full object-cover" [src]="form.background" />
+        }
+        <!-- Close button -->
+        <div class="mx-auto flex w-full max-w-3xl items-center justify-end pt-6">
+            <a mat-icon-button [matTooltip]="'Close'" [routerLink]="['../']" class="bg-warn-500">
+                <mat-icon class="text-white" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+            </a>
+        </div>
+    </div>
+
+    <!-- User -->
+    <div class="relative flex flex-auto flex-col items-center p-6 pt-0 sm:p-12 sm:pt-0">
+        <div class="w-full max-w-3xl">
+            <!-- Avatar and actions -->
+            <div class="-mt-16 flex flex-auto items-end">
+                <div class="text-3xl font-bold">{{ form.name }}</div>
+                <div class="mb-1 ml-auto flex items-center">
+                    <button mat-stroked-button [routerLink]="['../edit/', form.id]">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
+                        <span class="ml-2">Edit</span>
+                    </button>
+                </div>
+            </div>
+
+            <form [formGroup]="itemForm" class="px-4 py-4">
+                <formly-form [model]="model" [fields]="_formsV2Service.form().fields" [options]="options"
+                    [form]="form"></formly-form>
+            </form>
+
+        </div>
+    </div>
+    }
+</div>

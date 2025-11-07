@@ -1,0 +1,129 @@
+.audit-trail {
+  cursor: pointer;
+}
+
+// Shared styling for both datetime and date pickers
+::ng-deep .xdsoft_datetimepicker {
+  z-index: 1000 !important;
+  font-family: inherit;
+  
+  // Calendar styling
+  .xdsoft_calendar {
+    .xdsoft_date {
+      &.xdsoft_current {
+        background: #007bff;
+        color: white;
+        border-radius: 4px;
+      }
+      
+      &.xdsoft_today {
+        background: #28a745;
+        color: white;
+        border-radius: 4px;
+      }
+      
+      &:hover {
+        background: #e9ecef;
+        border-radius: 4px;
+      }
+    }
+  }
+  
+  // Header styling
+  .xdsoft_monthpicker,
+  .xdsoft_yearselect {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  // Navigation buttons
+  .xdsoft_prev,
+  .xdsoft_next {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    
+    &:hover {
+      background: #e9ecef;
+    }
+  }
+}
+
+// Input field styling for both date and datetime pickers
+::ng-deep input[id^="datetime-picker-input"],
+::ng-deep input[id^="date-picker-input"] {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background: #fff;
+  font-family: inherit;
+  
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+  
+  &::placeholder {
+    color: #999;
+    font-style: italic;
+  }
+  
+  &:hover {
+    border-color: #adb5bd;
+  }
+}
+
+// Confirm dialog styling to ensure it appears properly within the form
+::ng-deep .confirm-dialog-panel {
+  z-index: 10000 !important;
+  
+  .mat-dialog-container {
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .mat-dialog-title {
+    margin: 0 0 16px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .mat-dialog-content {
+    margin: 0 0 16px 0;
+    
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+    }
+  }
+  
+  .mat-dialog-actions {
+    margin: 0;
+    padding: 0;
+    
+    button {
+      min-width: 80px;
+      margin-left: 8px;
+      
+      &.cancel-btn {
+        color: #666;
+      }
+      
+      &.confirm-btn {
+        background-color: #dc3545;
+        color: white;
+        
+        &:hover {
+          background-color: #c82333;
+        }
+      }
+    }
+  }
+}

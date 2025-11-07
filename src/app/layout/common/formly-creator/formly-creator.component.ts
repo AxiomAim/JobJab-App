@@ -27,7 +27,6 @@ import { FormlySidebarComponent } from './formly-sidebar.component';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
     ReactiveFormsModule,
-    FormlyForm,
     MatSidenavModule,
     FormlySidebarComponent,
     MatButtonModule,

@@ -7,7 +7,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { MatRippleModule } from '@angular/material/core';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { RequestsV2Service } from '../requests-v2.service';
-import { FormCreatorComponent } from 'app/layout/common/form-creator/form-creator.component';
+import { FormCreatorComponent } from 'app/modules/axiomaim/jobjab/forms/form-creator/form-creator.component';
 import { FormlyCreatorComponent } from 'app/layout/common/formly-creator/formly-creator.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
