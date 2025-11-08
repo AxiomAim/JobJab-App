@@ -67,6 +67,7 @@ export const appRoutes: Route[] = [
         //     initialData: initialDataResolver
         // },
         children: [
+            {path: 'form', loadChildren: () => import('app/modules/landing/form/form.routes')},
             {path: 'home', loadChildren: () => import('app/modules/landing/home/home.routes')},
             {path: 'pricing', loadChildren: () => import('app/modules/landing/pricing/pricing.routes')},
         ]
@@ -146,6 +147,7 @@ export const appRoutes: Route[] = [
                 {path: 'items', loadChildren: () => import('app/modules/axiomaim/jobjab/items/items.routes')},
                 {path: 'job-board', loadChildren: () => import('app/modules/axiomaim/jobjab/job-board/job-board.routes')},
                 {path: 'forms', loadChildren: () => import('app/modules/axiomaim/jobjab/forms/forms.routes')},
+                {path: 'theme-designer', loadChildren: () => import('app/modules/axiomaim/jobjab/forms/theme-designer/theme-designer.routes')},
             ]},
 
             // Apps

@@ -1,0 +1,25 @@
+#surveyCreator {
+    height: 90vh;
+    width: 80vw;
+}
+
+:root {
+    --sjs-general-padding: 1px; /* General padding for elements */
+    --sjs-question-margin-bottom: 0px; /* Space below questions */
+}
+
+.low-padding-question .sv_qstn .sq-root {
+    padding: 0px !important;
+    margin-bottom: 0px !important;
+}
+
+/* Target the question container and its inner root for padding/margin */
+.sv_qstn .sq-root {
+    padding: 0px !important; /* Reduces internal padding */
+    margin-bottom: 0px !important; /* Reduces space between questions */
+}
+
+/* Optional: Also target the main question wrapper if needed for outer margins */
+.sv_qstn {
+    margin: 0px 0 !important; /* Adjusts outer top/bottom margins */
+}

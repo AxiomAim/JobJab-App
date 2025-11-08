@@ -339,6 +339,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 icon: 'heroicons_outline:clipboard-document-check',
                 link: '/jobjab/job-board',
             },
+            {
+                id: 'jobjab.theme-designer',
+                title: 'Theme Designer',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/jobjab/theme-designer',
+            },
         ],
     },
     {
