@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import { Component, OnDestroy, OnInit, signal, effect, ViewChild, ViewEncapsulation, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, Input, inject, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -32,15 +31,14 @@ import { SurveyCreatorModel } from 'survey-creator-core';
 import { SurveyCreatorModule } from 'survey-creator-angular';
 
 const surveyJson = {
-  elements: [{
-    name: "FirstName",
-    title: "Enter your first name:",
-    type: "text"
-  }, {
-    name: "LastName",
-    title: "Enter your last name:",
-    type: "text"
-  }]
+  elements: [
+    {
+      type: "address-lookup",
+      name: "address",
+      title: "Enter your address",
+      placeholder: "Search for an address"
+    }
+  ]
 };
 
 const creatorOptions = {
@@ -91,8 +89,7 @@ const creatorOptions = {
         MatSlideToggleModule,
         MatChipsModule,
         MatSidenavModule,
-        SurveyCreatorModule
-        
+        SurveyCreatorModule,        
         // AddressLookupComponent,
         // RouterLink,
         // NgClass,
@@ -164,8 +161,10 @@ export class FormsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
      * On init
      */
     async ngOnInit() {
-      const creator = new SurveyCreatorModel(creatorOptions, surveyJson);
-      creator.text = JSON.stringify(this.newForm.formJson);
+      const creator = new SurveyCreatorModel(creatorOptions);
+        creator.JSON = surveyJson;
+      
+    creator.text = JSON.stringify(this.newForm.formJson);
       creator.saveSurveyFunc = (saveNo: number, callback: Function) => { 
       callback(saveNo, true);
       const formJson = JSON.parse(creator.text);

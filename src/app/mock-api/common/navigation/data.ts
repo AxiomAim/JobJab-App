@@ -312,6 +312,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 link: '/jobjab/forms',
             },
             {
+                id: 'jobjab.queries',
+                title: 'Queries',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/jobjab/queries',
+            },
+            {
                 id: 'jobjab.jobs',
                 title: 'Jobs',
                 type: 'basic',

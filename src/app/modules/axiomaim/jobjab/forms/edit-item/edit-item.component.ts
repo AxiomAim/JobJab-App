@@ -20,6 +20,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDrawerToggleResult, MatSidenavModule } from '@angular/material/sidenav';
+import { AlertMessagesComponent } from 'app/layout/common/alert-messages/alert-messages.component';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 import { AlertMessagesService } from 'app/layout/common/alert-messages/alert-messages.service';
 import { Form, FormModel } from '../forms.model';
@@ -30,16 +31,30 @@ import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { SurveyCreatorModel } from 'survey-creator-core';
 import { SurveyCreatorModule } from 'survey-creator-angular';
 import { FormsListComponent } from '../list/list.component';
+import { Serializer, SurveyModel } from "survey-core";
+import { ColorPickerComponent } from 'app/layout/common/color-picker/color-picker.component';
+
+function applyBackground(color) {
+  setTimeout(() => {
+    const surveyEl = document.getElementsByClassName("sd-root-modern")[0] as HTMLElement;
+    if (!!surveyEl) {
+      surveyEl.style.setProperty("--background", color);
+    }
+  }, 50);
+};
+
+function handleActiveTabChange(sender, options) {
+  if (options.tabName === "preview" || options.tabName === "designer") {
+    applyBackground(sender.survey.backgroundColor);
+  }
+};
 
 const surveyJson = {
   elements: [{
-    name: "FirstName",
-    title: "Enter your first name:",
-    type: "text"
-  }, {
-    name: "LastName",
-    title: "Enter your last name:",
-    type: "text"
+    type: "color-picker",
+    name: "question1",
+    title: "Pick a color",
+    colorPickerType: "Sketch"
   }]
 };
 
@@ -90,7 +105,8 @@ const creatorOptions = {
         MatSlideToggleModule,
         MatChipsModule,
         MatSidenavModule,
-        SurveyCreatorModule
+        SurveyCreatorModule,
+        ColorPickerComponent
     ]
 })
 export class FormsEditItemComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -165,6 +181,20 @@ export class FormsEditItemComponent implements OnInit, AfterViewInit, OnDestroy 
 
     console.log('edit-item - newForm', this.newForm);
       const creator = new SurveyCreatorModel(creatorOptions, surveyJson);
+    Serializer.addProperty("survey", {
+      name: "backgroundColor",
+      displayName: "Background color",
+      type: "color",
+      category: "general",
+      visibleIndex: 3,
+      onSetValue: (survey: SurveyModel, value) => {
+        survey.setPropertyValue("backgroundColor", value);
+        applyBackground(value);
+      }
+    });
+      
+    creator.onActiveTabChanged.add(handleActiveTabChange);
+    creator.JSON = surveyJson;
       creator.text = JSON.stringify(this.newForm.formJson);
       creator.saveSurveyFunc = (saveNo: number, callback: Function) => { 
       callback(saveNo, true);

@@ -8,7 +8,10 @@ export default [
         path: '',
         component: LoginUserDashboardComponent,
         resolve: {
-            totalLeads: () => inject(LoginUserDashboardV2Service).getTotalLeads(),
+            queries: () => inject(LoginUserDashboardV2Service).getQueries(),
+            quotes: () => inject(LoginUserDashboardV2Service).getQuotes(),
+            jobs: () => inject(LoginUserDashboardV2Service).getJobs(),
+            invoices: () => inject(LoginUserDashboardV2Service).getInvoices(),
         },
     },
 ] as Routes;

@@ -1,0 +1,10 @@
+<ng-container *ngIf="model.colorPickerType === 'Sketch'">
+  <color-sketch [disableAlpha]="model.disableAlpha" (onChange)="handleChange($event)"
+    [color]="model.value || '#fff'"></color-sketch>
+</ng-container>
+<ng-container *ngIf="model.colorPickerType === 'Slider'">
+  <color-slider (onChange)="handleChange($event)" [color]="model.value || '#fff'"></color-slider>
+</ng-container>
+<ng-container *ngIf="model.colorPickerType === 'Compact'">
+  <color-compact (onChange)="handleChange($event)" [color]="model.value || '#fff'"></color-compact>
+</ng-container>

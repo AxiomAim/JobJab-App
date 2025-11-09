@@ -1,0 +1,5 @@
+<div *ngIf="model.mapsLoadingError">{{ model.mapsLoadingError }}</div>
+
+<address-lookup [label]="model.title" [placeholder]="model.placeholder" [disabled]="model.isReadOnly"
+    (selectedOption)="onAddressSelected($event)">
+</address-lookup>

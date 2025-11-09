@@ -18,19 +18,20 @@ const formResolver = (
     const router = inject(Router);
     const oid = route.paramMap.get('id');
     
-    return _formsV2Service.getItem(oid).catch((error) => {
-        // Log the error
-        console.error('Error fetching site:', error);
-
-        // Get the parent url
-        const parentUrl = state.url.split('/').slice(0, -1).join('/');
-
-        // Navigate to there
-        router.navigateByUrl(parentUrl);
-
-        // Return an observable that emits an error or a default value
-        return of(null); // Or throwError(() => error); if you want the routing to potentially fail
-    });
+    if (!oid) {
+        // Optional: Handle missing ID early
+        router.navigateByUrl('/');
+        return of(null);
+    }
+    
+    return _formsV2Service.getItem(oid)
+        .then((res) => res)  // Explicitly return res on success
+        .catch((error) => {
+            console.error('Error fetching form:', error);
+            const parentUrl = state.url.split('/').slice(0, -1).join('/');
+            router.navigateByUrl(parentUrl);
+            return of(null);
+        });
 };
 
 export default [
@@ -40,6 +41,5 @@ export default [
         resolve: {
             form: formResolver,
         },
-
     },
 ] as Routes;

@@ -3,12 +3,22 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from 'app/app.component';
 import { appConfig } from 'app/app.config';
-import { setLicenseKey } from "survey-core";
+import { ElementFactory, setLicenseKey } from "survey-core";
 import { catchError, Observable, of, Subject, throwError } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { Inject, Injectable, NgZone } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { QuestionAddressLookupModel } from 'app/layout/common/question-address-loookup/question-address-loookup.model';
+import { AngularComponentFactory } from 'survey-angular-ui';
+import { AddressLookupQuestionComponent } from 'app/layout/common/address-lookup-question/address-lookup-question.component';
 
+const CUSTOM_TYPE = "address-lookup";
+
+ElementFactory.Instance.registerElement(CUSTOM_TYPE, (name) => {
+  return new QuestionAddressLookupModel(name);
+});
+
+AngularComponentFactory.Instance.registerComponent(`${CUSTOM_TYPE}-question`, AddressLookupQuestionComponent);
 
 bootstrapApplication(AppComponent, appConfig).catch((err) =>
     console.error(err)

@@ -11,29 +11,35 @@ import { Quote } from "app/modules/axiomaim/projects/quotes/quotes.model";
 import { Job } from "app/modules/axiomaim/jobjab/jobs/jobs.model";
 import { Invoice } from "app/modules/axiomaim/administration/invoices/invoices.model";
 import { Request } from "app/core/services/data-services/requests/requests.model";
+import { QueriesV2Service } from "app/modules/axiomaim/jobjab/queries/queries-v2.service";
+import { Query } from "app/modules/axiomaim/jobjab/queries/queries.model";
 
 export const WorkflowV2Service = createInjectable(() => {
   const _data: BehaviorSubject<any> = new BehaviorSubject(null);
   const _router = inject(Router);
   const _httpClient = inject(HttpClient);
-  const _requestsV2Service = inject(RequestsV2Service);
+  const _queriesV2Service = inject(QueriesV2Service);
   const _quotesV2Service = inject(QuotesV2Service);
   const _jobsV2Service = inject(JobsV2Service);
   const _invoicesV2Service = inject(InvoicesV2Service);
+  const queries = signal<Query[] | null>(null);
+  const quotes = signal<Quote[] | null>(null);
+  const jobs = signal<Job[] | null>(null);
+  const invoices = signal<Invoice[] | null>(null);
   const allRequests = signal<Request[] | null>(null);
   const allQuotes = signal<Quote[] | null>(null);
   const allJobs = signal<Job[] | null>(null);
   const allInvoices = signal<Invoice[] | null>(null);
 
 const getAll = async (): Promise<any> => {
-  const getRequests = await _requestsV2Service.getAll();
+  const getQueries = await _queriesV2Service.getAll();
   const getQuotes = await _quotesV2Service.getAll();
   const getJobs = await _jobsV2Service.getAll();
   const getInvoices = await _invoicesV2Service.getAll();
-  allRequests.set(getRequests);
-  allQuotes.set(getQuotes);
-  allJobs.set(getJobs);
-  allInvoices.set(getInvoices);
+  queries.set(getQueries);
+  quotes.set(getQuotes);
+  jobs.set(getJobs);
+  invoices.set(getInvoices);
   // const newLeadsList = response.filter(lead => {
   //   const createdDate = new Date(lead.createdAt);
   //   const currentDate = new Date();
@@ -44,6 +50,7 @@ const getAll = async (): Promise<any> => {
   // });
   return;
 };
+
 
   // const getItem = async (oid: string): Promise<Contact> => {
   //   const response = await _contactsV2Service.getItem(oid);
@@ -82,10 +89,15 @@ const getAll = async (): Promise<any> => {
 //   };
 
   return {
-    allRequests: computed(() => allRequests()),
-    allQuotes: computed(() => allQuotes()),
-    allJobs: computed(() => allJobs()),
-    allInvoices: computed(() => allInvoices()),
+    queries: computed(() => queries()),
+    quotes: computed(() => quotes()),
+    jobs: computed(() => jobs()),
+    invoices: computed(() => invoices()),
+    // allRequests: computed(() => allRequests()),
+    // allQuotes: computed(() => allQuotes()),
+    // allJobs: computed(() => allJobs()),
+    // allInvoices: computed(() => allInvoices()),
     getAll,
+
   };
 });

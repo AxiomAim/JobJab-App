@@ -3,7 +3,7 @@
     <div class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-2 shadow">
         <div class="flex items-start justify-between">
             <div class="truncate text-lg font-medium leading-6 tracking-tight">
-                Requests
+                Queries
             </div>
             <div class="-mr-3 -mt-2 ml-2">
                 <button mat-icon-button [matMenuTriggerFor]="summaryMenu">
@@ -26,14 +26,14 @@
         </div>
         <div class="mt-0 flex flex-col items-center">
             <div class="text-6xl font-bold leading-none tracking-tight text-blue-500 sm:text-6xl">
-                {{ this._workflowV2Service.allRequests().length || 0 }}
+                {{ this._crmV2Service.queries().length || 0 }}
             </div>
             <div class="text-lg font-medium text-blue-600 dark:text-blue-500">
-                Requests
+                Queries
             </div>
             <div class="text-secondary mt-0 flex w-full items-baseline justify-center">
                 <div class="truncate text-md font-medium">
-                    Pending Response:
+                    Pending Reply:
                 </div>
                 <div class="ml-1.5 text-lg font-semibold">
                     0
@@ -68,7 +68,7 @@
         </div>
         <div class="mt-0 flex flex-col items-center">
             <div class="text-6xl font-bold leading-none tracking-tight text-amber-500 sm:text-6xl">
-                {{ this._workflowV2Service.allQuotes().length || 0 }}
+                {{ this._crmV2Service.quotes().length || 0 }}
             </div>
             <div class="text-lg font-medium text-amber-600 dark:text-amber-500">
                 Quotes
@@ -110,7 +110,7 @@
         </div>
         <div class="mt-0 flex flex-col items-center">
             <div class="text-6xl font-bold leading-none tracking-tight text-warn-500 sm:text-6xl">
-                {{ this._workflowV2Service.allJobs().length || 0}}
+                {{ this._crmV2Service.jobs().length || 0}}
             </div>
             <div class="text-lg font-medium text-warn-600 dark:text-warn-500">
                 Jobs
@@ -152,17 +152,17 @@
         </div>
         <div class="mt-0 flex flex-col items-center">
             <div class="text-6xl font-bold leading-none tracking-tight text-green-500 sm:text-6xl">
-                {{ this._workflowV2Service.allInvoices().length || 0 }}
+                {{ this._crmV2Service.invoices().length || 0 }}
             </div>
             <div class="text-lg font-medium text-green-600 dark:text-green-500">
                 Invoices
             </div>
             <div class="text-secondary mt-0 flex w-full items-baseline justify-center">
                 <div class="truncate text-md font-medium">
-                    Implemented:
+                    Pending Payment:
                 </div>
                 <div class="ml-1.5 text-lg font-semibold">
-                    16
+                    0
                 </div>
             </div>
         </div>

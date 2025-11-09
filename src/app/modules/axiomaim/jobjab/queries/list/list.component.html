@@ -1,0 +1,125 @@
+<div class="absolute inset-0 flex min-w-0 flex-col overflow-hidden">
+    <mat-drawer-container class="bg-card h-full flex-auto dark:bg-transparent" (backdropClick)="onBackdropClicked()">
+        <!-- Drawer -->
+        <mat-drawer class="w-full dark:bg-gray-900 md:w-3/4" [mode]="drawerMode" [opened]="false" [position]="'end'"
+            [disableClose]="true" #matDrawer>
+            <router-outlet></router-outlet>
+        </mat-drawer>
+
+        <mat-drawer-content class="flex flex-col">
+            <!-- Main -->
+            <div class="flex-auto">
+                <!-- Header -->
+                <div class="flex flex-auto flex-col justify-between border-b px-6 py-3 sm:flex-row md:flex-col md:px-4">
+                    <!-- Title -->
+                    <div>
+                        <div class="text-4xl font-extrabold leading-none tracking-tight">
+                            Queries
+                        </div>
+                        <div class="text-secondary ml-0.5 font-medium">
+                            @if (_queriesV2Service.queries().length > 0) {
+                            {{ _queriesV2Service.queries().length }}
+                            }
+                            {{
+                            _queriesV2Service.queries().length
+                            | i18nPlural
+                            : {
+                            '=0': 'No queries',
+                            '=1': 'query',
+                            other: 'queries',
+                            }
+                            }}
+                        </div>
+                    </div>
+
+                    <!-- Main actions -->
+                    <div class="mt-4 flex items-center sm:mt-0 md:mt-4">
+                        <!-- Search -->
+                        <div class="flex-auto">
+                            <mat-form-field class="axiomaim-mat-dense axiomaim-mat-rounded w-full min-w-50"
+                                subscriptSizing="dynamic">
+                                <mat-icon class="icon-size-5" matPrefix [svgIcon]="
+                                        'heroicons_solid:magnifying-glass'
+                                    "></mat-icon>
+                                <input matInput [formControl]="searchInputControl" [autocomplete]="'off'"
+                                    [placeholder]="'Search queries'" />
+                            </mat-form-field>
+                        </div>
+                        <!-- Add query button -->
+                        <queries-add-item></queries-add-item>
+                    </div>
+                </div>
+
+                <!-- Contacts list -->
+                <div class="relative">
+                    @if (_queriesV2Service.queries().length > 0) {
+                    @for (
+                    query of _queriesV2Service.queries();
+                    track trackByFn(i, query);
+                    let i = $index
+                    ) {
+                    <!-- Group -->
+                    <!-- @if (
+                    i === 0 ||
+                    query.firstName.charAt(0) !==
+                    queries[i - 1].firstName.charAt(0)
+                    ) {
+                    <div
+                        class="text-secondary sticky top-0 z-10 -mt-px border-b border-t bg-gray-50 px-6 py-1 font-medium uppercase dark:bg-gray-900 md:px-8">
+                        {{ query.firstName.charAt(0) }}
+                    </div>
+                    } -->
+                    <!-- User -->
+                    <a class="z-20 flex cursor-pointer items-center border-b px-4 py-2 md:px-4" [ngClass]="{
+                                        'dark:hover:bg-hover hover:bg-gray-100':
+                                            !selectedItem ||
+                                            selectedItem.id !== query.id,
+                                        'bg-primary-50 dark:bg-hover':
+                                            selectedItem &&
+                                            selectedItem.id === query.id,
+                                    }" [routerLink]="['./', query.id]">
+                        <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
+                            @if (query.avatar) {
+                            <img class="h-full w-full object-cover" [src]="query.avatar" alt="User avatar" />
+                            }
+                            @if (!query.avatar) {
+                            <div
+                                class="flex h-full w-full items-center justify-center rounded-full  text-lg uppercase text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                                {{ query.firstName?.charAt(0) }}{{ query.lastName?.charAt(0) }}
+                            </div>
+                            }
+                        </div>
+                        <div class="flex flex-wrap">
+                            <div class="ml-4 min-w-0">
+                                <div class="truncate font-medium leading-5 text-md">
+                                    {{ query.displayName }}
+                                </div>
+                                <div class="text-secondary truncate leading-5 text-md">
+                                    {{ query.emails[0].email }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap">
+                            <div class="ml-4 min-w-0">
+                                <div class="truncate font-medium leading-5 text-md">
+                                    {{ query.phoneNumbers[0].phoneNumber | phone}}
+                                </div>
+                                <div class="text-secondary truncate leading-5 text-md">
+                                    {{ query.address }}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    }
+                    } @else {
+                    <div class="border-t p-8 text-center text-4xl font-semibold tracking-tight sm:p-16">
+                        There are no queries!
+                    </div>
+                    }
+
+                    <!-- No queries -->
+                </div>
+            </div>
+        </mat-drawer-content>
+    </mat-drawer-container>
+</div>

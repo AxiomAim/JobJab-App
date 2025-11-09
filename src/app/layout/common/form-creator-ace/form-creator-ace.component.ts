@@ -6,8 +6,8 @@ import "ace-builds/src-noconflict/ace";
 import "ace-builds/src-noconflict/ext-searchbox";
 import "ace-builds/src-noconflict/theme-clouds_midnight";
 import { AceJsonEditorModel } from "survey-creator-core";
-import "survey-core/survey-core.css";
-import "survey-creator-core/survey-creator-core.css";
+// import "survey-core/survey-core.css";
+// import "survey-creator-core/survey-creator-core.css";
 import SurveyCreatorTheme from "survey-creator-core/themes";
 import { registerCreatorTheme } from "survey-creator-core";
 

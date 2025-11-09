@@ -68,6 +68,7 @@ export const appRoutes: Route[] = [
         // },
         children: [
             {path: 'form', loadChildren: () => import('app/modules/landing/form/form.routes')},
+            {path: 'embed', loadChildren: () => import('app/modules/landing/embed/embed.routes')},
             {path: 'home', loadChildren: () => import('app/modules/landing/home/home.routes')},
             {path: 'pricing', loadChildren: () => import('app/modules/landing/pricing/pricing.routes')},
         ]
@@ -142,6 +143,7 @@ export const appRoutes: Route[] = [
 
             // Services
             {path: 'jobjab', children: [
+                {path: 'queries', loadChildren: () => import('app/modules/axiomaim/jobjab/queries/queries.routes')},
                 {path: 'jobs', loadChildren: () => import('app/modules/axiomaim/jobjab/jobs/jobs.routes')},
                 {path: 'requests', loadChildren: () => import('app/modules/axiomaim/jobjab/requests/requests.routes')},
                 {path: 'items', loadChildren: () => import('app/modules/axiomaim/jobjab/items/items.routes')},

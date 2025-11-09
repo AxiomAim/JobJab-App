@@ -80,7 +80,7 @@
                             <div class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow">
                                 <div class="flex items-start justify-between">
                                     <div class="truncate text-lg font-medium leading-6 tracking-tight">
-                                        Requests
+                                        Queries
                                     </div>
                                     <div class="-mr-3 -mt-2 ml-2">
                                         <button mat-icon-button [matMenuTriggerFor]="summaryMenu">
@@ -104,11 +104,11 @@
                                 <div class="mt-2 flex flex-col items-center">
                                     <div
                                         class="text-6xl font-bold leading-none tracking-tight text-blue-500 sm:text-6xl">
-                                        {{ this._loginUserDashboardV2Service.totalLeads().length ?
-                                        this._loginUserDashboardV2Service.totalLeads().length : 0 }}
+                                        {{ this._loginUserDashboardV2Service.queries().length ?
+                                        this._loginUserDashboardV2Service.queries().length : 0 }}
                                     </div>
                                     <div class="text-lg font-medium text-blue-600 dark:text-blue-500">
-                                        Requests
+                                        Queries
                                     </div>
                                     <div class="text-secondary mt-5 flex w-full items-baseline justify-center">
                                         <div class="truncate text-md font-medium">
@@ -148,8 +148,8 @@
                                 <div class="mt-2 flex flex-col items-center">
                                     <div
                                         class="text-6xl font-bold leading-none tracking-tight text-amber-500 sm:text-6xl">
-                                        {{ this._loginUserDashboardV2Service.newLeads().length ?
-                                        this._loginUserDashboardV2Service.newLeads().length :
+                                        {{ this._loginUserDashboardV2Service.quotes().length ?
+                                        this._loginUserDashboardV2Service.quotes().length :
                                         0 }}
                                     </div>
                                     <div class="text-lg font-medium text-amber-600 dark:text-amber-500">
@@ -192,8 +192,10 @@
                                 </div>
                                 <div class="mt-2 flex flex-col items-center">
                                     <div
-                                        class="text-6xl font-bold leading-none tracking-tight text-warn-500 sm:text-6xl">
-                                        0
+                                        class="text-6xl font-bold leading-none tracking-tight text-amber-500 sm:text-6xl">
+                                        {{ this._loginUserDashboardV2Service.jobs().length ?
+                                        this._loginUserDashboardV2Service.jobs().length :
+                                        0 }}
                                     </div>
                                     <div class="text-lg font-medium text-warn-600 dark:text-warn-500">
                                         Jobs
@@ -235,8 +237,10 @@
                                 </div>
                                 <div class="mt-2 flex flex-col items-center">
                                     <div
-                                        class="text-6xl font-bold leading-none tracking-tight text-green-500 sm:text-6xl">
-                                        0
+                                        class="text-6xl font-bold leading-none tracking-tight text-amber-500 sm:text-6xl">
+                                        {{ this._loginUserDashboardV2Service.invoices().length ?
+                                        this._loginUserDashboardV2Service.invoices().length :
+                                        0 }}
                                     </div>
                                     <div class="text-lg font-medium text-green-600 dark:text-green-500">
                                         Invoices
