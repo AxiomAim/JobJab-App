@@ -31,35 +31,20 @@ import { AxiomaimLoadingService } from '@axiomaim/services/loading';
 import { SurveyCreatorModel } from 'survey-creator-core';
 import { SurveyCreatorModule } from 'survey-creator-angular';
 import { FormsListComponent } from '../list/list.component';
-import { Serializer, SurveyModel } from "survey-core";
-import { ColorPickerComponent } from 'app/layout/common/color-picker/color-picker.component';
-
-function applyBackground(color) {
-  setTimeout(() => {
-    const surveyEl = document.getElementsByClassName("sd-root-modern")[0] as HTMLElement;
-    if (!!surveyEl) {
-      surveyEl.style.setProperty("--background", color);
-    }
-  }, 50);
-};
-
-function handleActiveTabChange(sender, options) {
-  if (options.tabName === "preview" || options.tabName === "designer") {
-    applyBackground(sender.survey.backgroundColor);
-  }
-};
 
 const surveyJson = {
-  elements: [{
-    type: "color-picker",
-    name: "question1",
-    title: "Pick a color",
-    colorPickerType: "Sketch"
-  }]
+  elements: [
+    {
+      type: "address-lookup",
+      name: "address",
+      title: "Enter your address",
+      placeholder: "Search for an address"
+    }
+  ]
 };
 
 const creatorOptions = {
-  autoSaveEnabled: true,
+  autoSaveEnabled: false,
   collapseOnDrag: true
 };
 
@@ -106,7 +91,6 @@ const creatorOptions = {
         MatChipsModule,
         MatSidenavModule,
         SurveyCreatorModule,
-        ColorPickerComponent
     ]
 })
 export class FormsEditItemComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -181,20 +165,7 @@ export class FormsEditItemComponent implements OnInit, AfterViewInit, OnDestroy 
 
     console.log('edit-item - newForm', this.newForm);
       const creator = new SurveyCreatorModel(creatorOptions, surveyJson);
-    Serializer.addProperty("survey", {
-      name: "backgroundColor",
-      displayName: "Background color",
-      type: "color",
-      category: "general",
-      visibleIndex: 3,
-      onSetValue: (survey: SurveyModel, value) => {
-        survey.setPropertyValue("backgroundColor", value);
-        applyBackground(value);
-      }
-    });
-      
-    creator.onActiveTabChanged.add(handleActiveTabChange);
-    creator.JSON = surveyJson;
+      creator.JSON = surveyJson;
       creator.text = JSON.stringify(this.newForm.formJson);
       creator.saveSurveyFunc = (saveNo: number, callback: Function) => { 
       callback(saveNo, true);

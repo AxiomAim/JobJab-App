@@ -15,8 +15,6 @@ const surveyJson = {
     }
   ]
 };
-
-
 @Component({
     selector: 'landing-form',
     styleUrls: ['./form.component.scss'],

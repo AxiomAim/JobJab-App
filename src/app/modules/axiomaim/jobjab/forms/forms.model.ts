@@ -7,6 +7,7 @@ export class FormModel implements BaseDto {
     constructor(
         id: string,
         orgId: string,
+        contactId: string,
         name: string,
         fields: FormlyFieldConfig[],
         formJason?: any,
@@ -16,6 +17,7 @@ export class FormModel implements BaseDto {
         ) {
             this.id = id;
             this.orgId = orgId;
+            this.contactId = contactId;
             this.name = name;
             this.fields = fields;
             this.formJson = formJason;
@@ -25,6 +27,7 @@ export class FormModel implements BaseDto {
     }
     public id: string;
     public orgId: string;
+    public contactId: string;
     public name: string;
     public fields: FormlyFieldConfig[];
     public formJson?: any;
@@ -38,9 +41,56 @@ export class FormModel implements BaseDto {
         return {
             id: dto.id ? dto.id : '',
             orgId: dto.orgId ? dto.orgId : '',
+            contactId: dto.contactId ? dto.contactId : '',
             name: dto.name ? dto.name : '',
             fields: dto.fields ? dto.fields : [],
-            formJson: dto.formJson ? dto.formJson : '',
+            formJson: dto.formJson ? dto.formJson : 
+            {
+                title: 'Request Form',
+                description: 'Request a quote by filling out the form below.',
+                pages: [
+                    {
+                    name: 'page1',
+                    elements: [
+                        {
+                        type: 'text',
+                        name: 'firstName',
+                        title: 'First name:',
+                        isRequired: true
+                        },
+                        {
+                        type: 'text',
+                        name: 'lastName',
+                        startWithNewLine: false,
+                        title: 'Last name:',
+                        isRequired: true
+                        },
+                        {
+                        type: 'text',
+                        name: 'phoneNumber',
+                        title: 'Phone number:',
+                        isRequired: true,
+                        inputType: 'tel'
+                        },
+                        {
+                        type: 'text',
+                        name: 'email',
+                        startWithNewLine: false,
+                        title: 'Email address:',
+                        isRequired: true,
+                        inputType: 'email'
+                        },
+                        {
+                        type: 'address-lookup',
+                        name: 'address',
+                        title: 'Address:',
+                        isRequired: true,
+                        placeholder: 'Enter Address'
+                        }
+                    ]
+                    }
+                ]
+            },
             createdAt: dto.createdAt ? dto.createdAt : '',
             updatedAt: dto.updatedAt ? dto.updatedAt : '',
             deletedAt: dto.deletedAt ? dto.deletedAt : '',
@@ -52,18 +102,55 @@ export class FormModel implements BaseDto {
         return {
             id: uuidv4().toString(),
             orgId: '',
+            contactId: '',
             name: '',
             fields: [],
-            formJson: {
-                elements: [{
-                    name: "FirstName",
-                    title: "Enter your first name:",
-                    type: "text"
-                }, {
-                    name: "LastName",
-                    title: "Enter your last name:",
-                    type: "text"
-                }]
+            formJson: 
+            {
+            title: 'Request Form',
+            description: 'Request a quote by filling out the form below.',
+            pages: [
+                {
+                name: 'page1',
+                elements: [
+                    {
+                    type: 'text',
+                    name: 'firstName',
+                    title: 'First name:',
+                    isRequired: true
+                    },
+                    {
+                    type: 'text',
+                    name: 'lastName',
+                    startWithNewLine: false,
+                    title: 'Last name:',
+                    isRequired: true
+                    },
+                    {
+                    type: 'text',
+                    name: 'phoneNumber',
+                    title: 'Phone number:',
+                    isRequired: true,
+                    inputType: 'tel'
+                    },
+                    {
+                    type: 'text',
+                    name: 'email',
+                    startWithNewLine: false,
+                    title: 'Email address:',
+                    isRequired: true,
+                    inputType: 'email'
+                    },
+                    {
+                    type: 'address-lookup',
+                    name: 'address',
+                    title: 'Address:',
+                    isRequired: true,
+                    placeholder: 'Enter Address'
+                    }
+                ]
+                }
+            ]
             },
             createdAt: date,
             updatedAt: date,
@@ -76,6 +163,7 @@ export class FormModel implements BaseDto {
 export interface Form  extends BaseDto {
     id: string;
     orgId: string;
+    contactId: string;
     name: string;
     fields: FormlyFieldConfig[];
     formJson?: any;
@@ -84,16 +172,3 @@ export interface Form  extends BaseDto {
     deletedAt?: string;    
 }
 
-export interface FieldData {
-    key: string;
-    type: string;
-    props: FieldProps;
-}
-
-export interface FieldProps {
-    label: string;
-    placeholder: string;
-    description: string;
-    required: boolean;
-    options?: Array<{ value: any; label: string }>;
-}

@@ -42,7 +42,7 @@ const surveyJson = {
 };
 
 const creatorOptions = {
-  autoSaveEnabled: true,
+  autoSaveEnabled: false,
   collapseOnDrag: true
 };
 
@@ -164,7 +164,7 @@ export class FormsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
       const creator = new SurveyCreatorModel(creatorOptions);
         creator.JSON = surveyJson;
       
-    creator.text = JSON.stringify(this.newForm.formJson);
+        creator.text = JSON.stringify(this.newForm.formJson);
       creator.saveSurveyFunc = (saveNo: number, callback: Function) => { 
       callback(saveNo, true);
       const formJson = JSON.parse(creator.text);
@@ -240,8 +240,7 @@ export class FormsAddItemComponent implements OnInit, AfterViewInit, OnDestroy {
     
     openDrawer(): void {
         // Reset form to ensure clean state when opening
-        console.log('openDrawer - resetting form');
-        this.resetForm();
+        this.newForm = FormModel.emptyDto();
         
         // Open the drawer
         this.newItemDrawer.open();
