@@ -12,8 +12,8 @@ import {
   query, 
   WhereFilterOp
 } from '@angular/fire/firestore';
-import { Notification } from './notifications.model';
 import { FirestoreQuery, FirestoreV2Service } from 'app/core/auth-firebase/firestore-v2.service';
+import { Notification } from './notifications.model';
 
 @Injectable(
     {
@@ -42,6 +42,7 @@ export class NotificationsDataService extends BaseDataService<Notification> {
     // }
     
     public updateItem(data: Partial<Notification>): Observable<Notification> {
+      console.log("updateItem:data", data);
         // Assuming 'id' is the primary key
         const { id, ...updateData } = data; 
         // Only update if there are actual changes

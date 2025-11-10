@@ -17,10 +17,10 @@ import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
+import { NotificationsV2Service } from 'app/core/services/data-services/notifications/notifications-v2.service';
 import { NotificationsService } from 'app/layout/common/notifications/notifications.service';
 import { Notification } from 'app/layout/common/notifications/notifications.types';
 import { Subject, takeUntil } from 'rxjs';
-import { NotificationsV2Service } from './notifications-v2.service';
 
 @Component({
     selector: 'notifications',
@@ -67,19 +67,20 @@ export class NotificationsComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
+        this.unreadCount = this._notificationsV2Service.notifications().length;
         // Subscribe to notification changes
-        this._notificationsService.notifications$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((notifications: Notification[]) => {
-                // Load the notifications
-                this.notifications = notifications;
+        // this._notificationsService.notifications$
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((notifications: Notification[]) => {
+        //         // Load the notifications
+        //         this.notifications = notifications;
 
-                // Calculate the unread count
-                this._calculateUnreadCount();
+        //         // Calculate the unread count
+        //         this._calculateUnreadCount();
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        //         // Mark for check
+        //         this._changeDetectorRef.markForCheck();
+        //     });
     }
 
     /**

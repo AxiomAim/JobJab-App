@@ -5,6 +5,7 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    inject,
     OnDestroy,
     OnInit,
     TemplateRef,
@@ -18,6 +19,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { MessagesService } from 'app/layout/common/messages/messages.service';
 import { Message } from 'app/layout/common/messages/messages.types';
+import { MessagesV2Service } from 'app/modules/axiomaim/administration/messages/messages-v2.service';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -37,6 +39,7 @@ import { Subject, takeUntil } from 'rxjs';
     ],
 })
 export class MessagesComponent implements OnInit, OnDestroy {
+    _messagesV2Service = inject(MessagesV2Service);
     @ViewChild('messagesOrigin') private _messagesOrigin: MatButton;
     @ViewChild('messagesPanel') private _messagesPanel: TemplateRef<any>;
 
@@ -63,19 +66,20 @@ export class MessagesComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
+        this.unreadCount = this._messagesV2Service.messages().length;
         // Subscribe to message changes
-        this._messagesService.messages$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((messages: Message[]) => {
-                // Load the messages
-                this.messages = messages;
+        // this._messagesService.messages$
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((messages: Message[]) => {
+        //         // Load the messages
+        //         this.messages = messages;
 
-                // Calculate the unread count
-                this._calculateUnreadCount();
+        //         // Calculate the unread count
+        //         this._calculateUnreadCount();
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        //         // Mark for check
+        //         this._changeDetectorRef.markForCheck();
+        //     });
     }
 
     /**

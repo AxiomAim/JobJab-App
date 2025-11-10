@@ -2,15 +2,21 @@ import { createInjectable } from "ngxtension/create-injectable";
 import { inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { NotificationsDataService } from "./notifications-data.service";
-import { Notification } from "./notifications.model";
 import { FirebaseAuthV2Service } from "app/core/auth-firebase/firebase-auth-v2.service";
+import { Notification } from "./notifications.model";
 
-export const NotificationsV2ApiService = createInjectable(() => {
+export const NotificationsApiV2Service = createInjectable(() => {
   const _notificationsDataService = inject(NotificationsDataService);
   const loginUser = inject(FirebaseAuthV2Service).loginUser();
-
+  
   const getAll = async ():Promise<Notification[]> => {
     const response$ = _notificationsDataService.getAll(loginUser.orgId);
+    const response: any = await firstValueFrom(response$)
+    return response;
+  };
+
+  const getAllMyEvents = async ():Promise<Notification[]> => {
+    const response$ = _notificationsDataService.getQuery('userId', '==', loginUser.id);
     const response: any = await firstValueFrom(response$)
     return response;
   };
@@ -22,6 +28,7 @@ export const NotificationsV2ApiService = createInjectable(() => {
   };
 
   const createItem = async (data: Notification):Promise<Notification> => {
+    data.orgId = loginUser.orgId;
     const response$ = _notificationsDataService.createItem(data);
     const response: any = await firstValueFrom(response$)
     return response.data;
@@ -30,7 +37,7 @@ export const NotificationsV2ApiService = createInjectable(() => {
   const updateItem = async (data: Notification):Promise<Notification> => {
     const response$ = _notificationsDataService.updateItem(data);
     const response: any = await firstValueFrom(response$)
-    return response.data;
+    return response;
   };
 
   const deleteItem = async (id: string):Promise<object> => {
@@ -46,5 +53,6 @@ export const NotificationsV2ApiService = createInjectable(() => {
     updateItem,
     deleteItem,
     getItem,
+    getAllMyEvents
   };
 });

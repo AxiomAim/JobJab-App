@@ -22,6 +22,7 @@ import { LoginUserMenuComponent } from 'app/layout/common/login-user-menu/login-
 import { Subject, takeUntil } from 'rxjs';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
 import { LoginUserService } from 'app/core/login-user/login-user.service';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 
 @Component({
     selector: 'futuristic-layout',
@@ -44,10 +45,10 @@ import { LoginUserService } from 'app/core/login-user/login-user.service';
     ],
 })
 export class FuturisticLayoutComponent implements OnInit, OnDestroy {
-    private _loginUserService = inject(LoginUserService);
+    loginUser = inject(FirebaseAuthV2Service).loginUser();
     isScreenSmall: boolean;
     navigation: Navigation;
-    user: User;
+    // user: User;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -88,11 +89,11 @@ export class FuturisticLayoutComponent implements OnInit, OnDestroy {
             });
 
         // Subscribe to the user service
-        this._loginUserService.loginUser$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((user: User) => {
-                this.user = user;
-            });
+        // this._loginUserService.loginUser$
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((user: User) => {
+        //         this.user = user;
+        //     });
 
         // Subscribe to media changes
         this._axiomaimMediaWatcherService.onMediaChange$
