@@ -44,7 +44,7 @@ import { WorkflowComponent } from 'app/layout/common/workflow/workflow.component
     MatTooltipModule,
     DecimalPipe,
     WorkflowComponent,
-    KendoSchedulerComponent,
+    // KendoSchedulerComponent,
     DatePipe
 ],
 })

@@ -84,7 +84,7 @@ public read(): void {
     if (updated.length) {
       completed.push(
         from(Promise.all(updated.map(async (event: any) => {
-          const appointment: MyEvent = {
+          const appointment: any = {
             id: event.id as string,
             orgId: this.loginUser.organization.id,
             userId: this.loginUser.id,
@@ -113,7 +113,7 @@ public read(): void {
           console.log('created:event', event);
           const base = MyEventModel.emptyDto();
           // delete base.id; // Remove generated UUID to let Firestore auto-generate
-          const appointment: MyEvent = {
+          const appointment: any = {
             ...base,
             orgId: this.loginUser.organization.id,
             userId: this.loginUser.id,
