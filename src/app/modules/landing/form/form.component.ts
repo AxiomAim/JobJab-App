@@ -20,7 +20,9 @@ const surveyJson = {
     styleUrls: ['./form.component.scss'],
     templateUrl: './form.component.html',
     encapsulation: ViewEncapsulation.None,
-    imports: [SurveyModule],
+    imports: [
+      SurveyModule
+    ],
 })
 export class LandingFormComponent implements OnInit, OnDestroy {
     public _formsV2Service = inject(FormsV2Service);
@@ -35,10 +37,12 @@ export class LandingFormComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         const resolvedForm = this.route.snapshot.data['form'];  // Use resolved data
+        console.log('Resolved form data:', resolvedForm);
         if (resolvedForm && resolvedForm.formJson) {
             const survey = new Model(resolvedForm.formJson);
-            survey.applyTheme(ThreeDimensionalLightPanelless);                  
+            // survey.applyTheme(ThreeDimensionalLightPanelless);                  
             survey.JSON = surveyJson;
+            // survey.onComplete.add(this.surveyComplete);
             this.surveyModel = survey;
             this.loadedForm = true;
         } else {
@@ -49,4 +53,34 @@ export class LandingFormComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {}
+
+    // surveyComplete (survey) {
+    // const userId = /* ... Getting the user ID ... */
+    // survey.setValue("userId", userId);
+
+    // this.saveSurveyResults(,
+    //   survey.data
+    // )
+
+
+  saveSurveyResults(url, json) {
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      body: JSON.stringify(json)
+    })
+    .then(response => {
+      if (response.ok) {
+        // Handle success
+      } else {
+        // Handle error
+      }
+    })
+    .catch(error => {
+      // Handle error
+    });
+  }
+
 }

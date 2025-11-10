@@ -16,15 +16,15 @@ const formResolver = (
 ) => {
     const _formsV2Service = inject(FormsV2Service);
     const router = inject(Router);
-    const oid = route.paramMap.get('id');
+    const id = route.paramMap.get('id');
     
-    if (!oid) {
+    if (!id) {
         // Optional: Handle missing ID early
         router.navigateByUrl('/');
         return of(null);
     }
     
-    return _formsV2Service.getItem(oid)
+    return _formsV2Service.getItem(id)
         .then((res) => res)  // Explicitly return res on success
         .catch((error) => {
             console.error('Error fetching form:', error);
