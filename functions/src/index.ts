@@ -28,10 +28,9 @@
 import * as admin from "firebase-admin";
 admin.initializeApp();  // No need to assign to `app` unless using multiple projects
 const firestore = admin.firestore();
-import { v4 as uuidv4 } from "uuid";
 
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
-
+import { v4 as uuidv4 } from "uuid";
 export const createquery = onDocumentCreated("queries/{queryId}", (event) => {    // Get the document snapshot
     const snapshot = event.data;
     if (!snapshot) {
