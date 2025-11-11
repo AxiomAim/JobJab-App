@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';  // Add this import
 import { FormsV2Service } from 'app/modules/axiomaim/jobjab/forms/forms-v2.service';
 import { Model } from "survey-core";
 import { SurveyModule } from "survey-angular-ui";
-import { ThreeDimensionalLightPanelless } from "survey-core/themes";  // Simplified import (add others if needed)
+import { ThreeDimensionalLightPanelless, FlatLightPanelless, PlainLightPanelless } from "survey-core/themes";  // Simplified import (add others if needed)
 
 const surveyJson = {
   elements: [
@@ -40,7 +40,7 @@ export class LandingFormComponent implements OnInit, OnDestroy {
         console.log('Resolved form data:', resolvedForm);
         if (resolvedForm && resolvedForm.formJson) {
             const survey = new Model(resolvedForm.formJson);
-            // survey.applyTheme(ThreeDimensionalLightPanelless);                  
+            survey.applyTheme(PlainLightPanelless);                  
             survey.JSON = surveyJson;
             // survey.onComplete.add(this.surveyComplete);
             this.surveyModel = survey;

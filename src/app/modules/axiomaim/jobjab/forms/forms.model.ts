@@ -147,7 +147,47 @@ export class FormModel implements BaseDto {
                     title: 'Address:',
                     isRequired: true,
                     placeholder: 'Enter Address'
-                    }
+                    },
+                    {
+                    type: "dropdown",
+                    name: "source",
+                    title: "Where did you hear about us?",
+                    isRequired: true,
+                    choices: [
+                        {
+                        value: "google",
+                        text: "Google Search"
+                        },
+                        {
+                        value: "other",
+                        text: "Other Search Engine"
+                        },
+                        {
+                        value: "social",
+                        text: "Social Media"
+                        },
+                        {
+                        value: "x",
+                        text: "X"
+                        },
+                        {
+                        value: "linkedin",
+                        text: "LinkedIn"
+                        },
+                        {
+                        value: "referral",
+                        text: "Referral"
+                        },
+                        {
+                        value: "promotion",
+                        text: "Promotion"
+                        },
+                        {
+                        value: "ad",
+                        text: "Online Ad"
+                        }
+                    ]
+                }
                 ]
                 }
             ]
