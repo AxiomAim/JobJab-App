@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { AxiomaimNavigationItem } from '@axiomaim/components/navigation';
+import { UserRolesEnum } from 'app/core/enum/user-roles.enum';
 
 export const defaultNavigation: AxiomaimNavigationItem[] = [
     {
@@ -8,6 +9,10 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         subtitle: 'Unique dashboard designs',
         type: 'group',
         icon: 'heroicons_outline:home',
+        // userRoles:[
+        //     UserRolesEnum.ADMINISTRATOR,
+        //     UserRolesEnum.OWNER
+        // ],
         children: [
             {
                 id: 'dashboards.login-user-dashboard',
@@ -59,6 +64,10 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         subtitle: 'Instant Forms',
         type: 'group',
         icon: 'heroicons_outline:rectangle-stack',
+        userRoles:[
+            UserRolesEnum.ADMINISTRATOR,
+            UserRolesEnum.OWNER
+        ],
         children: [
             {
                 id: 'forms.invoice',
@@ -215,6 +224,10 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         subtitle: 'Administration Tools',
         type: 'group',
         icon: 'heroicons_outline:home',
+        userRoles:[
+            UserRolesEnum.ADMINISTRATOR,
+            UserRolesEnum.OWNER
+        ],
         children: [
             {
                 id: 'administration.',
@@ -273,6 +286,10 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         subtitle: 'CRM Tools',
         type: 'group',
         icon: 'heroicons_outline:home',
+        userRoles:[
+            UserRolesEnum.ADMINISTRATOR,
+            UserRolesEnum.OWNER
+        ],
         children: [
             {
                 id: 'administration.pipelines',
@@ -303,6 +320,10 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         subtitle: 'JobJab Tools',
         type: 'group',
         icon: 'heroicons_outline:home',
+        userRoles:[
+            UserRolesEnum.ADMINISTRATOR,
+            UserRolesEnum.OWNER
+        ],
         children: [
             {
                 id: 'jobjab.forms',
@@ -361,6 +382,10 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         subtitle: 'Service Tools',
         type: 'group',
         icon: 'heroicons_outline:home',
+        userRoles:[
+            UserRolesEnum.ADMINISTRATOR,
+            UserRolesEnum.OWNER
+        ],
         children: [
             {
                 id: 'services.services',
@@ -385,6 +410,10 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         subtitle: 'Project Tools',
         type: 'group',
         icon: 'heroicons_outline:home',
+        userRoles:[
+            UserRolesEnum.ADMINISTRATOR,
+            UserRolesEnum.OWNER
+        ],
         children: [
             {
                 id: 'projects.items',
@@ -422,6 +451,10 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         subtitle: 'Custom made application designs',
         type: 'group',
         icon: 'heroicons_outline:home',
+        userRoles:[
+            UserRolesEnum.ADMINISTRATOR,
+            UserRolesEnum.OWNER
+        ],
         children: [
             {
                 id: 'apps.academy',
@@ -553,6 +586,10 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         subtitle: 'Custom made page designs',
         type: 'group',
         icon: 'heroicons_outline:document',
+        userRoles:[
+            UserRolesEnum.ADMINISTRATOR,
+            UserRolesEnum.OWNER
+        ],
         children: [
             {
                 id: 'pages.activities',
@@ -1077,6 +1114,10 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         subtitle: 'Building blocks of the UI & UX',
         type: 'group',
         icon: 'heroicons_outline:rectangle-stack',
+        userRoles:[
+            UserRolesEnum.ADMINISTRATOR,
+            UserRolesEnum.OWNER
+        ],
         children: [
             {
                 id: 'user-interface.material-components',
@@ -1355,6 +1396,10 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         subtitle: 'Everything you need to know about Axiomaim',
         type: 'group',
         icon: 'heroicons_outline:information-circle',
+        userRoles:[
+            UserRolesEnum.ADMINISTRATOR,
+            UserRolesEnum.OWNER
+        ],
         children: [
             {
                 id: 'documentation.changelog',

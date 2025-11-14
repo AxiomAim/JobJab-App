@@ -35,6 +35,7 @@ export interface AxiomaimNavigationItem {
         classes?: string;
     };
     children?: AxiomaimNavigationItem[];
+    userRoles?: any[];
     meta?: any;
 }
 

@@ -23,6 +23,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { User } from 'app/modules/axiomaim/administration/users/users.model';
 import { LoginUserService } from 'app/core/login-user/login-user.service';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
+import { ContactsV2Service } from 'app/modules/axiomaim/crm/contacts/contacts-v2.service';
 
 @Component({
     selector: 'customer-layout',
@@ -45,7 +46,7 @@ import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.s
     ],
 })
 export class CustomerLayoutComponent implements OnInit, OnDestroy {
-    loginUser = inject(FirebaseAuthV2Service).loginUser();
+    _contactsV2Service = inject(ContactsV2Service);
     isScreenSmall: boolean;
     navigation: Navigation;
     // user: User;
