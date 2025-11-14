@@ -5,7 +5,8 @@ import { NotificationsService } from 'app/layout/common/notifications/notificati
 import { QuickChatService } from 'app/layout/common/quick-chat/quick-chat.service';
 import { ShortcutsService } from 'app/layout/common/shortcuts/shortcuts.service';
 import { forkJoin } from 'rxjs';
-import { FirebaseAuthV2Service } from './core/auth-firebase/firebase-auth-v2.service';
+// import { FirebaseAuthV2Service } from './core/auth-firebase/firebase-auth-v2.service';
+// import { StagesV2Service } from './core/services/data-services/stages/stages-v2.service';
 
 export const initialDataResolver = () => {
     // const _firebaseAuthV2Service = inject(FirebaseAuthV2Service);
@@ -14,6 +15,7 @@ export const initialDataResolver = () => {
     const notificationsService = inject(NotificationsService);
     const quickChatService = inject(QuickChatService);
     const shortcutsService = inject(ShortcutsService);
+    // const _stagesV2Service = inject(StagesV2Service);
 
     // Fork join multiple API endpoint calls to wait all of them to finish
     return forkJoin([
@@ -23,5 +25,6 @@ export const initialDataResolver = () => {
         notificationsService.getAll(),
         quickChatService.getChats(),
         shortcutsService.getAll(),
+        // _stagesV2Service.getAll(),
     ]);
 };

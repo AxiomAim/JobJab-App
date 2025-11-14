@@ -4,4 +4,5 @@ export enum UserRolesEnum {
   TECHNICIAN = 'technician',
   SALES = 'sales',
   CUSTOMER = 'customer',
+  SKIP = 'skip',
 }

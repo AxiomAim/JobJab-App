@@ -9,10 +9,9 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         subtitle: 'Unique dashboard designs',
         type: 'group',
         icon: 'heroicons_outline:home',
-        // userRoles:[
-        //     UserRolesEnum.ADMINISTRATOR,
-        //     UserRolesEnum.OWNER
-        // ],
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [
             {
                 id: 'dashboards.login-user-dashboard',
@@ -292,11 +291,11 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
         ],
         children: [
             {
-                id: 'administration.pipelines',
-                title: 'Pipelines',
+                id: 'administration.stages',
+                title: 'Stages',
                 type: 'basic',
                 icon: 'heroicons_outline:clipboard-document-check',
-                link: '/crm/pipelines',
+                link: '/crm/stages',
             },
             {
                 id: 'administration.contacts',
@@ -311,6 +310,13 @@ export const defaultNavigation: AxiomaimNavigationItem[] = [
                 type: 'basic',
                 icon: 'heroicons_outline:clipboard-document-check',
                 link: '/crm/sources',
+            },
+            {
+                id: 'administration.emailbox',
+                title: 'Emailbox',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/crm/emailbox',
             },
         ],
     },
@@ -1607,6 +1613,9 @@ export const compactNavigation: AxiomaimNavigationItem[] = [
         tooltip: 'Dashboards',
         type: 'aside',
         icon: 'heroicons_outline:home',
+        // userRoles:[
+        //     UserRolesEnum.CUSTOMER,
+        // ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
     {
@@ -1615,6 +1624,9 @@ export const compactNavigation: AxiomaimNavigationItem[] = [
         tooltip: 'Apps',
         type: 'aside',
         icon: 'heroicons_outline:squares-2x2',
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
     {
@@ -1623,6 +1635,9 @@ export const compactNavigation: AxiomaimNavigationItem[] = [
         tooltip: 'Pages',
         type: 'aside',
         icon: 'heroicons_outline:document-duplicate',
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
     {
@@ -1631,6 +1646,9 @@ export const compactNavigation: AxiomaimNavigationItem[] = [
         tooltip: 'UI',
         type: 'aside',
         icon: 'heroicons_outline:rectangle-stack',
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
     {
@@ -1639,6 +1657,9 @@ export const compactNavigation: AxiomaimNavigationItem[] = [
         tooltip: 'Navigation',
         type: 'aside',
         icon: 'heroicons_outline:bars-3',
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
 ];
@@ -1647,12 +1668,18 @@ export const futuristicNavigation: AxiomaimNavigationItem[] = [
         id: 'dashboards',
         title: 'DASHBOARDS',
         type: 'group',
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
     {
         id: 'apps',
         title: 'APPS',
         type: 'group',
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
     {
@@ -1665,6 +1692,9 @@ export const futuristicNavigation: AxiomaimNavigationItem[] = [
         title: 'Pages',
         type: 'aside',
         icon: 'heroicons_outline:document-duplicate',
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
     {
@@ -1672,6 +1702,9 @@ export const futuristicNavigation: AxiomaimNavigationItem[] = [
         title: 'User Interface',
         type: 'aside',
         icon: 'heroicons_outline:rectangle-stack',
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
     {
@@ -1679,6 +1712,9 @@ export const futuristicNavigation: AxiomaimNavigationItem[] = [
         title: 'Navigation Features',
         type: 'aside',
         icon: 'heroicons_outline:bars-3',
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
 ];
@@ -1688,6 +1724,9 @@ export const horizontalNavigation: AxiomaimNavigationItem[] = [
         title: 'Dashboards',
         type: 'group',
         icon: 'heroicons_outline:home',
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
     {
@@ -1695,6 +1734,9 @@ export const horizontalNavigation: AxiomaimNavigationItem[] = [
         title: 'Apps',
         type: 'group',
         icon: 'heroicons_outline:squares-2x2',
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
     {
@@ -1702,6 +1744,9 @@ export const horizontalNavigation: AxiomaimNavigationItem[] = [
         title: 'Pages',
         type: 'group',
         icon: 'heroicons_outline:document-duplicate',
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
     {
@@ -1709,6 +1754,9 @@ export const horizontalNavigation: AxiomaimNavigationItem[] = [
         title: 'UI',
         type: 'group',
         icon: 'heroicons_outline:rectangle-stack',
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
     {
@@ -1716,6 +1764,9 @@ export const horizontalNavigation: AxiomaimNavigationItem[] = [
         title: 'Misc',
         type: 'group',
         icon: 'heroicons_outline:bars-3',
+        userRoles:[
+            UserRolesEnum.OWNER,
+        ],
         children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
     },
 ];

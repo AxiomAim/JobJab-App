@@ -30,6 +30,8 @@ import { EmailLabelsMockApi } from './common/email-labels/api';
 import { CategoriesMockApi } from './common/categories/api';
 import { JobBoardMockApi } from './jobjab/job-board/api';
 import { JobBoardListMockApi } from './common/job-board-list/api';
+import { StagesMockApi } from './setup/stages/api';
+import { EmailboxMockApi } from './crm/emailbox/api';
 
 @Injectable({ providedIn: 'root' })
 export class MockApiService {
@@ -64,6 +66,8 @@ export class MockApiService {
     categoriesMockApi = inject(CategoriesMockApi);
     jobBoardMockApi = inject(JobBoardMockApi);
     jobBoardListMockApi = inject(JobBoardListMockApi);
+    stagesMockApi = inject(StagesMockApi);
+    emailboxMockApi = inject(EmailboxMockApi);
 
     
 }

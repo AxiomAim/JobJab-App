@@ -26,6 +26,7 @@ import { CustomersMenuComponent } from 'app/layout/common/customers-menu/custome
 import { OrganizationComponent } from 'app/layout/common/organization/organization.component';
 import { AddItemComponent } from 'app/layout/common/add-item/add-item.component';
 import { SettingsOrganizationComponent } from 'app/layout/common/settings-organization/settings-organization.component';
+import { StagesListComponent } from 'app/layout/common/stages-list/stages-list.component';
 
 @Component({
     selector: 'classy-layout',
@@ -49,6 +50,7 @@ import { SettingsOrganizationComponent } from 'app/layout/common/settings-organi
         OrganizationComponent,
         AddItemComponent,
         SettingsOrganizationComponent,
+        // StagesListComponent
         
         
     ],

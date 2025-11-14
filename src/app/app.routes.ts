@@ -123,6 +123,7 @@ export const appRoutes: Route[] = [
             {path: 'crm', children: [
                 {path: 'contacts', loadChildren: () => import('app/modules/axiomaim/crm/contacts/contacts.routes')},
                 {path: 'sources', loadChildren: () => import('app/modules/axiomaim/crm/sources/sources.routes')},
+                {path: 'emailbox', loadChildren: () => import('app/modules/axiomaim/crm/emailbox/emailbox.routes')},
             ]},
 
             // Projects

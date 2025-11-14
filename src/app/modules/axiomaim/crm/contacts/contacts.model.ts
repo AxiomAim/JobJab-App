@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BaseDto } from 'app/core/models/base-dto.model';
 import { Source } from '../sources/sources.model';
+import { Stage } from 'app/core/services/data-services/stages/stages.model';
 
 export class ContactModel implements BaseDto {
     constructor(
@@ -13,6 +14,7 @@ export class ContactModel implements BaseDto {
         company: string,
         displayName: string,
         address: string,
+        stage: Stage,
         lead: boolean,
         leadAt: string,
         customer: boolean,
@@ -43,6 +45,7 @@ export class ContactModel implements BaseDto {
             this.company = company;
             this.displayName = displayName;
             this.address = address;
+            this.stage = stage;
             this.lead = lead;
             this.leadAt = leadAt;
             this.customer = customer;
@@ -66,6 +69,7 @@ export class ContactModel implements BaseDto {
     public company: string;
     public displayName: string;
     public address: string;
+    public stage: Stage;
     public lead: boolean;
     public leadAt: string;
     public customer: boolean;
@@ -102,6 +106,7 @@ export class ContactModel implements BaseDto {
             company: dto.company ? dto.company : '',
             displayName: dto.displayName ? dto.displayName : dto.firstName + ' ' + dto.lastName ,
             address: dto.address ? dto.address : '',
+            stage: dto.stage ? dto.stage : null,
             lead: dto.lead ? dto.lead : false,
             leadAt: dto.leadAt ? dto.leadAt : '',
             customer: dto.customer ? dto.customer : false,
@@ -136,6 +141,7 @@ export class ContactModel implements BaseDto {
             company: '',
             displayName: '',
             address: '',
+            stage: null,
             lead: false,
             leadAt: '',
             customer: false,
@@ -170,6 +176,7 @@ export interface Contact  extends BaseDto {
     company: string;
     displayName: string;
     address: string;
+    stage: Stage;
     lead: boolean;
     leadAt: string;
     customer: boolean;
