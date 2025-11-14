@@ -20,7 +20,7 @@ export const stages = [
         quote: false,
         job: false,
         invoice: false,
-        percent: 10,
+        percent: 0.1,
     },
     {
         id: '00000000-0003-0000-0000-000000000000',
@@ -31,7 +31,7 @@ export const stages = [
         quote: true,
         job: false,
         invoice: false,
-        percent: 25,
+        percent: 0.25,
     },
     {
         id: '00000000-0004-0000-0000-000000000000',
@@ -42,7 +42,7 @@ export const stages = [
         quote: false,
         job: true,
         invoice: false,
-        percent: 50,
+        percent: 0.50,
     },
     {
         id: '00000000-0005-0000-0000-000000000000',
@@ -53,6 +53,6 @@ export const stages = [
         quote: false,
         job: false,
         invoice: true,
-        percent: 100,
+        percent: 1,
     },
 ];

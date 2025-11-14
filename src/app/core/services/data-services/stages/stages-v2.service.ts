@@ -4,7 +4,6 @@ import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { Stage } from "./stages.model";
 import { StagesApiV2Service } from "./stages-v2-api.service";
-import { StagesDataService } from "./stages-data.service";
 
 export const StagesV2Service = createInjectable(() => {
   const _router = inject(Router);

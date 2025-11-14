@@ -31,9 +31,8 @@
                 <!-- View mode -->
                 @if (mode === 'view') {
                 <!-- Enter 'modify' mode -->
-                <button mat-icon-button (click)="populatStages()" [matTooltip]="'Populate Stages'">
-                    <mat-icon class="text-current icon-size-5"
-                        [svgIcon]="'heroicons_outline:arrow-down-on-square'"></mat-icon>
+                <button mat-icon-button (click)="changeMode('modify')" [matTooltip]="'Enter edit mode'">
+                    <mat-icon class="text-current icon-size-5" [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
                 </button>
                 <!-- Enter 'add' mode -->
                 <button mat-icon-button (click)="newStage()" [matTooltip]="'Add stage'">

@@ -35,6 +35,8 @@ import { Stage, StageModel } from 'app/core/services/data-services/stages/stages
 import { StagesV2Service } from 'app/core/services/data-services/stages/stages-v2.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'; // New import
 import { DragDropModule } from '@angular/cdk/drag-drop'; // New import
+import { SetupV2Service } from 'app/core/services/data-services/setup/setup-v2.service';
+import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
 
 @Component({
     selector: 'stages-list',
@@ -46,21 +48,23 @@ import { DragDropModule } from '@angular/cdk/drag-drop'; // New import
         MatButtonModule,
         MatIconModule,
         MatTooltipModule,
-        NgClass,
-        NgTemplateOutlet,
-        RouterLink,
+        // NgClass,
+        // NgTemplateOutlet,
+        // RouterLink,
         FormsModule,
         ReactiveFormsModule,
         MatFormFieldModule,
         MatInputModule,
         MatSlideToggleModule,
-        StagesListAddStageComponent,
+        // StagesListAddStageComponent,
         PercentPipe,
         DragDropModule
     ],
 })
 export class StagesListComponent implements OnInit, OnDestroy {
     public _stagesV2Service = inject(StagesV2Service);
+    public _setupV2Service = inject(SetupV2Service);
+    public loginUse = inject(FirebaseAuthV2Service).loginUser();
     @ViewChild('shortcutsOrigin') private _shortcutsOrigin: MatButton;
     @ViewChild('shortcutsPanel') private _shortcutsPanel: TemplateRef<any>;
 
@@ -306,4 +310,9 @@ export class StagesListComponent implements OnInit, OnDestroy {
             this._changeDetectorRef.markForCheck();
         }
     }    
+
+    async populatStages() {
+        await this._setupV2Service.init(this.loginUse);
+        console.log('Stages Populated');
+    }
 }

@@ -12,17 +12,13 @@ import { AxiomaimMediaWatcherService } from '@axiomaim/services/media-watcher';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { Navigation } from 'app/core/navigation/navigation.types';
 // import { User } from 'app/core/user/user.types';
-import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { MessagesComponent } from 'app/layout/common/messages/messages.component';
 import { NotificationsComponent } from 'app/layout/common/notifications/notifications.component';
 import { QuickChatComponent } from 'app/layout/common/quick-chat/quick-chat.component';
 import { SearchComponent } from 'app/layout/common/search/search.component';
-import { ShortcutsComponent } from 'app/layout/common/shortcuts/shortcuts.component';
 import { LoginUserMenuComponent } from 'app/layout/common/login-user-menu/login-user-menu.component';
 import { Subject, takeUntil } from 'rxjs';
-import { User } from 'app/modules/axiomaim/administration/users/users.model';
 import { FirebaseAuthV2Service } from 'app/core/auth-firebase/firebase-auth-v2.service';
-import { CustomersMenuComponent } from 'app/layout/common/customers-menu/customers-menu.component';
 import { OrganizationComponent } from 'app/layout/common/organization/organization.component';
 import { AddItemComponent } from 'app/layout/common/add-item/add-item.component';
 import { SettingsOrganizationComponent } from 'app/layout/common/settings-organization/settings-organization.component';
@@ -50,7 +46,7 @@ import { StagesListComponent } from 'app/layout/common/stages-list/stages-list.c
         OrganizationComponent,
         AddItemComponent,
         SettingsOrganizationComponent,
-        // StagesListComponent
+        StagesListComponent
         
         
     ],

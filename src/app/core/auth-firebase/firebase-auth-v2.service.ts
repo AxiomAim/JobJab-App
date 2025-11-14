@@ -38,7 +38,7 @@ import { Router } from '@angular/router';
 import { Organization, OrganizationModel } from 'app/modules/axiomaim/administration/organizations/organizations.model';
 import { OrganizationsDataService } from 'app/modules/axiomaim/administration/organizations/organizations-data.service';
 import { AxiomaimConfigService, Scheme, Theme } from '@axiomaim/services/config';
-import { SetupV2Service } from '../services/data-services/setup/setup-v2.service';
+// import { SetupV2Service } from '../services/data-services/setup/setup-v2.service';
 
 const LOGIN_USER = "loginUser";
 const AUTH_LOGIN_USER = "authUser";
@@ -51,7 +51,7 @@ export const FirebaseAuthV2Service = createInjectable(() => {
   const _usersDataService = inject(UsersDataService);
   const _organizationsDataService = inject(OrganizationsDataService);
   const _axiomaimConfigService = inject(AxiomaimConfigService);
-  const _setupV2Service = inject(SetupV2Service);
+  // const _setupV2Service = inject(SetupV2Service);
 
   const loginUser = signal<User | null>(null);
   const organization = signal<Organization | null>(null);
@@ -204,11 +204,11 @@ export const FirebaseAuthV2Service = createInjectable(() => {
       const thisUser: User = await firstValueFrom(_usersDataService.getItem(cred.user.uid));
       const thisOrganization: any = await firstValueFrom(_organizationsDataService.getItem(thisUser.orgId));
       const date = new Date().toISOString();
-      if(thisUser.firstTime) {
-        await _setupV2Service.init(thisUser);
-        thisUser.firstTime = false;
-        await _usersDataService.updateItem(thisUser);
-      }
+      // if(thisUser.firstTime) {
+      //   await _setupV2Service.init(thisUser);
+      //   thisUser.firstTime = false;
+      //   await _usersDataService.updateItem(thisUser);
+      // }
       thisUser.organization = thisOrganization;
       thisUser.login_at.push(date);
       thisUser.status = 'online';
