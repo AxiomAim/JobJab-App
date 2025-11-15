@@ -11,7 +11,7 @@
         <div class="flex shrink-0 items-center bg-primary py-4 pl-6 pr-4 text-on-primary">
             <div class="-ml-1 mr-3 sm:hidden">
                 <button mat-icon-button (click)="closePanel()">
-                    <mat-icon class="text-current icon-size-5" [svgIcon]="'heroicons_solid:x-mark'"></mat-icon>
+                    <mat-icon class="text-current icon-size-5" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
                 </button>
             </div>
             <div class="flex items-center text-lg font-medium leading-10">
@@ -31,21 +31,29 @@
                 <!-- View mode -->
                 @if (mode === 'view') {
                 <!-- Enter 'modify' mode -->
-                <button mat-icon-button (click)="populatStages()" [matTooltip]="'Populate Stages'">
+                <button mat-icon-button (click)="changeMode('modify')" [matTooltip]="'Enter edit mode'">
+                    <mat-icon class="text-current icon-size-5" [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
+                </button>
+                <!-- <button mat-icon-button (click)="populatStages()" [matTooltip]="'Populate Stages'">
                     <mat-icon class="text-current icon-size-5"
                         [svgIcon]="'heroicons_outline:arrow-down-on-square'"></mat-icon>
-                </button>
+                </button> -->
                 <!-- Enter 'add' mode -->
                 <button mat-icon-button (click)="newStage()" [matTooltip]="'Add stage'">
-                    <mat-icon class="text-current icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                    <mat-icon class="text-current icon-size-5" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
                 </button>
+                <!-- Close -->
+                <button mat-icon-button (click)="closePanel()" [matTooltip]="'Close'">
+                    <mat-icon class="text-current icon-size-5" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                </button>
+
                 }
 
                 <!-- Modify mode -->
                 @if (mode === 'modify') {
                 <!-- Enter 'view' mode -->
                 <button mat-icon-button (click)="changeMode('view')" [matTooltip]="'Exit edit mode'">
-                    <mat-icon class="text-current icon-size-5" [svgIcon]="'heroicons_solid:check-circle'"></mat-icon>
+                    <mat-icon class="text-current icon-size-5" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
                 </button>
                 }
 
@@ -53,7 +61,7 @@
                 @if (mode === 'add') {
                 <!-- Enter 'view' mode -->
                 <button mat-icon-button (click)="changeMode('view')" [matTooltip]="'Cancel'">
-                    <mat-icon class="text-current icon-size-5" [svgIcon]="'heroicons_solid:x-circle'"></mat-icon>
+                    <mat-icon class="text-current icon-size-5" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
                 </button>
                 }
 
@@ -61,7 +69,7 @@
                 @if (mode === 'edit') {
                 <!-- Enter 'modify' mode -->
                 <button mat-icon-button (click)="changeMode('modify')" [matTooltip]="'Cancel'">
-                    <mat-icon class="text-current icon-size-5" [svgIcon]="'heroicons_solid:x-circle'"></mat-icon>
+                    <mat-icon class="text-current icon-size-5" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
                 </button>
                 }
             </div>
@@ -69,26 +77,32 @@
         <div class="bg-card relative p-4 -mb-px flex flex-auto flex-col overflow-y-auto sm:max-h-120">
             <!-- View mode -->
             @if (mode === 'view' || mode === 'modify') {
+            <!-- Stages -->
             <!-- Shortcuts -->
             <div class="flex flex-wrap gap-x-8 gap-y-4">
-                <!-- <div class="mt-4 flex flex-col space-y-8 border-t pt-6"> -->
                 <div class="flex">
+                    <!-- Conditionally apply cdkDropList only in 'modify' mode -->
+                    @if (mode === 'modify') {
                     <div cdkDropList (cdkDropListDropped)="drop($event)" class="ml-6 min-w-0 space-y-1">
                         @for (
                         stage of _stagesV2Service.stages();
                         track trackByFn($index, stage)
                         ) {
                         <div class="flex items-center leading-6 bg-card rounded-lg p-3 shadow"
-                            [cdkDrag]="mode === 'modify'">
-                            <mat-icon cdkDragHandle class="w-10" [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
-                            <div class="w-30 ">
+                            [cdkDrag]="stage.percent !== 0">
+                            <!-- Simplified: Already in modify, so no mode check here -->
+                            <!-- Drag handle: Only for non-locked stages -->
+                            @if (stage.percent !== 0) {
+                            <mat-icon cdkDragHandle class="w-10 cursor-grab active:cursor-grabbing"
+                                [svgIcon]="'heroicons_outline:bars-3'" [matTooltip]="'Drag to reorder'"></mat-icon>
+                            }
+                            <div class="w-30 flex-1 min-w-0">
                                 {{ stage.name }}
                             </div>
-                            <div class="w-15 text-secondary truncate text-md">
-                                <span class="font-medium">{{
-                                    stage.percent | percent
-                                    }}</span>
+                            <div class="w-15 text-secondary truncate text-md flex-shrink-0">
+                                <span class="font-medium">{{ stage.percent | percent }}</span>
                             </div>
+                            <!-- Edit button: Show in view/modify, disabled outside -->
                             <button mat-icon-button (click)="editStage(stage)" [matTooltip]="'Edit stage'"
                                 [disabled]="mode !== 'view' && mode !== 'modify'">
                                 <mat-icon class="w-10" [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
@@ -96,9 +110,26 @@
                         </div>
                         }
                     </div>
+                    } @else {
+                    <!-- Plain div for 'view' mode (or others): Same layout, no drag/drop -->
+                    <div class="ml-6 min-w-0 space-y-1">
+                        @for (
+                        stage of _stagesV2Service.stages();
+                        track trackByFn($index, stage)
+                        ) {
+                        <div class="flex items-center leading-6 bg-card rounded-lg p-3 shadow">
+                            <div class="w-50 flex-1 min-w-0">
+                                {{ stage.name }}
+                            </div>
+                            <div class="w-15 text-secondary truncate text-md flex-shrink-0">
+                                <span class="font-medium">{{ stage.percent | percent }}</span>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    }
                 </div>
             </div>
-
             <!-- No shortcuts -->
             @if (!_stagesV2Service.stages() || !_stagesV2Service.stages().length) {
             <div class="flex flex-auto flex-col items-center justify-center px-8 py-12 sm:justify-start">
@@ -131,12 +162,12 @@
                 <!-- Actions -->
                 <div class="mt-4 flex items-center justify-end">
                     @if (mode === 'edit') {
-                    <button class="mr-2" mat-flat-button type="button" (click)="delete()">
+                    <button class="mr-2" mat-flat-button type="button" (click)="deleteStage()">
                         Delete
                     </button>
                     }
                     <button mat-flat-button [color]="'primary'" [disabled]="!stageForm.valid" type="button"
-                        (click)="save()">
+                        (click)="mode === 'add' ? addStage() : updateStage()">
                         @if (mode === 'add') {
                         Add
                         }

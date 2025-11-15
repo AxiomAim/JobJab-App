@@ -47,8 +47,8 @@ export const StagesV2Service = createInjectable(() => {
     return response;
   };
 
-  const deleteItem = async (oid: string): Promise<any> => {
-    const response = await _stagesApiV2Service.deleteItem(oid);
+  const deleteItem = async (id: string): Promise<any> => {
+    const response = await _stagesApiV2Service.deleteItem(id);
     stage.set(null);
     return response;
   };

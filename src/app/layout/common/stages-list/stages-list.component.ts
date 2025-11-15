@@ -73,7 +73,8 @@ export class StagesListComponent implements OnInit, OnDestroy {
     stages: Stage[];
     private _overlayRef: OverlayRef;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-    editingId: string | null = null; // New: Track edit mode
+    // editingId: string | null = null; // New: Track edit mode
+    editingStage: Stage | null = null;
     /**
      * Constructor
      */
@@ -182,7 +183,7 @@ export class StagesListComponent implements OnInit, OnDestroy {
     /**
      * Save shortcut
      */
-    async save() {
+    async addStage() {
         const stage: Stage = StageModel.emptyDto();
         stage.name = this.stageForm.get('name').value;
         stage.percent = (this.stageForm.get('percent').value)/100;
@@ -198,6 +199,21 @@ export class StagesListComponent implements OnInit, OnDestroy {
         // }
 
         // Go back the modify mode
+        this.mode = 'modify';
+    }
+
+    async updateStage() {
+        if (!this.editingStage) {
+            return;
+        }
+
+        this.editingStage.name = this.stageForm.get('name').value;
+        this.editingStage.percent = (this.stageForm.get('percent').value)/100;
+
+        await this._stagesV2Service.updateItem(this.editingStage);
+
+        // Clear editingId and go back to modify mode
+        this.editingStage = null;
         this.mode = 'modify';
     }
 
@@ -267,30 +283,46 @@ export class StagesListComponent implements OnInit, OnDestroy {
     }
 
     // New: Handle drop event
-    drop(event: CdkDragDrop<Stage[]>): void {
+    // Updated: Handle drop event (now async for persistence)
+    // Updated: Handle drop event (with lock enforcement)
+    async drop(event: CdkDragDrop<Stage[]>): Promise<void> {
         const currentStages = [...(this._stagesV2Service.stages() || [])];
+        
+        // Enforce lock: Prevent dropping into position 0 (unless dragging from 0, but that's impossible due to drag disabled)
+        if (event.currentIndex === 0 && event.previousIndex !== 0) {
+            // Redirect drop to position 1 (after the locked stage)
+            // This keeps the 0% stage pinned at the start
+            event.currentIndex = 1;
+        }
+        
+        // Reorder the array based on (possibly adjusted) drag/drop
         moveItemInArray(currentStages, event.previousIndex, event.currentIndex);
-
-        // Optional: Reassign percent for persistence (evenly spaced 0-1)
-        // Comment out if percent isn't for ordering
+        
+        // Recalculate percents for ALL stages based on new order (evenly spaced 0 to 1)
         const total = currentStages.length - 1;
-        const updates: Partial<Stage>[] = currentStages.map((stage, index) => ({
-            id: stage.id,
-            percent: total > 0 ? (index / total) : 0 // e.g., [0, 0.5, 1] for 3 stages
-        }));
-
-        // Reorder in-memory
+        if (total > 0) {
+            currentStages.forEach((stage, index) => {
+                stage.percent = index / total;  // e.g., [0, 0.5, 1] for 3 stages
+            });
+        } else if (currentStages.length === 1) {
+            currentStages[0].percent = 0;  // Locked single stage
+        }
+        
+        // Update in-memory state with reordered + updated percents
         this._stagesV2Service.reorder(currentStages);
-
-        // Persist (optional; uncomment to save to Firestore)
-        // this._stagesV2Service.bulkUpdate(updates).then(() => {
-        //     console.log('Stages reordered and persisted');
-        // });
+        
+        // Persist each updated stage to backend (loop since no bulkUpdate)
+        for (const stage of currentStages) {
+            await this._stagesV2Service.updateItem(stage);
+        }
+        
+        console.log('Stages reordered and percents updated:', currentStages);
+        this._changeDetectorRef.markForCheck();  // Trigger change detection (for OnPush)
     }
-
+    
     // New: Edit a stage
     editStage(stage: Stage): void {
-        this.editingId = stage.id;
+        this.editingStage = stage;
         this.stageForm.patchValue({
             name: stage.name,
             percent: stage.percent * 100 // Display as 0-100 in input
@@ -300,16 +332,25 @@ export class StagesListComponent implements OnInit, OnDestroy {
     }
 
     // Updated: Delete (only in edit mode)
-    async delete(): Promise<void> {
-        if (this.editingId) {
-            await this._stagesV2Service.deleteItem(this.editingId);
-            this.editingId = null;
+    async deleteStage(): Promise<void> {
+        console.log('Deleting stage', this.editingStage);
+        if (this.editingStage) {
+            await this._stagesV2Service.deleteItem(this.editingStage.id);
+            this.editingStage = null;
             this.stageForm.reset();
             this.mode = 'modify';
             await this._stagesV2Service.getAll(); // Reload
             this._changeDetectorRef.markForCheck();
         }
     }    
+
+    setPercent(event): void {
+        const inputValue = event.target.value;
+        const percentValue = parseFloat(inputValue);
+        if (!isNaN(percentValue)) {
+            this.stageForm.get('percent').setValue(percentValue);
+        }
+    }
 
     async populatStages() {
         await this._setupV2Service.init(this.loginUse);
